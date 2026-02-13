@@ -1,0 +1,39 @@
+{
+  "id": "b16532ce-de73-4738-9b88-00c2ce76a4b7",
+  "name": "CashflowAnalyzer",
+  "publisher": "bc365optimizers",
+  "version": "1.0.0.0",
+  "brief": "Optimize your cash flow with ease",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "https://bc365optimizers.com/",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "87990153-0e35-4e5d-ba61-2e93077d1699",
+      "name": "Review General Ledger Entries",
+      "publisher": "Microsoft",
+      "version": "27.0.0.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "27.0.0.0",
+  "idRanges": [
+    {
+      "from": 57200,
+      "to": 57249
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "16.1",
+  "features": [
+    "NoImplicitWith"
+  ]
+}

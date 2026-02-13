@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "KnuswonenKasstromen",
+            "request": "launch",
+            "type": "al",
+            "tenant": "b065c0bc-23a5-45b6-a36e-f392b42d19a1",
+            "environmentType": "Sandbox",
+            "environmentName": "KnuswonenKasstromen",
+            // "startupObjectType": "Page",
+            // "startupObjectId": 57110,
+            "breakOnError": true,
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "schemaUpdateMode": "ForceSync"
+        }
+    ]
+}
