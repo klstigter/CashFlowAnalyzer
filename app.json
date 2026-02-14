@@ -11,12 +11,20 @@
   "url": "https://bc365optimizers.com/",
   "logo": "",
   "dependencies": [
-    {
+    { 
       "id": "87990153-0e35-4e5d-ba61-2e93077d1699",
       "name": "Review General Ledger Entries",
       "publisher": "Microsoft",
       "version": "27.0.0.0"
+    },
+    {
+      "id": "093bb000-e08b-4a2c-b55a-bd835e5e312b",
+      "name": "DataBalk DDSIA API",
+      "publisher": "DDSIA",
+      "version": "1.0.0.97"
     }
+     
+    
   ],
   "screenshots": [],
   "platform": "1.0.0.0",
