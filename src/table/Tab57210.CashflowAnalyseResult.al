@@ -251,10 +251,11 @@ table 57210 "Cashflow Analyse Result"
         CashFlowResult: Record "Cashflow Analyse Result";
     begin
         CashFlowResult.Reset();
+        CashFlowResult.SetRange("G/L Entry No.", Rec."G/L Entry No.");
         if CashFlowResult.FindLast() then
-            Rec."G/L Entry No." := CashFlowResult."G/L Entry No." + 1
+            Rec."Entry Line No." := CashFlowResult."Entry Line No." + 1
         else
-            Rec."G/L Entry No." := 1;
+            Rec."Entry Line No." := 1;
     end;
 
     procedure ShowDimensions()

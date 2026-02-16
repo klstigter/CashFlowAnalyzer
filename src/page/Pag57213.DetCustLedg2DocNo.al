@@ -55,6 +55,10 @@ page 57213 "Det. Cust. Ledg2DocNo."
                 {
                     ToolTip = 'Specifies the value of the Posting Date Target field.', Comment = '%';
                 }
+                field(Amount; Rec.Amount)
+                {
+                    ToolTip = 'Specifies the value of the Amount field.', Comment = '%';
+                }
             }
         }
         area(Factboxes)

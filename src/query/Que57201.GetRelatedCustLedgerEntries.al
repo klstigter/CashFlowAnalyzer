@@ -9,6 +9,8 @@ query 57201 GetRelatedCustLedgerEntries
 
             DataItemTableFilter = "Entry Type" = filter(<> "Initial Entry");
 
+            filter(TransactionNoFilter; "Transaction No.") { }
+
             column(EntryNo; "Entry No.") { }
             column(CustLedgEntryNo; "Cust. Ledger Entry No.") { }
             column(AppliedCustLedEntrNo; "Applied Cust. Ledger Entry No.") { }
@@ -16,7 +18,8 @@ query 57201 GetRelatedCustLedgerEntries
             column(EntryType; "Entry Type") { }
             column(DocumentNoBnk; "Document No.") { }
             column(PostingDateBnk; "Posting Date") { }
-            filter(TransactionNoFilter; "Transaction No.") { }
+            column(Amount; Amount) { }
+
             dataitem(CustLedger; "Cust. Ledger Entry")
             {
                 DataItemLink = "Entry No." = DetCustLed."Cust. Ledger Entry No.";
