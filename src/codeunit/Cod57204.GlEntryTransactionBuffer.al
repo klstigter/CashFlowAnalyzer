@@ -88,8 +88,11 @@ codeunit 57204 GlEntryTransactionBuffer
             TEMPDetCusLed."Applied Cust. Ledger Entry No." := CustLedgerEntry.AppliedCustLedEntrNo;
             TEMPDetCusLed."Entry Type" := CustLedgerEntry.EntryType;
             TEMPDetCusLed."Transaction No." := CustLedgerEntry.TransactionNo;
-            TEMPDetCusLed."Document No." := CustLedgerEntry.DocNo;
-            TEMPDetCusLed."Posting Date" := CustLedgerEntry.PostingDate;
+            TEMPDetCusLed."Document No. Bnk" := CustLedgerEntry.DocNoTarget;
+            TEMPDetCusLed."Posting Date Bnk" := CustLedgerEntry.PostingDateTarget;
+            TEMPDetCusLed."Entry No. Target" := CustLedgerEntry.EntryNoTarget;
+            TEMPDetCusLed."Document No. Target" := CustLedgerEntry.DocNoTarget;
+            TEMPDetCusLed."Posting Date Target" := CustLedgerEntry.PostingDateTarget;
             TEMPDetCusLed.Insert();
         end;
     end;
