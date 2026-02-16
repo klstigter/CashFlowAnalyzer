@@ -85,7 +85,27 @@ page 57211 "Cash Entry Postings"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'run my codeunit';
-                RunObject = Codeunit MyCodeunit;
+
+                trigger OnAction()
+                var
+                    CU: Codeunit MyCodeunit;
+                    CuBuffers: Codeunit "GlEntryTransactionBuffer";
+                begin
+                    cu.Run(Rec);
+                    cu.GetCodeunit(CuBuffers);
+                end;
+            }
+            action(runCreateAnalyzeLines)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'run my codeunit';
+
+                trigger OnAction()
+                var
+
+                begin
+                    //Callsomefuntion(CuBuffers);
+                end;
             }
         }
     }
