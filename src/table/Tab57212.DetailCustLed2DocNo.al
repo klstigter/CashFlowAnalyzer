@@ -9,11 +9,6 @@ table 57212 "DetailCustLed2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(2; "Det. Cust. Ledger Entry No."; Integer)
-        {
-            DataClassification = ToBeClassified;
-
-        }
         field(3; "Cust. Ledger Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
@@ -22,22 +17,35 @@ table 57212 "DetailCustLed2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(11; "Document No."; Code[20])
+        field(11; "Transaction No."; Integer)
         {
             DataClassification = ToBeClassified;
         }
-        field(12; "Posting Date"; Date)
+        field(12; "Entry Type"; Enum "Detailed CV Ledger Entry Type")
         {
             DataClassification = ToBeClassified;
         }
-        field(13; "Entry Type"; Enum "Detailed CV Ledger Entry Type")
+        field(13; "Document No. Bnk"; Code[20])
         {
             DataClassification = ToBeClassified;
         }
-        field(14; "Transaction No."; Integer)
+        field(14; "Posting Date Bnk"; Date)
         {
             DataClassification = ToBeClassified;
         }
+        field(30; "Entry No. Target"; Integer)
+        {
+            DataClassification = ToBeClassified;
+        }
+        Field(31; "Document No. Target"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        Field(32; "Posting Date Target"; Date)
+        {
+            DataClassification = ToBeClassified;
+        }
+
     }
 
     keys

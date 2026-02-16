@@ -26,22 +26,34 @@ page 57213 "Det. Cust. Ledg2DocNo."
                 {
                     ToolTip = 'Specifies the value of the Applied Cust. Ledger Entry No. field.', Comment = '%';
                 }
+                field("Transaction No."; Rec."Transaction No.")
+                {
+                    ToolTip = 'Specifies the value of the Transaction No. field.', Comment = '%';
+                }
 
                 field("Entry Type"; Rec."Entry Type")
                 {
                     ToolTip = 'Specifies the value of the Entry Type field.', Comment = '%';
                 }
-                field("Transaction No."; Rec."Transaction No.")
-                {
-                    ToolTip = 'Specifies the value of the Transaction No. field.', Comment = '%';
-                }
-                field("Document No."; Rec."Document No.")
+                field("Document No."; Rec."Document No. Bnk")
                 {
                     ToolTip = 'Specifies the value of the Document No. field.', Comment = '%';
                 }
-                field("Posting Date"; Rec."Posting Date")
+                field("Posting Date"; Rec."Posting Date Bnk")
                 {
                     ToolTip = 'Specifies the value of the Posting Date field.', Comment = '%';
+                }
+                field("Entry No. Target"; Rec."Entry No. Target")
+                {
+                    ToolTip = 'Specifies the value of the Entry No. Target field.', Comment = '%';
+                }
+                field("Document No. Target"; Rec."Document No. Target")
+                {
+                    ToolTip = 'Specifies the value of the Document No. Target field.', Comment = '%';
+                }
+                field("Posting Date Target"; Rec."Posting Date Target")
+                {
+                    ToolTip = 'Specifies the value of the Posting Date Target field.', Comment = '%';
                 }
             }
         }

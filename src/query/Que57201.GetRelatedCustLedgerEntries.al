@@ -14,19 +14,24 @@ query 57201 GetRelatedCustLedgerEntries
             column(AppliedCustLedEntrNo; "Applied Cust. Ledger Entry No.") { }
             column(TransactionNo; "Transaction No.") { }
             column(EntryType; "Entry Type") { }
+            column(DocumentNoBnk; "Document No.") { }
+            column(PostingDateBnk; "Posting Date") { }
             filter(TransactionNoFilter; "Transaction No.") { }
             dataitem(CustLedger; "Cust. Ledger Entry")
             {
                 DataItemLink = "Entry No." = DetCustLed."Cust. Ledger Entry No.";
 
 
-                column(DocNo; "Document No.")
+                column(EntryNoTarget; "Entry No.")
                 {
+                }
+                column(DocNoTarget; "Document No.")
+                {
+                }
+                column(PostingDateTarget; "Posting Date")
+                {
+                }
 
-                }
-                column(PostingDate; "Posting Date")
-                {
-                }
 
             }
 
