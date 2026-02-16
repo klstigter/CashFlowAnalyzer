@@ -8,8 +8,8 @@ codeunit 57202 "Copy Data to CashFlow Analyzer"
         GripInvoiceDataCounter := 0;
         CashFlowCategoryCounter := 0;
         CashFlowCategoriesSetupCounter := 0;
-        //getGRIPInvoiceData();
-        //getCashFlow_Category();
+        getGRIPInvoiceData();
+        getCashFlow_Category();
         getCashFlowCategoriesSetup();
         Message('Data copy completed. %1 records were copied from Grip invoice.', GripInvoiceDataCounter);
         Message('Data copy completed. %1 records were copied from CashFlow Category.', CashFlowCategoryCounter);

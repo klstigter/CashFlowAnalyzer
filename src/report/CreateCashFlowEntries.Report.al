@@ -65,7 +65,7 @@ report 57200 "Opt. Cash Flow Entries Calc."
 
     trigger OnInitReport()
     begin
-        DateFilter := StrSubstNo('%1..%2', DMY2Date(1, 7, 2025), DMY2Date(31, 7, 2025));
+        DateFilter := StrSubstNo('%1..%2', '', DMY2Date(31, 12, 2025));
     end;
 
     trigger OnPreReport()
