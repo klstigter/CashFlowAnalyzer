@@ -93,20 +93,23 @@ page 57211 "Cash Entry Postings"
                 begin
                     cu.Run(Rec);
                     cu.GetCodeunit(CuBuffers);
+                    CuBuffers.CreateAnalyzerFromBuffer();
                 end;
             }
-            action(runCreateAnalyzeLines)
-            {
-                ApplicationArea = Basic, Suite;
-                Caption = 'run my codeunit';
+            // action(runCreateAnalyzeLines)
+            // {
+            //     ApplicationArea = Basic, Suite;
+            //     Caption = 'Create Analyze Lines';
 
-                trigger OnAction()
-                var
+            //     trigger OnAction()
+            //     begin
+            //         //Callsomefuntion(CuBuffers);
 
-                begin
-                    //Callsomefuntion(CuBuffers);
-                end;
-            }
+            //     end;
+            // }
         }
     }
+
+    var
+
 }

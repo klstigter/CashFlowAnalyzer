@@ -45,6 +45,10 @@ table 57212 "DetailCustLed2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(40; Amount; Decimal)
+        {
+            DataClassification = ToBeClassified;
+        }
 
     }
 

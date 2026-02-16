@@ -93,6 +93,7 @@ codeunit 57204 GlEntryTransactionBuffer
             TEMPDetCusLed."Entry No. Target" := CustLedgerEntry.EntryNoTarget;
             TEMPDetCusLed."Document No. Target" := CustLedgerEntry.DocNoTarget;
             TEMPDetCusLed."Posting Date Target" := CustLedgerEntry.PostingDateTarget;
+            TEMPDetCusLed."Amount" := CustLedgerEntry.Amount;
             TEMPDetCusLed.Insert();
         end;
     end;
@@ -102,5 +103,121 @@ codeunit 57204 GlEntryTransactionBuffer
         DetCustLedgPage: Page "Det. Cust. Ledg2DocNo.";
     begin
         page.Run(Page::"Det. Cust. Ledg2DocNo.", TEMPDetCusLed);
+    end;
+
+    procedure CreateAnalyzerFromBuffer()
+    begin
+        TEMPbuffer_Bnk.Reset();
+        if TEMPbuffer_Bnk.FindSet() then
+            repeat
+                CreateCashFlowHeader();
+            until TEMPbuffer_Bnk.Next() = 0;
+    end;
+
+    local procedure CreateCashFlowHeader()
+    var
+        GLentry2Analyze: record "G/L Entry Cash to Analyze";
+        RealizedCashFlow: Record "Cashflow Analyse Result";
+        GLentry: Record "G/L Entry";
+    begin
+        GLentry.Get(TEMPbuffer_Bnk."Entry No.");
+        GLentry2Analyze.Init();
+        GLentry2Analyze."Entry No." := GLentry."Entry No.";
+        GLentry2Analyze."Posting Date" := GLentry."Posting Date";
+        GLentry2Analyze."Document No." := GLentry."Document No.";
+        GLentry2Analyze.Description := GLentry.Description;
+        GLentry2Analyze.Amount := GLentry.Amount;
+
+        GLentry2Analyze."Source Type" := GLentry2Analyze."Source Type"::"Bank Account";
+
+        GLentry2Analyze."Journal Templ. Name" := GLentry."Journal Templ. Name";
+        GLentry2Analyze."Journal Batch Name" := GLentry."Journal Batch Name";
+        GLentry2Analyze."Transaction No. Start" := GLentry."Transaction No.";
+        if not GLentry2Analyze.Insert() then
+            GLentry2Analyze.Modify();
+
+        RealizedCashFlow.SetRange("G/L Entry No.", GLentry2Analyze."Entry No.");
+        if RealizedCashFlow.FindSet() then
+            RealizedCashFlow.DeleteAll();
+        CreateCashFlowLine();
+    end;
+
+    local procedure CreateCashFlowLine()
+    begin
+        TEMPDetCusLed.Reset();
+        TEMPDetCusLed.SetRange("Applied Cust. Ledger Entry No.", TEMPbuffer_Bnk."Balance Entry No. Start", TEMPbuffer_Bnk."Balance Entry No. End");
+        if TEMPDetCusLed.FindSet() then
+            repeat
+                if TEMPDetCusLed."Applied Cust. Ledger Entry No." <> TEMPDetCusLed."Entry No. Target" then begin
+                    CreateCashFlowLineFromDetailCustLedger(TEMPDetCusLed);
+                end;
+            until TEMPDetCusLed.Next() = 0;
+    end;
+
+    local procedure CreateCashFlowLineFromDetailCustLedger(var DetailCustLed: Record "DetailCustLed2DocNo Buffer")
+    var
+        RealizedCashFlow: Record "Cashflow Analyse Result";    //"Realized Cash Flow";
+        GLentry: Record "G/L Entry";
+        CLE_Applied: Record "Cust. Ledger Entry";
+        DetailedCustLedgerEntry: Record "Detailed Cust. Ledg. Entry";
+        SourceType: enum "Realized Cash Flow Source Type";
+        Sign: Integer;
+    begin
+        DetailedCustLedgerEntry.Get(DetailCustLed."Entry No.");
+        CLE_Applied.Get(DetailedCustLedgerEntry."Cust. Ledger Entry No.");
+        Sign := -1;
+        GLentry.Get(TEMPbuffer_Bnk."Entry No.");
+        // Bank/Cash Block
+        RealizedCashFlow."G/L Entry No." := GLentry."Entry No.";
+        RealizedCashFlow."Posting Date" := GLentry."Posting Date";
+        RealizedCashFlow."Dimension Set ID" := GLentry."Dimension Set ID";
+        RealizedCashFlow."Global Dimension 1 Code" := GLentry."Global Dimension 1 Code";
+        RealizedCashFlow."Global Dimension 2 Code" := GLentry."Global Dimension 2 Code";
+        RealizedCashFlow."Amount to Analyze" := GLentry.Amount;
+
+        // Realized block
+        RealizedCashFlow."G/L Account" := GLentry."G/L Account No.";
+        RealizedCashFlow."Cash Flow Category" := GetCashFlowCategory(RealizedCashFlow."G/L Account", RealizedCashFlow."Posting Date");
+        RealizedCashFlow."Cash Flow Category Amount" := Sign * DetailedCustLedgerEntry.Amount;
+
+        case CLE_Applied."Document Type" of
+            CLE_Applied."Document Type"::Invoice:
+                RealizedCashFlow."Applied Document Type" := RealizedCashFlow."Applied Document Type"::Invoice;
+            CLE_Applied."Document Type"::"Credit Memo":
+                RealizedCashFlow."Applied Document Type" := RealizedCashFlow."Applied Document Type"::"Credit Memo";
+            CLE_Applied."Document Type"::"Finance Charge Memo":
+                RealizedCashFlow."Applied Document Type" := RealizedCashFlow."Applied Document Type"::"Finance Charge Memo";
+            CLE_Applied."Document Type"::Payment:
+                RealizedCashFlow."Applied Document Type" := RealizedCashFlow."Applied Document Type"::Payment;
+            CLE_Applied."Document Type"::Refund:
+                RealizedCashFlow."Applied Document Type" := RealizedCashFlow."Applied Document Type"::Refund;
+            CLE_Applied."Document Type"::Reminder:
+                RealizedCashFlow."Applied Document Type" := RealizedCashFlow."Applied Document Type"::Reminder;
+        end;
+
+        RealizedCashFlow."Applied Document No." := CLE_Applied."Document No.";
+        RealizedCashFlow."Applied Document Entry No." := CLE_Applied."Entry No.";
+        RealizedCashFlow."Realized Type" := RealizedCashFlow."Realized Type"::"Customer Ledger Entry";
+        RealizedCashFlow.GetLastEntryNo();
+        RealizedCashFlow.Validate("Dimension Set ID", CLE_Applied."Dimension Set ID");
+        RealizedCashFlow."Place of Birth" := 'Applied Customer Ledger Entry';
+        RealizedCashFlow."Transaction No." := CLE_Applied."Transaction No.";
+        RealizedCashFlow.Insert();
+    end;
+
+    local procedure GetCashFlowCategory(GLAccNo: Code[20]; pPostingDate: Date) CashFlowCategory: Code[20]
+    var
+        CashFlowCategoryGLAccount: record "Cash Flow Category G/L Account";
+        recExist: Boolean; //Task 2240: manage dummy cashflow category
+    begin
+        CashFlowCategoryGLAccount.SetRange("G/L Account No.", GLAccNo);
+        CashFlowCategoryGLAccount.SetFilter("Start Date", '%1|..%2', 0D, pPostingDate);
+        recExist := CashFlowCategoryGLAccount.FindLast();
+        if not recExist then begin
+            CashFlowCategoryGLAccount.SetFilter("G/L Account No.", '');
+            CashFlowCategoryGLAccount.FindFirst(); //will get blank 
+        end;
+        CashFlowCategoryGLAccount.TestField("Cash Flow Category");
+        exit(CashFlowCategoryGLAccount."Cash Flow Category");
     end;
 }
