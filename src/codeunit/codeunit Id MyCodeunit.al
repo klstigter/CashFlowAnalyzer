@@ -12,6 +12,13 @@ codeunit 57205 MyCodeunit
         TransActionBuffer.ShowPageDetCustLedg();
     end;
 
+
     var
         TransActionBuffer: Codeunit GlEntryTransactionBuffer;
+
+
+    procedure GetCodeunit(var CU: Codeunit GlEntryTransactionBuffer)
+    begin
+        cu := TransActionBuffer;
+    end;
 }
