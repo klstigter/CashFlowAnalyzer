@@ -1,4 +1,4 @@
-table 57212 "DetailCustLed2DocNo Buffer"
+table 57212 "DetailLedger2DocNo Buffer"
 {
     DataClassification = ToBeClassified;
     TableType = Temporary;
@@ -9,11 +9,16 @@ table 57212 "DetailCustLed2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(2; "Vendor Ledger Entry No."; Integer)
+        {
+            DataClassification = ToBeClassified;
+        }
+
         field(3; "Cust. Ledger Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
         }
-        field(10; "Applied Cust. Ledger Entry No."; Integer)
+        field(10; "Applied Ledger Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
         }
@@ -49,6 +54,18 @@ table 57212 "DetailCustLed2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(50; "Account No."; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(60; "Target Amount"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(70; "Document Type Target"; Enum "Gen. Journal Document Type")
+        {
+            DataClassification = ToBeClassified;
+        }
 
     }
 
@@ -57,6 +74,9 @@ table 57212 "DetailCustLed2DocNo Buffer"
         key(Key1; "Entry No.")
         {
             Clustered = true;
+        }
+        key(Key2; "Document No. Target")
+        {
         }
     }
 

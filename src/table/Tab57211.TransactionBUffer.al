@@ -17,11 +17,11 @@ table 57211 "Transaction Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(4; "Debit Amount"; decimal)
+        field(4; "Balance Amount"; decimal)
         {
             DataClassification = ToBeClassified;
         }
-        field(5; "Credit Amount"; decimal)
+        field(5; "Cashflow Amount"; decimal)
         {
             DataClassification = ToBeClassified;
         }
@@ -30,6 +30,30 @@ table 57211 "Transaction Buffer"
             DataClassification = ToBeClassified;
         }
         field(10; Description; text[100])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(11; "Journal Templ. Name"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(12; "Journal Batch Name"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(13; "Transaction No."; Integer)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(16; amount; Decimal)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(17; "Document No."; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(18; "Posting Date"; Date)
         {
             DataClassification = ToBeClassified;
         }
@@ -63,6 +87,10 @@ table 57211 "Transaction Buffer"
             DataClassification = ToBeClassified;
         }
         field(31; RelatedToEntryNo; Integer)
+        {
+            DataClassification = ToBeClassified;
+        }
+        FIELD(32; "GL Account No."; Code[20])
         {
             DataClassification = ToBeClassified;
         }

@@ -2,7 +2,7 @@ page 57210 CashAnalyzerFactBox
 {
     PageType = ListPart;
     ApplicationArea = All;
-    SourceTable = "Cashflow Analyse Result";
+    SourceTable = "Cashflow Analyse Line";
 
     layout
     {

@@ -1,4 +1,4 @@
-enum 57200 "Cash_Flow Source Type"
+enum 57200 "Analyse Type"
 {
     Extensible = true;
     Caption = 'Cash Flow Source Type';

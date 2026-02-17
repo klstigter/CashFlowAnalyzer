@@ -36,7 +36,7 @@ table 57203 "CashFlow_Category"
         {
             CaptionML = ENU = 'Mutation', NLD = 'Mutatie';
             FieldClass = FlowField;
-            CalcFormula = Sum("Cashflow Analyse Result"."Cash Flow Category Amount" WHERE("Cash Flow Category" = field(Code),
+            CalcFormula = Sum("Cashflow Analyse Line"."Cash Flow Category Amount" WHERE("Cash Flow Category" = field(Code),
                                                         "Cash Flow Category" = FIELD(filter("Totaling")),
                                                         "Global Dimension 1 Code" = field("Global Dimension 1 Filter"),
                                                         "Global Dimension 2 Code" = field("Global Dimension 2 Filter"),
@@ -49,7 +49,7 @@ table 57203 "CashFlow_Category"
         {
             CaptionML = ENU = 'Saldo', NLD = 'Saldo';
             FieldClass = FlowField;
-            CalcFormula = Sum("Cashflow Analyse Result"."Cash Flow Category Amount" WHERE("Cash Flow Category" = field(Code)
+            CalcFormula = Sum("Cashflow Analyse Line"."Cash Flow Category Amount" WHERE("Cash Flow Category" = field(Code)
                                                         , "Cash Flow Category" = FIELD(filter("Totaling"))
                                                         , "Global Dimension 1 Code" = field("Global Dimension 1 Filter")
                                                         , "Global Dimension 2 Code" = field("Global Dimension 2 Filter")

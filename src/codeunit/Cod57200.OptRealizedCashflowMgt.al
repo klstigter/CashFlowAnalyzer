@@ -38,9 +38,9 @@ codeunit 57200 "Opt. Realized Cashflow Mgt."
     local procedure CreateCashFlowAnalyzeEntries(GenJournalTemplate: Code[10]; JournalBatch: Code[10]; DocumentNoFilter: Text; DateFilter: Text; bankEntryNoFilter: Integer)
     var
         GLentry: Record "G/L Entry";
-        GLentry2Analyze: record "G/L Entry Cash to Analyze";
-        GLentry2AnalyzeCheck: record "G/L Entry Cash to Analyze";
-        cashFlowType: Enum "Cash_Flow source Type";
+        GLentry2Analyze: record "CashFLow Analyze Header";
+        GLentry2AnalyzeCheck: record "CashFLow Analyze Header";
+        cashFlowType: Enum "Analyse Type";
         i: Integer;
         GlEntryNext0: Boolean;
     begin
@@ -65,9 +65,9 @@ codeunit 57200 "Opt. Realized Cashflow Mgt."
                         GLentry2Analyze.Amount := GLentry.Amount;
                         case i of
                             1:
-                                GLentry2Analyze."Source Type" := cashFlowType::"Bank Account";
+                                GLentry2Analyze."Analyse Type" := cashFlowType::"Bank Account";
                             2:
-                                GLentry2Analyze."Source Type" := cashFlowType::"Cash Statement"
+                                GLentry2Analyze."Analyse Type" := cashFlowType::"Cash Statement"
                         end;
                     end;
                     GLentry2Analyze."Journal Templ. Name" := GLentry."Journal Templ. Name";

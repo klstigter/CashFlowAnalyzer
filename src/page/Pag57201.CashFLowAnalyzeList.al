@@ -1,10 +1,10 @@
-page 57201 "G/L Entry Cash to Analyze List"
+page 57201 "CashFLow Analyze List"
 {
     PageType = List;
     ApplicationArea = All;
     UsageCategory = Lists;
-    CardPageId = "G/L Entry CashFlow Card";
-    SourceTable = "G/L Entry Cash to Analyze";
+    CardPageId = "CashFlow Analyze Card";
+    SourceTable = "CashFLow Analyze Header";
     Editable = false;
 
     layout
@@ -43,10 +43,30 @@ page 57201 "G/L Entry Cash to Analyze List"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the description.';
                 }
+                field("Cashflow Amount"; Rec."Cashflow Amount")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the cash flow amount.';
+                }
                 field(Amount; Rec.Amount)
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the amount.';
+                }
+                field("Analyse Type"; Rec."Analyse Type")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the analysis type.';
+                }
+                field("Source Type"; Rec."Source Type")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the source type.';
+                }
+                field("Source No."; Rec."Source No.")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the source number.';
                 }
             }
         }
@@ -126,7 +146,7 @@ page 57201 "G/L Entry Cash to Analyze List"
 
                     trigger OnAction()
                     var
-                        Cashflowheader: record "G/L Entry Cash to Analyze";
+                        Cashflowheader: record "CashFLow Analyze Header";
                         ConfirmLbl: Label 'This will delete ALL Cash Flow Analyzer Header entries. Do you want to continue?', Comment = 'NLD=Dit zal ALLE kasstroomanalysator-kopteksten verwijderen. Wilt u doorgaan?;ENU=This will delete ALL Cash Flow Analyzer Header entries. Do you want to continue?';
                     begin
                         if not confirm(ConfirmLbl, false) then

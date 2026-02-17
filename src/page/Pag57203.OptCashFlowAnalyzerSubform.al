@@ -3,7 +3,7 @@ page 57203 "Opt. CashFlow Analyzer Subform"
     PageType = ListPart;
     ApplicationArea = All;
     UsageCategory = Lists;
-    SourceTable = "Cashflow Analyse Result";
+    SourceTable = "Cashflow Analyse Line";
     Editable = false;
     Caption = 'CashFlow Analyzer Subform';
     AutoSplitKey = true;
@@ -69,6 +69,11 @@ page 57203 "Opt. CashFlow Analyzer Subform"
                 {
                     ApplicationArea = All;
                     Caption = 'Cash Flow Category Amount';
+                }
+                field("Is Grip"; Rec."Is Grip")
+                {
+                    ApplicationArea = All;
+                    Caption = 'Is Grip';
                 }
                 field(globalDimension1; Rec."Global Dimension 1 Code")
                 {

@@ -1,9 +1,9 @@
-table 57200 "G/L Entry Cash to Analyze"
+table 57200 "CashFLow Analyze Header"
 {
     DataClassification = ToBeClassified;
-    Caption = 'G/L Entry Cash to Analyze';
-    LookupPageId = "G/L Entry Cash to Analyze List";
-    DrillDownPageId = "G/L Entry Cash to Analyze List";
+    Caption = 'CashFlow Analyze Header';
+    LookupPageId = "cashflow analyze List";
+    DrillDownPageId = "cashflow analyze List";
 
     fields
     {
@@ -32,12 +32,28 @@ table 57200 "G/L Entry Cash to Analyze"
         {
             DataClassification = ToBeClassified;
         }
-
+        field(31; "Source Type"; Enum "Gen. Journal Source Type")
+        {
+            Caption = 'Source Type';
+        }
+        field(32; "Source No."; Code[20])
+        {
+            Caption = 'Source No.';
+            TableRelation = if ("Source Type" = const(Customer)) Customer
+            else
+            if ("Source Type" = const(Vendor)) Vendor
+            else
+            if ("Source Type" = const("Bank Account")) "Bank Account"
+            else
+            if ("Source Type" = const("Fixed Asset")) "Fixed Asset"
+            else
+            if ("Source Type" = const(Employee)) Employee;
+        }
         field(40; Amount; Decimal)
         {
             DataClassification = ToBeClassified;
         }
-        field(50; "Source Type"; enum "Cash_Flow Source Type")
+        field(50; "Analyse Type"; enum "Analyse Type")
         {
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Source Type', NLD = 'Bronsoort';
@@ -70,6 +86,11 @@ table 57200 "G/L Entry Cash to Analyze"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Is Analyzed', NLD = 'Geanalyseerd';
         }
+        field(60; "Cashflow Amount"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = sum("Cashflow Analyse Line"."Cash Flow Category Amount" where("G/L Entry No." = field("Entry No.")));
+        }
     }
 
     keys
@@ -100,7 +121,7 @@ table 57200 "G/L Entry Cash to Analyze"
 
     trigger OnDelete()
     var
-        CashFlowLines: record "Cashflow Analyse Result";
+        CashFlowLines: record "Cashflow Analyse Line";
     begin
         CashFlowLines.SetRange("G/L Entry No.", Rec."Entry No.");
         if CashFlowLines.FindLast() then

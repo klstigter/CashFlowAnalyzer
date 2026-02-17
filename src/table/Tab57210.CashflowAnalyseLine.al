@@ -1,4 +1,4 @@
-table 57210 "Cashflow Analyse Result"
+table 57210 "Cashflow Analyse Line"
 {
     DataClassification = ToBeClassified;
     CaptionML = ENU = 'Realized Cash Flow', NLD = 'Gerealiseerde kasstroom';
@@ -15,6 +15,11 @@ table 57210 "Cashflow Analyse Result"
         field(2; "Entry Line No."; Integer)
         {
             DataClassification = ToBeClassified;
+        }
+        field(3; "Is Grip"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Is Grip', NLD = 'Is Grip';
         }
         field(9; "Posting Date"; Date)
         {
@@ -248,7 +253,7 @@ table 57210 "Cashflow Analyse Result"
 
     procedure GetLastEntryNo()
     var
-        CashFlowResult: Record "Cashflow Analyse Result";
+        CashFlowResult: Record "Cashflow Analyse Line";
     begin
         CashFlowResult.Reset();
         CashFlowResult.SetRange("G/L Entry No.", Rec."G/L Entry No.");

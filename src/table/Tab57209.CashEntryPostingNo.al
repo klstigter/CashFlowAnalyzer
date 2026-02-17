@@ -2,8 +2,8 @@ table 57209 "Cash Entry Posting No."
 {
     DataClassification = ToBeClassified;
     Caption = 'Cashflow Entry to Analys';
-    LookupPageId = "G/L Entry Cash to Analyze List";
-    DrillDownPageId = "G/L Entry Cash to Analyze List";
+    //LookupPageId = "G/L Entry Cash to Analyze List";
+    //DrillDownPageId = "G/L Entry Cash to Analyze List";
 
     fields
     {
@@ -106,7 +106,7 @@ table 57209 "Cash Entry Posting No."
 
     trigger OnDelete()
     var
-        CashFlowLines: record "Cashflow Analyse Result";
+        CashFlowLines: record "Cashflow Analyse Line";
     begin
         CashFlowLines.SetRange("g/l Entry No.", Rec."Entry No.");
         if CashFlowLines.FindLast() then

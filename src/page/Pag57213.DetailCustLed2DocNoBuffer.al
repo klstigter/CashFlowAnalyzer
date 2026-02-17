@@ -1,9 +1,9 @@
-page 57213 "Det. Cust. Ledg2DocNo."
+page 57213 "DetailedLedger2DocNo Buffer"
 {
     PageType = List;
     ApplicationArea = All;
     UsageCategory = Lists;
-    SourceTable = "DetailCustLed2DocNo Buffer";
+    SourceTable = "DetailLedger2DocNo Buffer";
     Editable = false;
 
     layout
@@ -22,7 +22,7 @@ page 57213 "Det. Cust. Ledg2DocNo."
                     ToolTip = 'Specifies the value of the Cust. Ledger Entry No. field.', Comment = '%';
                 }
 
-                field("Applied Cust. Ledger Entry No."; Rec."Applied Cust. Ledger Entry No.")
+                field("Applied Cust. Ledger Entry No."; Rec."Applied Ledger Entry No.")
                 {
                     ToolTip = 'Specifies the value of the Applied Cust. Ledger Entry No. field.', Comment = '%';
                 }
@@ -59,6 +59,20 @@ page 57213 "Det. Cust. Ledg2DocNo."
                 {
                     ToolTip = 'Specifies the value of the Amount field.', Comment = '%';
                 }
+                field("Account No."; Rec."Account No.")
+                {
+                    ToolTip = 'Specifies the value of the Account No. field.', Comment = '%';
+                }
+                field("Target Amount"; Rec."Target Amount")
+                {
+                    ToolTip = 'Specifies the value of the Target Amount field.', Comment = '%';
+                }
+                field("Document Type Target"; Rec."Document Type Target")
+                {
+                    ToolTip = 'Specifies the value of the Document Type Target field.', Comment = '%';
+
+                }
+
             }
         }
         area(Factboxes)

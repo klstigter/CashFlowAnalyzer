@@ -22,7 +22,7 @@ codeunit 57203 CreateCashEntryPostingNoList
         CashEntryPostingNo.DeleteAll();
         SourceType := SourceType::"Bank Account";
         qry.setfilter(SourceTypeFilter, '%1', SourceType);
-        qry.SetFilter(PostingDateFilter, '%1..%2', 20250101D, 20251231D);
+        qry.SetFilter(PostingDateFilter, '%1..%2', 20250701D, 20250830D);
 
         qry.Open();
         while qry.Read() do begin

@@ -1,9 +1,9 @@
-page 57202 "G/L Entry CashFlow Card"
+page 57202 "CashFlow Analyze Card"
 {
     PageType = Card;
     ApplicationArea = All;
     UsageCategory = Administration;
-    SourceTable = "G/L Entry Cash to Analyze";
+    SourceTable = "CashFLow Analyze Header";
     Caption = 'CashFlow Analyzer';
     Editable = false;
 
@@ -37,6 +37,21 @@ page 57202 "G/L Entry CashFlow Card"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the amount.';
+                }
+                field("Analyse Type"; Rec."Analyse Type")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the analysis type.';
+                }
+                field("Source Type"; Rec."Source Type")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the source type.';
+                }
+                field("Source No."; Rec."Source No.")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the source number.';
                 }
             }
             part(CashFlowAnalyzerSubform; "Opt. CashFlow Analyzer Subform")

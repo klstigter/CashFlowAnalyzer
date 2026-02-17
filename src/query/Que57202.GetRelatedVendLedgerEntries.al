@@ -1,33 +1,35 @@
-query 57201 GetRelatedCustLedgerEntries
+query 57202 GetRelatedVendLedgerEntries
 {
     QueryType = Normal;
 
     elements
     {
-        dataitem(DetCustLed; "Detailed Cust. Ledg. Entry")
+        dataitem(DetVendLed; "Detailed Vendor Ledg. Entry")
         {
-            DataItemTableFilter = "Entry Type" = filter("Initial Entry");
 
+            DataItemTableFilter = "Entry Type" = filter(<> "Initial Entry");
             filter(TransactionNoFilter; "Transaction No.") { }
             filter(DocNoFilter; "Document No.") { }
             filter(PostingDateFilter; "Posting Date") { }
 
-            dataitem(DetNotInit; "Detailed Cust. Ledg. Entry")
+            dataitem(DetNotInit; "Detailed vendor Ledg. Entry")
             {
                 DataItemTableFilter = "Entry Type" = filter(<> "Initial Entry");
-                DataItemLink = "Cust. Ledger Entry No." = DetCustLed."Cust. Ledger Entry No.";
+                DataItemLink = "Vendor Ledger Entry No." = DetVendLed."Vendor Ledger Entry No.";
                 column(EntryNo; "Entry No.") { }
-                column(CustLedgEntryNo; "Cust. Ledger Entry No.") { }
-                column(AppliedCustLedEntrNo; "Applied Cust. Ledger Entry No.") { }
+                column(VendLedgEntryNo; "Vendor Ledger Entry No.") { }
+                column(AppliedVendLedgEntryNo; "Applied Vend. Ledger Entry No.") { }
                 column(TransactionNo; "Transaction No.") { }
                 column(EntryType; "Entry Type") { }
                 column(DocumentNoBnk; "Document No.") { }
                 column(PostingDateBnk; "Posting Date") { }
                 column(Amount; Amount) { }
 
-                dataitem(CustLedger; "Cust. Ledger Entry")
+                dataitem(VendLedger; "Detailed Vendor Ledg. Entry")
                 {
-                    DataItemLink = "Entry No." = DetCustLed."Cust. Ledger Entry No.";
+                    DataItemLink = "Entry No." = DetVendLed."Vendor Ledger Entry No.";
+
+
                     column(EntryNoTarget; "Entry No.")
                     {
                     }
@@ -40,7 +42,7 @@ query 57201 GetRelatedCustLedgerEntries
                     column(PostingDateTarget; "Posting Date")
                     {
                     }
-                    column(AccountNo; "Customer No.")
+                    column(AccountNo; "Vendor No.")
                     {
                     }
                     column(TargetAmount; Amount)
@@ -51,9 +53,4 @@ query 57201 GetRelatedCustLedgerEntries
         }
     }
 
-    trigger OnBeforeOpen()
-    begin
-
-    end;
 }
-

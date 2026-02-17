@@ -78,38 +78,82 @@ page 57211 "Cash Entry Postings"
             action("Copy GRIP Invoice Data")
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Get list of Posting no. from G/L Entry';
+                Caption = 'Step 1: Get list from G/L Entry';
                 RunObject = Codeunit CreateCashEntryPostingNoList;
             }
             action(runMyCodeunit)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'run my codeunit';
+                Caption = 'Step 2: Fetch data in buffers';
 
                 trigger OnAction()
                 var
-                    CU: Codeunit MyCodeunit;
-                    CuBuffers: Codeunit "GlEntryTransactionBuffer";
                 begin
                     cu.Run(Rec);
-                    cu.GetCodeunit(CuBuffers);
-                    CuBuffers.CreateAnalyzerFromBuffer();
                 end;
             }
-            // action(runCreateAnalyzeLines)
-            // {
-            //     ApplicationArea = Basic, Suite;
-            //     Caption = 'Create Analyze Lines';
+            action(runCreateAnalyzeLines)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Step 3: Create Analyze Lines';
+                trigger OnAction()
+                var
+                begin
+                    Cu.CreateAnalyze();
+                end;
+            }
 
-            //     trigger OnAction()
-            //     begin
-            //         //Callsomefuntion(CuBuffers);
-
-            //     end;
-            // }
+            action(RunAnalyze)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Analyze';
+                trigger OnAction()
+                var
+                begin
+                    cu.Run(Rec);
+                    Cu.CreateAnalyze();
+                end;
+            }
+        }
+        area(Reporting)
+        {
+            action(ShowBuffers)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show Buffer Contents';
+                trigger OnAction()
+                var
+                begin
+                    Cu.ShowPages();
+                end;
+            }
+            action(AnalyzeCardPage)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Analyze Card';
+                RunPageLink = "Document No." = field("Document No.");
+                RunObject = Page "CashFlow Analyze Card";
+            }
+            action(AnalyzeListPage)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Analyze List';
+                trigger OnAction()
+                var
+                    cashFlowheader: Record "CashFlow Analyze Header";
+                    cashflowAnalyzeList: Page "CashFlow Analyze List";
+                begin
+                    //Pass parameters to the page through global variables in codeunit, as the page is called from action on repeater which has source as temp table.
+                    cashFlowheader.setrange("Document No.", Rec."Document No.");
+                    cashflowAnalyzeList.SetTableView(cashFlowheader);
+                    cashflowAnalyzeList.Run();
+                end;
+            }
         }
     }
 
     var
+
+        CU: Codeunit MyCodeunit;
 
 }

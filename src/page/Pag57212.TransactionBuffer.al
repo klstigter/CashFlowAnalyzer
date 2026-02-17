@@ -12,53 +12,90 @@ page 57212 "Transaction Buffer"
         {
             repeater(GroupName)
             {
-                field("Transaction No."; Rec."Entry No.")
+                field("Entry No."; Rec."Entry No.")
                 {
-                    ToolTip = 'Specifies the value of the Transaction No. field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Entry No. field.', Comment = '%';
                 }
-                field("Debit Amount"; Rec."Debit Amount")
+                field(amount; Rec.amount)
                 {
-                    ToolTip = 'Specifies the value of the debit amount field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the amount field.', Comment = '%';
                 }
-                field("Credit Amount"; Rec."Credit Amount")
+                field("Amount of Lines"; Rec."Amount of Lines")
                 {
-                    ToolTip = 'Specifies the value of the credit amount field.', Comment = '%';
-                }
-                field("Balance Entry No. Start"; Rec."Balance Entry No. Start")
-                {
-                    ToolTip = 'Specifies the value of the Balance Entry No. Start field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Amount of Lines field.', Comment = '%';
                 }
                 field("Balance Entry No. End"; Rec."Balance Entry No. End")
                 {
                     ToolTip = 'Specifies the value of the Balance Entry No. End field.', Comment = '%';
                 }
+                field("Balance Entry No. Start"; Rec."Balance Entry No. Start")
+                {
+                    ToolTip = 'Specifies the value of the Balance Entry No. Start field.', Comment = '%';
+                }
                 field("Counter Posting"; Rec."Counter Posting")
                 {
                     ToolTip = 'Specifies the value of the Counter Posting field.', Comment = '%';
+                }
+                field("Credit Amount"; Rec."Cashflow Amount")
+                {
+                    ToolTip = 'Specifies the value of the Credit Amount field.', Comment = '%';
+                }
+                field("Debit Amount"; Rec."Balance Amount")
+                {
+                    ToolTip = 'Specifies the value of the Debit Amount field.', Comment = '%';
                 }
                 field(Description; Rec.Description)
                 {
                     ToolTip = 'Specifies the value of the Description field.', Comment = '%';
                 }
-
+                field("Document No."; Rec."Document No.")
+                {
+                    ToolTip = 'Specifies the value of the Document No. field.', Comment = '%';
+                }
                 field("Document Type"; Rec."Document Type")
                 {
                     ToolTip = 'Specifies the value of the Document Type field.', Comment = '%';
                 }
-                field("Source Type"; Rec."Source Type")
+                field("Journal Batch Name"; Rec."Journal Batch Name")
                 {
-                    ToolTip = 'Specifies the value of the Source Type field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Journal Batch Name field.', Comment = '%';
+                }
+                field("Journal Templ. Name"; Rec."Journal Templ. Name")
+                {
+                    ToolTip = 'Specifies the value of the Journal Templ. Name field.', Comment = '%';
+                }
+                field("Posting Date"; Rec."Posting Date")
+                {
+                    ToolTip = 'Specifies the value of the Posting Date field.', Comment = '%';
+                }
+                field(RelatedFromEntryNo; Rec.RelatedFromEntryNo)
+                {
+                    ToolTip = 'Specifies the value of the RelatedFromEntryNo field.', Comment = '%';
+                }
+                field(RelatedToEntryNo; Rec.RelatedToEntryNo)
+                {
+                    ToolTip = 'Specifies the value of the RelatedToEntryNo field.', Comment = '%';
                 }
                 field("Source No."; Rec."Source No.")
                 {
                     ToolTip = 'Specifies the value of the Source No. field.', Comment = '%';
                 }
+                field("Source Type"; Rec."Source Type")
+                {
+                    ToolTip = 'Specifies the value of the Source Type field.', Comment = '%';
+                }
+                field("Transaction No."; Rec."Transaction No.")
+                {
+                    ToolTip = 'Specifies the value of the Transaction No. field.', Comment = '%';
+                }
+                field("GL Account No."; Rec."GL Account No.")
+                {
+                    ToolTip = 'Specifies the value of the GL Account No. field.', Comment = '%';
+                }
 
             }
         }
-
     }
-
     actions
     {
         area(Processing)
