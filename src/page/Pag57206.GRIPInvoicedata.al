@@ -39,10 +39,9 @@ page 57206 "GRIP Invoice data"
                     ApplicationArea = All;
                     ToolTipML = ENU = 'Specifies the amount.', NLD = 'Specificeert het bedrag.';
                 }
-                field("Remaning Amount"; Rec."Remaning Amount")
+                field(Open; Rec.Open)
                 {
                     ApplicationArea = All;
-                    ToolTipML = ENU = 'Specifies whether there is a remaining amount for the document.', NLD = 'Specificeert of er een resterend bedrag is voor het document.';
                 }
                 field("Global Dimension 1 Code"; Rec."Global Dimension 1 Code")
                 {
