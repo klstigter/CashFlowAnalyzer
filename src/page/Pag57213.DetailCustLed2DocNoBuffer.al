@@ -25,7 +25,7 @@ page 57213 "DetailedLedger2DocNo Buffer"
                 {
                     ToolTip = 'Specifies the value of the Init Entry No. field.', Comment = '%';
                 }
-                field("Init Cust. Ledger Entry No."; Rec."Init Cust. Ledger Entry No.")
+                field("Init Ledger Entry No."; Rec."Init Ledger Entry No.")
                 {
                     ToolTip = 'Specifies the value of the Init Cust. Ledger Entry No. field.', Comment = '%';
                 }
@@ -33,12 +33,12 @@ page 57213 "DetailedLedger2DocNo Buffer"
                 {
                     ToolTip = 'Specifies the value of the Entry No. field.', Comment = '%';
                 }
-                field("Cust. Ledger Entry No."; Rec."Cust. Ledger Entry No.")
+                field("Ledger Entry No."; Rec."Ledger Entry No.")
                 {
-                    ToolTip = 'Specifies the value of the Cust. Ledger Entry No. field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Ledger Entry No. field.', Comment = '%';
                 }
 
-                field("Applied Cust. Ledger Entry No."; Rec."Applied Ledger Entry No.")
+                field("Applied Ledger Entry No."; Rec."Applied Ledger Entry No.")
                 {
                     ToolTip = 'Specifies the value of the Applied Cust. Ledger Entry No. field.', Comment = '%';
                 }
@@ -63,31 +63,31 @@ page 57213 "DetailedLedger2DocNo Buffer"
                 {
                     ToolTip = 'Specifies the value of the Amount field.', Comment = '%';
                 }
-                field("Cle_Entry No."; Rec."Cle_Entry No.")
+                field("Led_Entry No."; Rec."led_Entry No.")
                 {
-                    ToolTip = 'Specifies the value of the Cle Entry No. field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Led Entry No. field.', Comment = '%';
                 }
-                field("Cle Document Type"; Rec."Cle_Document Type")
+                field("Led Document Type"; Rec."led_Document Type")
                 {
-                    ToolTip = 'Specifies the value of the Document Type Target field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Led Document Type field.', Comment = '%';
                 }
-                field("Cle_Document No."; Rec."Cle_Document No.")
+                field("Led Document No."; Rec."led_Document No.")
                 {
-                    ToolTip = 'Specifies the value of the Document Type Target field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Led Document No. field.', Comment = '%';
                 }
-                field("Cle Posting Date"; Rec."Cle_Posting Date")
+                field("Led Posting Date"; Rec."led_Posting Date")
                 {
-                    ToolTip = 'Specifies the value of the Cle Posting Date field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Led Posting Date field.', Comment = '%';
                 }
-                field("Cle Account No."; Rec."Cle_Account No.")
+                field("Led Account No."; Rec."led_Account No.")
                 {
-                    ToolTip = 'Specifies the value of the Account No. field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Led Account No. field.', Comment = '%';
                 }
-                field("Cle Amount"; Rec."Cle_Amount")
+                field("Led Amount"; Rec."led_Amount")
                 {
-                    ToolTip = 'Specifies the value of the Target Amount field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Led Amount field.', Comment = '%';
                 }
-                field(Cle_Dimension_Set_ID; Rec."Cle_Dimension Set ID")
+                field(Cle_Dimension_Set_ID; Rec."led_Dimension Set ID")
                 {
                     ToolTip = 'Specifies the value of the Dimension Set ID field.', Comment = '%';
                 }

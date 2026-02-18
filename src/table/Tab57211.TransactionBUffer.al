@@ -9,11 +9,11 @@ table 57211 "Transaction Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(2; "Balance Entry No. Start"; Integer)
+        field(2; "Init LedgerEntryNo Start"; Integer)
         {
             DataClassification = ToBeClassified;
         }
-        field(3; "Balance Entry No. End"; Integer)
+        field(3; "Init LedgerEntryNo End"; Integer)
         {
             DataClassification = ToBeClassified;
         }

@@ -18,7 +18,7 @@ table 57212 "DetailLedger2DocNo Buffer"
             DataClassification = ToBeClassified;
         }
 
-        field(4; "Cust. Ledger Entry No."; Integer)
+        field(4; "Ledger Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
         }
@@ -46,15 +46,15 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(30; "Cle_Entry No."; Integer)
+        field(30; "led_Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
         }
-        Field(31; "Cle_Document No."; Code[20])
+        Field(31; "led_Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
         }
-        Field(32; "Cle_Posting Date"; Date)
+        Field(32; "led_Posting Date"; Date)
         {
             DataClassification = ToBeClassified;
         }
@@ -62,15 +62,15 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(50; "Cle_Account No."; Code[20])
+        field(50; "led_Account No."; Code[20])
         {
             DataClassification = ToBeClassified;
         }
-        field(60; "Cle_Amount"; Decimal)
+        field(60; "led_Amount"; Decimal)
         {
             DataClassification = ToBeClassified;
         }
-        field(70; "Cle_Document Type"; Enum "Gen. Journal Document Type")
+        field(70; "led_Document Type"; Enum "Gen. Journal Document Type")
         {
             DataClassification = ToBeClassified;
         }
@@ -78,11 +78,11 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(81; "Init Cust. Ledger Entry No."; integer)
+        field(81; "Init Ledger Entry No."; integer)
         {
             DataClassification = ToBeClassified;
         }
-        field(82; "Cle_Dimension Set ID"; Integer)
+        field(82; "led_Dimension Set ID"; Integer)
         {
             DataClassification = ToBeClassified;
         }
@@ -95,7 +95,7 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             Clustered = true;
         }
-        key(Key2; "Cle_Document No.")
+        key(Key2; "led_Document No.")
         {
         }
     }

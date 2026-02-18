@@ -3,6 +3,7 @@ codeunit 57207 FilterBuilder
     var
         Chunks: List of [Text];
         CurrChunk: Text;
+        i: Integer;
 
     procedure BuildEntryNoFilter(var Buf: Record "Transaction Buffer") Chunks: List of [Text]
     var
@@ -31,7 +32,13 @@ codeunit 57207 FilterBuilder
         exit(Chunks);
     end;
 
-    procedure BuildEntryNoFilter(var Buf: Record "DetailLedger2DocNo Buffer") Chunks: List of [Text]
+    procedure GetFilterChunk(i: Integer): Text
+    begin
+        Chunks.Get(i, CurrChunk);
+        exit(CurrChunk);
+    end;
+
+    procedure BuildEntryNoFilter(var Buf: Record "DetailLedger2DocNo Buffer"): Integer
     var
         StartRangeNo: Text;
         EndRangeNo: Text;
@@ -41,11 +48,11 @@ codeunit 57207 FilterBuilder
     begin
         ClearGlobalvars();
         if not Buf.FindSet(false) then
-            exit(Chunks);
+            exit(0);
         repeat
             if HasPrevious then
-                AddToRange := buf."Cle_Document No." = incstr(EndRangeNo);
-            BuildChunks(buf."Cle_Document No.", StartRangeNo, EndRangeNo, AddToRange);
+                AddToRange := buf."led_Document No." = incstr(EndRangeNo);
+            BuildChunks(buf."led_Document No.", StartRangeNo, EndRangeNo, AddToRange);
             HasPrevious := true;
         until Buf.Next() = 0;
         SingleFilter := CreateRangeFilter(StartRangeNo, EndRangeNo);
@@ -53,13 +60,14 @@ codeunit 57207 FilterBuilder
 
         if CurrChunk <> '' then
             Chunks.Add(CurrChunk);
-        exit(Chunks);
+        exit(i);
     end;
 
     local procedure ClearGlobalvars()
     begin
         CurrChunk := '';
         Clear(Chunks);
+        i := 0;
     end;
 
     local procedure BuildChunks(SingleStrValue: Text; var StartRangeNo: Text; var EndRangeNo: Text; var AddToRange: Boolean)
@@ -74,8 +82,12 @@ codeunit 57207 FilterBuilder
                 EndRangeNo := SingleStrValue
             else begin
                 // Flush previous range into chunk
-                SingleFilterRng := CreateRangeFilter(StartRangeNo, EndRangeNo);
-                AddToChunks(SingleFilterRng);
+                if StartRangeNo = EndRangeNo then begin
+                    AddToChunks(StartRangeNo);
+                end else begin
+                    SingleFilterRng := CreateRangeFilter(StartRangeNo, EndRangeNo);
+                    AddToChunks(SingleFilterRng);
+                end;
 
                 // Start new range
                 StartRangeNo := SingleStrValue;
@@ -105,6 +117,7 @@ codeunit 57207 FilterBuilder
         if StrLen(Candidate) <= 1024 then
             CurrChunk := Candidate
         else begin
+            i += 1;
             Chunks.Add(CurrChunk);
             CurrChunk := SingleRngFilter;
         end;

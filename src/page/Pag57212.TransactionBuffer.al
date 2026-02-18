@@ -24,13 +24,13 @@ page 57212 "Transaction Buffer"
                 {
                     ToolTip = 'Specifies the value of the Amount of Lines field.', Comment = '%';
                 }
-                field("Balance Entry No. End"; Rec."Balance Entry No. End")
+                field("Init LedgerEntryNo End"; Rec."Init LedgerEntryNo End")
                 {
-                    ToolTip = 'Specifies the value of the Balance Entry No. End field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Init LedgerEntryNo End field.', Comment = '%';
                 }
-                field("Balance Entry No. Start"; Rec."Balance Entry No. Start")
+                field("Init LedgerEntryNo Start"; Rec."Init LedgerEntryNo Start")
                 {
-                    ToolTip = 'Specifies the value of the Balance Entry No. Start field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Init LedgerEntryNo Start field.', Comment = '%';
                 }
                 field("Counter Posting"; Rec."Counter Posting")
                 {
