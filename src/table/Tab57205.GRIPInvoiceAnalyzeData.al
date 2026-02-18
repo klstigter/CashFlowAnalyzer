@@ -104,5 +104,16 @@ table 57205 "GRIP Invoice Analyze Data"
         "Created By" := UserId;
     end;
 
+    var
+        // Counter to keep track of the number of records copied
+        RecordCounter: Integer;
 
+    procedure GetAmountFromDocumentNo(): Decimal
+    var
+        Amt: Decimal;
+    begin
+        Rec.CalcSums(Amount);
+        Amt := Rec.Amount;
+        exit(Amt);
+    end;
 }

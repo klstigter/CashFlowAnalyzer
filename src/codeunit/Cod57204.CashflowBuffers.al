@@ -336,7 +336,9 @@ codeunit 57204 "Cashflow Buffers"
                     GLaccount.get(TEMPgrip."G/L Account");
                     CashFlowLine."G/L Account" := TEMPgrip."G/L Account";
                     CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
-                    CashFlowLine."Cash Flow Category Amount" := TEMPgrip.Amount;
+
+                    CashFlowLine."Cash Flow Category Amount" := TEMPgrip.GetAmountFromDocumentNo(); //TEMPgrip.Amount;
+
                     CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Invoice;
                     CashFlowLine."Applied Document No." := TEMPgrip."Document No.";
                     CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
