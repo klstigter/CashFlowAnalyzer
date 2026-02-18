@@ -76,7 +76,7 @@ table 57205 "GRIP Invoice Analyze Data"
         }
         field(100; Open; Boolean)
         {
-            CaptionML = ENU = 'Remaining Amount', NLD = 'Resterend bedrag';
+            CaptionML = ENU = 'Open', NLD = 'Open';
             FieldClass = FlowField;
             CalcFormula = lookup("Cust. Ledger Entry".Open where("Document No." = field("Document No.")));
             Editable = false;

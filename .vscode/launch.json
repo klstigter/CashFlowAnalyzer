@@ -15,7 +15,20 @@
             "enableLongRunningSqlStatements": true,
             "enableSqlInformationDebugger": true,
             "schemaUpdateMode": "ForceSync"
-        },
+        }
+        ,
+        {
+            "name": "KnuswonenKasstromen - Attach",
+            "request": "attach",
+            "type": "al",
+            "environmentType": "Sandbox",
+            "environmentName": "KnuswonenKasstromen",
+            "sessionId": 361095,
+            "breakOnNext": "WebClient",
+            "breakOnError": "ExcludeTry",
+            "tenant": "b065c0bc-23a5-45b6-a36e-f392b42d19a1"
+        }
+        ,        
         {
             "name": "woonzorgtest",
             "request": "launch",
