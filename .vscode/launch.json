@@ -9,7 +9,7 @@
             "environmentType": "Sandbox",
             "environmentName": "KnuswonenKasstromen",
             "startupObjectType": "Page",
-            "startupObjectId": 57206,
+            "startupObjectId": 57211,
             "breakOnError": true,
             "launchBrowser": true,
             "enableLongRunningSqlStatements": true,
