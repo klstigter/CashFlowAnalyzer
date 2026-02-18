@@ -74,6 +74,14 @@ table 57205 "GRIP Invoice Analyze Data"
             DataClassification = CustomerContent;
             Editable = false;
         }
+        field(100; "Remaning Amount"; Decimal)
+        {
+            CaptionML = ENU = 'Remaining Amount', NLD = 'Resterend bedrag';
+            FieldClass = FlowField;
+            CalcFormula = lookup("Cust. Ledger Entry"."Remaining Amount" where("Document No." = field("Document No.")));
+            Editable = false;
+        }
+
     }
 
     keys
