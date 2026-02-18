@@ -17,6 +17,10 @@ page 57213 "DetailedLedger2DocNo Buffer"
                 {
                     ToolTip = 'Specifies the value of the n field.', Comment = '%';
                 }
+                field("Is Init"; Rec."Is Init")
+                {
+                    ToolTip = 'Specifies the value of the Is Init field.', Comment = '%';
+                }
                 field("Init Entry No."; Rec."Init Entry No.")
                 {
                     ToolTip = 'Specifies the value of the Init Entry No. field.', Comment = '%';

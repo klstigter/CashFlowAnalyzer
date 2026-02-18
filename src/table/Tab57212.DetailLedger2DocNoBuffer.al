@@ -22,6 +22,10 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(5; "Is Init"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
         field(10; "Applied Ledger Entry No."; Integer)
         {
             DataClassification = ToBeClassified;

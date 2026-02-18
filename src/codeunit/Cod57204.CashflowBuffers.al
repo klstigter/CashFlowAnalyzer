@@ -102,31 +102,30 @@ codeunit 57204 "Cashflow Buffers"
 
         CustLedgerEntry.Open();
         while CustLedgerEntry.Read() do begin
-            if CustLedgerEntry.Init_CustLedgEntryNo <> CustLedgerEntry.CustLedgEntryNo then begin
-                n += 1;
-                TEMPDetailedLedger.Init();
-                TEMPDetailedLedger.n := n;
-                TEMPDetailedLedger."Init Entry No." := CustLedgerEntry.Init_EntryNo;
-                TEMPDetailedLedger."Init Cust. Ledger Entry No." := CustLedgerEntry.Init_CustLedgEntryNo;
+            n += 1;
+            TEMPDetailedLedger.Init();
+            TEMPDetailedLedger.n := n;
+            TEMPDetailedLedger."Is Init" := CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo;
+            TEMPDetailedLedger."Init Entry No." := CustLedgerEntry.Init_EntryNo;
+            TEMPDetailedLedger."Init Cust. Ledger Entry No." := CustLedgerEntry.Init_CustLedgEntryNo;
 
-                TEMPDetailedLedger."Entry No." := CustLedgerEntry.EntryNo;
-                TEMPDetailedLedger."Cust. Ledger Entry No." := CustLedgerEntry.CustLedgEntryNo;
-                TEMPDetailedLedger."Applied Ledger Entry No." := CustLedgerEntry.AppliedCustLedEntrNo;
-                TEMPDetailedLedger."Entry Type" := CustLedgerEntry.EntryType;
-                TEMPDetailedLedger."Transaction No." := CustLedgerEntry.TransactionNo;
-                TEMPDetailedLedger."Document No." := CustLedgerEntry.DocumentNo;
-                TEMPDetailedLedger."Amount" := CustLedgerEntry.Amount;
-                TEMPDetailedLedger."Posting Date" := CustLedgerEntry.PostingDate;
+            TEMPDetailedLedger."Entry No." := CustLedgerEntry.EntryNo;
+            TEMPDetailedLedger."Cust. Ledger Entry No." := CustLedgerEntry.CustLedgEntryNo;
+            TEMPDetailedLedger."Applied Ledger Entry No." := CustLedgerEntry.AppliedCustLedEntrNo;
+            TEMPDetailedLedger."Entry Type" := CustLedgerEntry.EntryType;
+            TEMPDetailedLedger."Transaction No." := CustLedgerEntry.TransactionNo;
+            TEMPDetailedLedger."Document No." := CustLedgerEntry.DocumentNo;
+            TEMPDetailedLedger."Amount" := CustLedgerEntry.Amount;
+            TEMPDetailedLedger."Posting Date" := CustLedgerEntry.PostingDate;
 
-                TEMPDetailedLedger."Cle_Entry No." := CustLedgerEntry.Cle_EntryNo;
-                TEMPDetailedLedger."Cle_Document Type" := CustLedgerEntry.Cle_DocType;
-                TEMPDetailedLedger."Cle_Document No." := CustLedgerEntry.Cle_DocNo;
-                TEMPDetailedLedger."Cle_Posting Date" := CustLedgerEntry.Cle_PostingDate;
-                TEMPDetailedLedger."Cle_Account No." := CustLedgerEntry.Cle_AccountNo;
-                TEMPDetailedLedger."Cle_Amount" := CustLedgerEntry.Cle_Amount;
-                TEMPDetailedLedger."Cle_Dimension Set ID" := CustLedgerEntry.Cle_Dimension_Set_ID;
-                TEMPDetailedLedger.Insert();
-            end;
+            TEMPDetailedLedger."Cle_Entry No." := CustLedgerEntry.Cle_EntryNo;
+            TEMPDetailedLedger."Cle_Document Type" := CustLedgerEntry.Cle_DocType;
+            TEMPDetailedLedger."Cle_Document No." := CustLedgerEntry.Cle_DocNo;
+            TEMPDetailedLedger."Cle_Posting Date" := CustLedgerEntry.Cle_PostingDate;
+            TEMPDetailedLedger."Cle_Account No." := CustLedgerEntry.Cle_AccountNo;
+            TEMPDetailedLedger."Cle_Amount" := CustLedgerEntry.Cle_Amount;
+            TEMPDetailedLedger."Cle_Dimension Set ID" := CustLedgerEntry.Cle_Dimension_Set_ID;
+            TEMPDetailedLedger.Insert();
         end;
     end;
 
