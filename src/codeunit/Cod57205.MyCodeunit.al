@@ -17,7 +17,6 @@ codeunit 57205 MyCodeunit
 
     procedure CreateAnalyze();
     begin
-
         TransActionBuffer.CreateAnalyze();
     end;
 

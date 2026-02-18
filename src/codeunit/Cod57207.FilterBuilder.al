@@ -44,8 +44,8 @@ codeunit 57207 FilterBuilder
             exit(Chunks);
         repeat
             if HasPrevious then
-                AddToRange := buf."Document No. Target" = incstr(EndRangeNo);
-            BuildChunks(buf."Document No. Target", StartRangeNo, EndRangeNo, AddToRange);
+                AddToRange := buf."Cle_Document No." = incstr(EndRangeNo);
+            BuildChunks(buf."Cle_Document No.", StartRangeNo, EndRangeNo, AddToRange);
             HasPrevious := true;
         until Buf.Next() = 0;
         SingleFilter := CreateRangeFilter(StartRangeNo, EndRangeNo);

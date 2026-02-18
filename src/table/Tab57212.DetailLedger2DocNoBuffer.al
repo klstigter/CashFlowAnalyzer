@@ -5,16 +5,20 @@ table 57212 "DetailLedger2DocNo Buffer"
 
     fields
     {
-        field(1; "Entry No."; Integer)
+        field(1; n; integer)
         {
             DataClassification = ToBeClassified;
         }
-        field(2; "Vendor Ledger Entry No."; Integer)
+        field(2; "Entry No."; Integer)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(3; "Vendor Ledger Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
         }
 
-        field(3; "Cust. Ledger Entry No."; Integer)
+        field(4; "Cust. Ledger Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
         }
@@ -30,23 +34,23 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(13; "Document No. Bnk"; Code[20])
+        field(13; "Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
         }
-        field(14; "Posting Date Bnk"; Date)
+        field(14; "Posting Date"; Date)
         {
             DataClassification = ToBeClassified;
         }
-        field(30; "Entry No. Target"; Integer)
+        field(30; "Cle_Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
         }
-        Field(31; "Document No. Target"; Code[20])
+        Field(31; "Cle_Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
         }
-        Field(32; "Posting Date Target"; Date)
+        Field(32; "Cle_Posting Date"; Date)
         {
             DataClassification = ToBeClassified;
         }
@@ -54,15 +58,27 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
-        field(50; "Account No."; Code[20])
+        field(50; "Cle_Account No."; Code[20])
         {
             DataClassification = ToBeClassified;
         }
-        field(60; "Target Amount"; Decimal)
+        field(60; "Cle_Amount"; Decimal)
         {
             DataClassification = ToBeClassified;
         }
-        field(70; "Document Type Target"; Enum "Gen. Journal Document Type")
+        field(70; "Cle_Document Type"; Enum "Gen. Journal Document Type")
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(80; "Init Entry No."; integer)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(81; "Init Cust. Ledger Entry No."; integer)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(82; "Cle_Dimension Set ID"; Integer)
         {
             DataClassification = ToBeClassified;
         }
@@ -71,11 +87,11 @@ table 57212 "DetailLedger2DocNo Buffer"
 
     keys
     {
-        key(Key1; "Entry No.")
+        key(Key1; "n")
         {
             Clustered = true;
         }
-        key(Key2; "Document No. Target")
+        key(Key2; "Cle_Document No.")
         {
         }
     }

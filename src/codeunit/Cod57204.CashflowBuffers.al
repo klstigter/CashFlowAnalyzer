@@ -102,24 +102,31 @@ codeunit 57204 "Cashflow Buffers"
 
         CustLedgerEntry.Open();
         while CustLedgerEntry.Read() do begin
-            TEMPDetailedLedger.Init();
-            n += 1;
-            TEMPDetailedLedger.Init();
-            TEMPDetailedLedger."Entry No." := n;
-            TEMPDetailedLedger."Entry No." := CustLedgerEntry.EntryNo;
-            TEMPDetailedLedger."Cust. Ledger Entry No." := CustLedgerEntry.CustLedgEntryNo;
-            TEMPDetailedLedger."Applied Ledger Entry No." := CustLedgerEntry.AppliedCustLedEntrNo;
-            TEMPDetailedLedger."Entry Type" := CustLedgerEntry.EntryType;
-            TEMPDetailedLedger."Transaction No." := CustLedgerEntry.TransactionNo;
-            TEMPDetailedLedger."Document No. Bnk" := CustLedgerEntry.DocNoTarget;
-            TEMPDetailedLedger."Posting Date Bnk" := CustLedgerEntry.PostingDateTarget;
-            TEMPDetailedLedger."Entry No. Target" := CustLedgerEntry.EntryNoTarget;
-            TEMPDetailedLedger."Document No. Target" := CustLedgerEntry.DocNoTarget;
-            TEMPDetailedLedger."Posting Date Target" := CustLedgerEntry.PostingDateTarget;
-            TEMPDetailedLedger."Amount" := CustLedgerEntry.Amount;
-            TEMPDetailedLedger."Account No." := CustLedgerEntry.AccountNo;
-            TEMPDetailedLedger."Target Amount" := CustLedgerEntry.TargetAmount;
-            TEMPDetailedLedger.Insert();
+            if CustLedgerEntry.Init_CustLedgEntryNo <> CustLedgerEntry.CustLedgEntryNo then begin
+                n += 1;
+                TEMPDetailedLedger.Init();
+                TEMPDetailedLedger.n := n;
+                TEMPDetailedLedger."Init Entry No." := CustLedgerEntry.Init_EntryNo;
+                TEMPDetailedLedger."Init Cust. Ledger Entry No." := CustLedgerEntry.Init_CustLedgEntryNo;
+
+                TEMPDetailedLedger."Entry No." := CustLedgerEntry.EntryNo;
+                TEMPDetailedLedger."Cust. Ledger Entry No." := CustLedgerEntry.CustLedgEntryNo;
+                TEMPDetailedLedger."Applied Ledger Entry No." := CustLedgerEntry.AppliedCustLedEntrNo;
+                TEMPDetailedLedger."Entry Type" := CustLedgerEntry.EntryType;
+                TEMPDetailedLedger."Transaction No." := CustLedgerEntry.TransactionNo;
+                TEMPDetailedLedger."Document No." := CustLedgerEntry.DocumentNo;
+                TEMPDetailedLedger."Amount" := CustLedgerEntry.Amount;
+                TEMPDetailedLedger."Posting Date" := CustLedgerEntry.PostingDate;
+
+                TEMPDetailedLedger."Cle_Entry No." := CustLedgerEntry.Cle_EntryNo;
+                TEMPDetailedLedger."Cle_Document Type" := CustLedgerEntry.Cle_DocType;
+                TEMPDetailedLedger."Cle_Document No." := CustLedgerEntry.Cle_DocNo;
+                TEMPDetailedLedger."Cle_Posting Date" := CustLedgerEntry.Cle_PostingDate;
+                TEMPDetailedLedger."Cle_Account No." := CustLedgerEntry.Cle_AccountNo;
+                TEMPDetailedLedger."Cle_Amount" := CustLedgerEntry.Cle_Amount;
+                TEMPDetailedLedger."Cle_Dimension Set ID" := CustLedgerEntry.Cle_Dimension_Set_ID;
+                TEMPDetailedLedger.Insert();
+            end;
         end;
     end;
 
@@ -133,23 +140,21 @@ codeunit 57204 "Cashflow Buffers"
 
         VendorLedgerEntry.Open();
         while VendorLedgerEntry.Read() do begin
-            TEMPDetailedLedger.Init();
             n += 1;
             TEMPDetailedLedger.Init();
-            TEMPDetailedLedger."Entry No." := n;
             TEMPDetailedLedger."Entry No." := VendorLedgerEntry.EntryNo;
             TEMPDetailedLedger."Vendor Ledger Entry No." := VendorLedgerEntry.VendLedgEntryNo;
             TEMPDetailedLedger."Applied Ledger Entry No." := VendorLedgerEntry.AppliedVendLedgEntryNo;
             TEMPDetailedLedger."Entry Type" := VendorLedgerEntry.EntryType;
             TEMPDetailedLedger."Transaction No." := VendorLedgerEntry.TransactionNo;
-            TEMPDetailedLedger."Document No. Bnk" := VendorLedgerEntry.DocNoTarget;
-            TEMPDetailedLedger."Posting Date Bnk" := VendorLedgerEntry.PostingDateTarget;
-            TEMPDetailedLedger."Entry No. Target" := VendorLedgerEntry.EntryNoTarget;
-            TEMPDetailedLedger."Document No. Target" := VendorLedgerEntry.DocNoTarget;
-            TEMPDetailedLedger."Posting Date Target" := VendorLedgerEntry.PostingDateTarget;
+            TEMPDetailedLedger."Document No." := VendorLedgerEntry.DocumentNoBnk;
+            TEMPDetailedLedger."Posting Date" := VendorLedgerEntry.PostingDateBnk;
+            TEMPDetailedLedger."Cle_Entry No." := VendorLedgerEntry.EntryNoTarget;
+            TEMPDetailedLedger."Cle_Document No." := VendorLedgerEntry.DocNoTarget;
+            TEMPDetailedLedger."Cle_Posting Date" := VendorLedgerEntry.PostingDateTarget;
             TEMPDetailedLedger."Amount" := VendorLedgerEntry.Amount;
-            TEMPDetailedLedger."Account No." := VendorLedgerEntry.AccountNo;
-            TEMPDetailedLedger."Target Amount" := VendorLedgerEntry.TargetAmount;
+            TEMPDetailedLedger."Cle_Account No." := VendorLedgerEntry.AccountNo;
+            TEMPDetailedLedger."Cle_Amount" := VendorLedgerEntry.TargetAmount;
             TEMPDetailedLedger.Insert();
         end;
     end;
@@ -241,7 +246,7 @@ codeunit 57204 "Cashflow Buffers"
                         end;
                     TEMPbuffer_Bnk."Source Type"::Customer:
                         begin
-                            TEMPDetailedLedger.Setrange("Account No.", TEMPbuffer_Bnk."Source No.");
+                            TEMPDetailedLedger.Setrange("Cle_Account No.", TEMPbuffer_Bnk."Source No.");
                             TEMPDetailedLedger.FilterGroup(-1);
                             TEMPDetailedLedger.SetFilter("Cust. Ledger Entry No.", '%1', TEMPbuffer_Bnk."Balance Entry No. End");
                             TEMPDetailedLedger.SetFilter("Applied Ledger Entry No.", '%1', TEMPbuffer_Bnk."Balance Entry No. Start");
@@ -289,23 +294,23 @@ codeunit 57204 "Cashflow Buffers"
             CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
             CashFlowLine."Cash Flow Category Amount" := Sign * TEMPDetailedLedger."Amount";
 
-            case TEMPDetailedLedger."Document Type Target" of
-                TEMPDetailedLedger."Document Type Target"::Invoice:
+            case TEMPDetailedLedger."Cle_Document Type" of
+                TEMPDetailedLedger."Cle_Document Type"::Invoice:
                     CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Invoice;
-                TEMPDetailedLedger."Document Type Target"::"Credit Memo":
+                TEMPDetailedLedger."Cle_Document Type"::"Credit Memo":
                     CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::"Credit Memo";
-                TEMPDetailedLedger."Document Type Target"::"Finance Charge Memo":
+                TEMPDetailedLedger."Cle_Document Type"::"Finance Charge Memo":
                     CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::"Finance Charge Memo";
-                TEMPDetailedLedger."Document Type Target"::Payment:
+                TEMPDetailedLedger."Cle_Document Type"::Payment:
                     CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Payment;
-                TEMPDetailedLedger."Document Type Target"::Refund:
+                TEMPDetailedLedger."Cle_Document Type"::Refund:
                     CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Refund;
-                TEMPDetailedLedger."Document Type Target"::Reminder:
+                TEMPDetailedLedger."Cle_Document Type"::Reminder:
                     CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Reminder;
             end;
 
-            CashFlowLine."Applied Document No." := TEMPDetailedLedger."Document No. Target";
-            CashFlowLine."Applied Document Entry No." := TEMPDetailedLedger."Entry No. Target";
+            CashFlowLine."Applied Document No." := TEMPDetailedLedger."Cle_Document No.";
+            CashFlowLine."Applied Document Entry No." := TEMPDetailedLedger."Cle_Entry No.";
             CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
             CashFlowLineNo += 1;
             CashFlowLine."Entry Line No." := CashFlowLineNo;
@@ -325,7 +330,7 @@ codeunit 57204 "Cashflow Buffers"
         Sign: Integer;
     begin
         repeat
-            TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."Document No. Target");
+            TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."Cle_Document No.");
             if Not TEMPgrip.findset then begin
                 TEMPDetailedLedger.SetRange("Entry No.", TEMPDetailedLedger."Entry No.");
                 InsertwithDetailBuffer();
