@@ -164,7 +164,7 @@ codeunit 57204 "Cashflow Buffers"
         DocFilter: Text;
         testMode: Boolean;
     begin
-        testMode := true;
+        testMode := false; // ************* Test mode, true = exclude grip
         DeleteOldAnalyzes();
         CreateCashFlowHeaders();
         FillTEMPCashFlowCategory();
@@ -196,12 +196,17 @@ codeunit 57204 "Cashflow Buffers"
                     TEMPDetailedLedger.findlast;
                     TEMPDetailedLedger.SetRange("Init Ledger Entry No.");
 
-                    TEMPbuffer_Bnk.Delete();
-
+                    //TEMPbuffer_Bnk.Delete();
+                    TEMPbuffer_Bnk.Mark(true);
+                    TEMPbuffer_Bnk.SetRange("Init LedgerEntryNo Start");
 
                 until TEMPDetailedLedger.Next() = 0;
         end;
         // non grip loop here
+        TEMPbuffer_Bnk.MarkedOnly := true;
+        if TEMPbuffer_Bnk.FindSet() then
+            TEMPbuffer_Bnk.DeleteAll();
+        TEMPbuffer_Bnk.Reset();
         if TEMPbuffer_Bnk.FindSet() then
             repeat
                 //TEMPDetailedLedger.SetRange("Is Init", true / false;
@@ -347,8 +352,9 @@ codeunit 57204 "Cashflow Buffers"
                     CashFlowLine."Applied Document No." := TEMPDetailedLedger."led_Document No.";
                     CashFlowLine."Applied Document Entry No." := TEMPDetailedLedger."led_Entry No.";
                     CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
-                    CashFlowLineNo += 1;
-                    CashFlowLine."Entry Line No." := CashFlowLineNo;
+                    // CashFlowLineNo += 1;
+                    // CashFlowLine."Entry Line No." := CashFlowLineNo;
+                    CashFlowLine.GetLastEntryNo();
                     //CashFlowLine.Validate("Dimension Set ID", CLE_Applied."Dimension Set ID");
                     CashFlowLine."Place of Birth" := 'Applied Customer Ledger Entry';
                     CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
@@ -376,8 +382,9 @@ codeunit 57204 "Cashflow Buffers"
                     CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
                     CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"CashFlow Category GRIP Invoice";
 
-                    CashFlowLineNo += 1;
-                    CashFlowLine."Entry Line No." := CashFlowLineNo;
+                    // CashFlowLineNo += 1;
+                    // CashFlowLine."Entry Line No." := CashFlowLineNo;
+                    CashFlowLine.GetLastEntryNo();
                     //CashFlowLine.Validate("Dimension Set ID", CLE_Applied."Dimension Set ID");
                     CashFlowLine."Place of Birth" := 'CreateRealizedCashFlowFromGRIPInvoice 01';
                     CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
@@ -464,21 +471,27 @@ codeunit 57204 "Cashflow Buffers"
 
     local procedure FillTempGrip(DocFilter: Text)
     var
-        GRIPdata: record "GRIP Invoice Analyze Data";
-        i, n : Integer;
-        GRIPdataOLD: Record "CashFlow Category GRIP Invoice";
+        GripQry: Query "Get Grip";
+    // GRIPdata: record "GRIP Invoice Analyze Data";
+    // i, n : Integer;
+    // GRIPdataOLD: Record "CashFlow Category GRIP Invoice";
     begin
         TEMPgrip.Reset();
         TEMPgrip.DeleteAll();
-        n := GripFilters.Count();
-        for i := 1 to n do begin
-            GRIPdataOLD.SetFilter("Document No.", DocFilter);
-            if GRIPdataOLD.FindSet() then
-                repeat
-                    TEMPgrip.TransferFields(GRIPdataOLD);
-                    TEMPgrip.Insert();
-                until GRIPdataOLD.Next() = 0;
+        GripQry.SetFilter("Document_No_", DocFilter);
+        GripQry.Open();
+        while GripQry.Read() do begin
+            TEMPgrip.Init();
+            TEMPgrip."Exploitation No." := GripQry."Exploitation_No_";
+            TEMPgrip."Document Type" := GripQry.Document_Type;
+            TEMPgrip."Document No." := GripQry.Document_No_;
+            TEMPgrip."G/L Account" := GripQry.GL_Account;
+            TEMPgrip."Amount" := GripQry.Amount;
+            TEMPgrip."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
+            TEMPgrip."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
+            TEMPgrip.Insert();
         end;
+        GripQry.Close();
     end;
 
 }
