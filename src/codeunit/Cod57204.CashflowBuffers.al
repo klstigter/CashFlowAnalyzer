@@ -202,17 +202,37 @@ codeunit 57204 "Cashflow Buffers"
         i, n : Integer;
         analyzeHeader: record "CashFLow Analyze Header";
         analyzeLine: record "Cashflow Analyse Line";
+
+        SelectionFilterMgt: Codeunit SelectionFilterManagement;
+        SelectionFilterMgt_DocFilter: Text;
+        SourceRecRef: RecordRef;
+        TargetRecRef: RecordRef;
     begin
-        Filters := FilterBuilder.BuildEntryNoFilter(TEMPbuffer_Bnk);
-        n := Filters.Count();
-        for i := 1 to n do begin
-            analyzeHeader.SetFilter("Entry No.", Filters.Get(i));
+        // Filters := FilterBuilder.BuildEntryNoFilter(TEMPbuffer_Bnk);
+        // n := Filters.Count();
+        // for i := 1 to n do begin
+        //     analyzeHeader.SetFilter("Entry No.", Filters.Get(i));
+        //     if not analyzeHeader.IsEmpty() then
+        //         analyzeHeader.DeleteAll(false);
+        //     analyzeLine.SetFilter("G/L Entry No.", Filters.Get(i));
+        //     if not analyzeLine.IsEmpty() then
+        //         analyzeLine.DeleteAll(false);
+        // end;
+
+        // Create RecordRefs
+        SourceRecRef.GetTable(TEMPbuffer_Bnk);
+        TargetRecRef.GetTable(TEMPbuffer_Bnk);
+        TargetRecRef.Reset(); // Remove filters from target
+        // Get the filter using CreateFilterFromTempTable
+        SelectionFilterMgt_DocFilter := SelectionFilterMgt.CreateFilterFromTempTable(SourceRecRef, TargetRecRef, TEMPbuffer_Bnk.FieldNo("Entry No."));
+        if SelectionFilterMgt_DocFilter <> '' then begin
+            analyzeHeader.SetFilter("Entry No.", SelectionFilterMgt_DocFilter);
             if not analyzeHeader.IsEmpty() then
                 analyzeHeader.DeleteAll(false);
-            analyzeLine.SetFilter("G/L Entry No.", Filters.Get(i));
+            analyzeLine.SetFilter("G/L Entry No.", SelectionFilterMgt_DocFilter);
             if not analyzeLine.IsEmpty() then
                 analyzeLine.DeleteAll(false);
-        end;
+        end
     end;
 
     local procedure CreateCashFlowHeaders()
