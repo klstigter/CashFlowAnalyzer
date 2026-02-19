@@ -82,7 +82,8 @@ codeunit 57204 "Cashflow Buffers"
                     TEMPbuffer_Bnk."Source No." := GLentry."Source No.";
 
                     //<<Lagi: manage here for GLentry."Source Type" and GLentry."Source No." = blank
-                    FillDetCustLedgBuffer(GLentry);
+                    if (GLentry."Source Type" = GLentry."Source Type"::" ") and (GLentry."Source No." = '') then
+                        FillDetCustLedgBuffer(GLentry);
                     //>>
 
                     TEMPbuffer_Bnk."GL Account No." := GLentry."G/L Account No.";
