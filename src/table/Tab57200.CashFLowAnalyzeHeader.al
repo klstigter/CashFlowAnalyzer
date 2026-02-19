@@ -79,17 +79,22 @@ table 57200 "CashFLow Analyze Header"
         field(54; "Transaction No. Start"; integer)
         {
             DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Is Analyzed', NLD = 'Geanalyseerd';
+            CaptionML = ENU = 'Transaction No. Start', NLD = 'Transactienummer start';
         }
         field(55; "Transaction No. End"; integer)
         {
             DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Is Analyzed', NLD = 'Geanalyseerd';
+            CaptionML = ENU = 'Transaction No. End', NLD = 'Transactienummer einde';
         }
         field(60; "Cashflow Amount"; Decimal)
         {
             FieldClass = FlowField;
             CalcFormula = sum("Cashflow Analyse Line"."Cash Flow Category Amount" where("G/L Entry No." = field("Entry No.")));
+        }
+        field(61; "Cashflow to Analyze"; Decimal)
+        {
+            FieldClass = FlowField;
+            CalcFormula = sum("Cashflow Analyse Line"."Amount to Analyze" where("G/L Entry No." = field("Entry No.")));
         }
     }
 

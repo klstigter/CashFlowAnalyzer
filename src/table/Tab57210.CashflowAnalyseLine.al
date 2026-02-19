@@ -2,8 +2,8 @@ table 57210 "Cashflow Analyse Line"
 {
     DataClassification = ToBeClassified;
     CaptionML = ENU = 'Realized Cash Flow', NLD = 'Gerealiseerde kasstroom';
-    LookupPageId = "Chart of CashFlow Category";
-    DrillDownPageId = "Chart of CashFlow Category";
+    LookupPageId = "CashFlowAnalyzeLines List";
+    DrillDownPageId = "CashFlowAnalyzeLines List";
 
     fields
     {
@@ -207,6 +207,7 @@ table 57210 "Cashflow Analyse Line"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Amount to Analyze', NLD = 'Bedrag te analyseren';
         }
+
     }
 
     keys
@@ -214,6 +215,7 @@ table 57210 "Cashflow Analyse Line"
         key(Key1; "G/L Entry No.", "Entry Line No.")
         {
             Clustered = true;
+            SumIndexFields = "Cash Flow Category Amount";
         }
 
     }

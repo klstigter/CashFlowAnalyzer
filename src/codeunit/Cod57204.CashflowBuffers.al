@@ -12,11 +12,9 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger_EntryNo: Integer;
         TEMPgrip: record "GRIP Invoice Analyze Data" temporary;
         TEMPCashFlowCategory: record "Cash Flow Category G/L Account" temporary;
-        GripFilters: List of [Text];
-        GripFiltersCrMemo: List of [Text];
         CashFlowLineNo: Integer;
 
-    procedure ShowPage()
+    procedure ShowTransactionBufferPage()
     var
         TransactionBufferPage: Page "Transaction Buffer";
     begin
@@ -29,6 +27,14 @@ codeunit 57204 "Cashflow Buffers"
     begin
         page.Run(Page::"DetailedLedger2DocNo Buffer", TEMPDetailedLedger);
     end;
+
+    procedure ShowPageTransactionBuffer()
+    var
+        TransactionBufferPage: Page "Transaction Buffer";
+    begin
+        page.Run(Page::"Transaction Buffer", TEMPbuffer_Bnk);
+    end;
+
 
     procedure FillBuffer("CashRec": Record "Cash Entry Posting No.") FilterTransactionNo: text;
     var
@@ -50,7 +56,7 @@ codeunit 57204 "Cashflow Buffers"
         if GLentry.FindSet() then
             repeat
                 TEMPbuffer_Bnk.Init();
-                TEMPbuffer_Bnk."Entry No." := GLentry."Entry No.";
+                TEMPbuffer_Bnk."Gl_EntryNo_Bnk" := GLentry."Entry No.";
                 TEMPbuffer_Bnk."Posting Date" := GLentry."Posting Date";
                 TEMPbuffer_Bnk."Document No." := GLentry."Document No.";
                 TEMPbuffer_Bnk."Document Type" := GLentry."Document Type";
@@ -69,22 +75,17 @@ codeunit 57204 "Cashflow Buffers"
 
         GLentry.SetRange("Source Type");
         GLentry.SetRange("Source No.");
-        TEMPbuffer_Bnk.setrange("Entry No.");
+        TEMPbuffer_Bnk.setrange("Gl_EntryNo_Bnk");
         if TEMPbuffer_Bnk.FindSet() then
             repeat
                 if GLentry.Next() = 0 then
                     break;
-                TEMPbuffer_Bnk."Init LedgerEntryNo Start" := GLentry."Entry No.";
+                TEMPbuffer_Bnk."GL_EntryNo Start" := GLentry."Entry No.";
                 repeat
                     TEMPbuffer_Bnk."Balance Amount" += GLentry.Amount;
-                    TEMPbuffer_Bnk."Init LedgerEntryNo End" := GLentry."Entry No.";
+                    TEMPbuffer_Bnk."GL_EntryNo End" := GLentry."Entry No.";
                     TEMPbuffer_Bnk."Source Type" := GLentry."Source Type";
                     TEMPbuffer_Bnk."Source No." := GLentry."Source No.";
-
-                    //<<Lagi: manage here for GLentry."Source Type" and GLentry."Source No." = blank
-                    if (GLentry."Source Type" = GLentry."Source Type"::" ") and (GLentry."Source No." = '') then
-                        FillDetCustLedgBuffer(GLentry);
-                    //>>
 
                     TEMPbuffer_Bnk."GL Account No." := GLentry."G/L Account No.";
                     if -1 * TEMPbuffer_Bnk."Balance Amount" >= TEMPbuffer_Bnk."Cashflow Amount" then
@@ -101,30 +102,33 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger_EntryNo := 0;
     end;
 
-    procedure FillDetCustLedgBuffer(GLEntry: Record "G/L Entry")
+    procedure FillDetCustLedgBuffer(GLEntryNo: Integer)
+    var
+        GLEntry: Record "G/L Entry";
     begin
+        GLEntry.get(GLEntryNo);
         TEMPDetailedLedger_EntryNo += 1;
         TEMPDetailedLedger.Init();
         TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
-        TEMPDetailedLedger."Is Init" := false; //CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo;
-        TEMPDetailedLedger."Init Entry No." := 0; //CustLedgerEntry.Init_EntryNo;
-        TEMPDetailedLedger."Init Ledger Entry No." := 0; //CustLedgerEntry.Init_CustLedgEntryNo;
+        TEMPDetailedLedger."Is Init" := true; //CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo;
+        TEMPDetailedLedger."Init Entry No." := GLEntry."Entry No."; //CustLedgerEntry.Init_EntryNo;
+        TEMPDetailedLedger."Init Ledger Entry No." := 0;//CustLedgerEntry.Init_CustLedgEntryNo;
         TEMPDetailedLedger."Entry No." := 0; //CustLedgerEntry.EntryNo;
         TEMPDetailedLedger."Ledger Entry No." := GLEntry."Entry No."; //CustLedgerEntry.CustLedgEntryNo;
-        TEMPDetailedLedger."Applied Ledger Entry No." := GLEntry."Entry No."; //CustLedgerEntry.AppliedCustLedEntrNo;
+        TEMPDetailedLedger."Applied Ledger Entry No." := 0; //CustLedgerEntry.AppliedCustLedEntrNo;
         TEMPDetailedLedger."Entry Type" := 0; //CustLedgerEntry.EntryType;
         TEMPDetailedLedger."Transaction No." := GLEntry."Transaction No."; //CustLedgerEntry.TransactionNo;
         TEMPDetailedLedger."Document No." := GLEntry."Document No."; //CustLedgerEntry.DocumentNo;
         TEMPDetailedLedger."Amount" := GLEntry.Amount; //CustLedgerEntry.Amount;
         TEMPDetailedLedger."Posting Date" := GLEntry."Posting Date"; //CustLedgerEntry.PostingDate;
-        TEMPDetailedLedger."led_Entry No." := GLEntry."Entry No."; //CustLedgerEntry.Cle_EntryNo;
+        TEMPDetailedLedger."led_Entry No." := 0; //CustLedgerEntry.Cle_EntryNo;
         TEMPDetailedLedger."led_Document Type" := GLEntry."Document Type"; //CustLedgerEntry.Cle_DocType;
         TEMPDetailedLedger."led_Document No." := GLEntry."Document No."; //CustLedgerEntry.Cle_DocNo;
         TEMPDetailedLedger."led_Posting Date" := GLEntry."Posting Date"; //CustLedgerEntry.Cle_PostingDate;
         TEMPDetailedLedger."led_Account No." := GLEntry."G/L Account No."; //CustLedgerEntry.Cle_AccountNo;
         TEMPDetailedLedger."led_Amount" := GLEntry.Amount; //CustLedgerEntry.Cle_Amount;
         TEMPDetailedLedger."led_Dimension Set ID" := GLEntry."Dimension Set ID";
-        TEMPDetailedLedger.Insert();
+
     end;
 
     procedure FillDetCustLedgBuffer(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text)
@@ -189,75 +193,77 @@ codeunit 57204 "Cashflow Buffers"
         end;
     end;
 
+    procedure CreateAnalyze(AnalyzeHeader: Record "CashFLow Analyze Header")
+    var
+        testMode: Boolean;
+        Factor: Decimal;
+        CashFlowLine: Record "Cashflow Analyse Line";
+    begin
+        TEMPbuffer_Bnk.get(AnalyzeHeader."Entry No.");
+        CashFlowLineNo := 0;
+        TEMPDetailedLedger.Reset();
+        TEMPDetailedLedger.setrange("Is Init", false);
+        TEMPDetailedLedger.SetRange("Init Ledger Entry No.", TEMPbuffer_Bnk."GL_EntryNo Start");
+        TEMPDetailedLedger.SetFilter(Amount, '<>%1', 0);
+        IF TEMPDetailedLedger.FindSet() THEN begin
+            CashFlowLine.SetRange("G/L Entry No.", TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
+            CashFlowLine.DeleteAll();
+            repeat
+                factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
+                TEMPgrip.DeleteAll();
+                IF FillTempGrip(TEMPDetailedLedger."led_Document No.") THEN
+                    //TODO:Amount process as return value
+                    InsertGrip(factor, testMode)
+                ELSE
+                    //TODO:Amount process as return value
+                    InsertDetailedLedBuffer(factor, testMode);
+            until TEMPDetailedLedger.Next() = 0;
+        end else begin
+            //ToDo: Rest amount also insert
+            FillDetCustLedgBuffer(TEMPbuffer_Bnk."GL_EntryNo Start");
+            TEMPDetailedLedger."Birth place" := 'No related ledger entry found';
+            InsertDetailedLedBuffer(1, testMode);
+        end;
+    end;
+
     procedure CreateAnalyze()
     var
-        FilterBuilder: Codeunit FilterBuilder;
-        i, n : Integer;
-        DocFilter: Text;
         testMode: Boolean;
+        Factor: Decimal;
+        n: Integer;
+        ProgressDlg: Dialog;
+        Counter: Integer;
     begin
         testMode := false; // ************* Test mode, true = exclude grip
         DeleteOldAnalyzes();
         CreateCashFlowHeaders();
-        FillTEMPCashFlowCategory();
-        TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice);
-        TEMPDetailedLedger.SetFilter("led_Document No.", '%1..', 'VF25');
-        TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
-        if not TEMPDetailedLedger.IsEmpty() then begin
-            n := FilterBuilder.BuildEntryNoFilter(TEMPDetailedLedger);
-            TEMPDetailedLedger.Reset;
-            TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice);
-            TEMPDetailedLedger.SetFilter("led_Document No.", '%1..', 'VF25');
-            TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
-        end;
-        TEMPgrip.Reset();
-        TEMPgrip.DeleteAll();
-        for i := 1 to n do begin
-            DocFilter := FilterBuilder.GetFilterChunk(i);
-            if not testMode then
-                FillTempGrip(DocFilter);
-            TEMPDetailedLedger.SetFilter("led_Document No.", DocFilter);
-            TEMPDetailedLedger.SetFilter("Ledger Entry No.", '<>%1', 0);
-            if TEMPDetailedLedger.FindSet() then
-                repeat
-                    //TEMPDetailedLedger.SetRange("Is Init", true);
-                    TEMPDetailedLedger.SetRange("Init Ledger Entry No.", TEMPDetailedLedger."Init Ledger Entry No.");
-                    TEMPDetailedLedger.FindFirst();
-
-                    if TEMPDetailedLedger."Is Init" then
-                        TEMPbuffer_Bnk.SetRange("Init LedgerEntryNo Start", TEMPDetailedLedger."Init Entry No.")
-                    else
-                        TEMPbuffer_Bnk.SetRange("Init LedgerEntryNo Start", TEMPDetailedLedger."Init Ledger Entry No.");
-                    TEMPbuffer_Bnk.FindFirst();
-                    CreateCashFlowLine(testMode);
-
-                    TEMPDetailedLedger.SetRange("Init Ledger Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start");
-                    TEMPDetailedLedger.findlast;
-                    TEMPDetailedLedger.SetRange("Init Ledger Entry No.");
-
-                    //TEMPbuffer_Bnk.Delete();
-                    TEMPbuffer_Bnk.Mark(true);
-                    TEMPbuffer_Bnk.SetRange("Init LedgerEntryNo Start");
-
-                until TEMPDetailedLedger.Next() = 0;
-        end;
-
-        // Delete TEMPbuffer_Bnk that used by above loop (grip)
-        TEMPbuffer_Bnk.MarkedOnly := true;
-        if TEMPbuffer_Bnk.FindSet() then
-            TEMPbuffer_Bnk.DeleteAll();
-
-        // non grip loop here
-        TEMPDetailedLedger.Reset();
+        //ProgressDlg.Open('Processing #1####');
         TEMPbuffer_Bnk.Reset();
         if TEMPbuffer_Bnk.FindSet() then
             repeat
-                //TEMPDetailedLedger.SetRange("Is Init", true / false;
-                //TEMPDetailedLedger.SetRange("Led_Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start");
-                CreateCashFlowLine(testMode);
-
-            until TEMPbuffer_Bnk.Next() = 0;
-
+                CashFlowLineNo := 0;
+                TEMPDetailedLedger.Reset();
+                TEMPDetailedLedger.setrange("Is Init", false);
+                TEMPDetailedLedger.SetRange("Init Ledger Entry No.", TEMPbuffer_Bnk."GL_EntryNo Start");
+                TEMPDetailedLedger.SetFilter(Amount, '<>%1', 0);
+                IF TEMPDetailedLedger.FindSet() THEN begin
+                    repeat
+                        factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
+                        TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."led_Document No.");
+                        IF TEMPgrip.FindSet() THEN
+                            InsertGrip(factor, testMode)
+                        ELSE
+                            InsertDetailedLedBuffer(factor, testMode);
+                    until TEMPDetailedLedger.Next() = 0;
+                end else begin
+                    FillDetCustLedgBuffer(TEMPbuffer_Bnk."GL_EntryNo Start");
+                    TEMPDetailedLedger."Birth place" := 'No related ledger entry found';
+                    InsertDetailedLedBuffer(1, testMode);
+                end;
+            //n += 1;
+            //ProgressDlg.Update(1, n);
+            until (TEMPbuffer_Bnk.Next() = 0) or (n = 1000);
+        //ProgressDlg.Close();
     end;
 
     local procedure DeleteOldAnalyzes()
@@ -289,7 +295,7 @@ codeunit 57204 "Cashflow Buffers"
         if TEMPbuffer_Bnk.FindSet() then
             repeat
                 AnalyzeHeader.Init();
-                AnalyzeHeader."Entry No." := TEMPbuffer_Bnk."Entry No.";
+                AnalyzeHeader."Entry No." := TEMPbuffer_Bnk."Gl_EntryNo_Bnk";
                 AnalyzeHeader."Posting Date" := TEMPbuffer_Bnk."Posting Date";
                 AnalyzeHeader."Document No." := TEMPbuffer_Bnk."Document No.";
                 AnalyzeHeader.Description := TEMPbuffer_Bnk.Description;
@@ -307,183 +313,94 @@ codeunit 57204 "Cashflow Buffers"
             until TEMPbuffer_Bnk.Next() = 0;
     end;
 
-    local procedure CreateCashFlowLine(testMode: Boolean)
-    var
-        SourceType: enum "Realized Cash Flow Source Type";
-        n: Integer;
-    begin
 
-        case TEMPbuffer_Bnk."Source Type" of
-            TEMPbuffer_Bnk."Source Type"::" ":
-                begin
-                    // TEMPDetailedLedger.SetFilter("Vendor Ledger Entry No.", '=%1', 0);
-                    // TEMPDetailedLedger.SetFilter("Ledger Entry No.", '=%1', 0);                    
-                end;
-            TEMPbuffer_Bnk."Source Type"::Customer,
-            TEMPbuffer_Bnk."Source Type"::Vendor:
-                begin
-                    //TEMPDetailedLedger.Setrange("Applied Ledger Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start", TEMPbuffer_Bnk."Init LedgerEntryNo End");
-
-                    // TEMPDetailedLedger.Setrange("Cle_Account No.", TEMPbuffer_Bnk."Source No.");
-                    // TEMPDetailedLedger.FilterGroup(-1);
-                    // TEMPDetailedLedger.SetFilter("Cust. Ledger Entry No.", '%1', TEMPbuffer_Bnk."Balance Entry No. End");
-                    // TEMPDetailedLedger.SetFilter("Applied Ledger Entry No.", '%1', TEMPbuffer_Bnk."Balance Entry No. Start");
-                    // TEMPDetailedLedger.FilterGroup(0);
-                end;
-            // TEMPbuffer_Bnk."Source Type"::Vendor:
-            //     begin
-            //         //TEMPDetailedLedger.Setrange("Account No.", TEMPbuffer_Bnk."Source No.");
-            //         //TEMPDetailedLedger.Setrange("Target Amount", TEMPbuffer_Bnk."Cashflow Amount");
-            //     end;
-            else
-                ;
-        end;
-        // if TEMPDetailedLedger.FindSet() then begin
-        //     CashFlowLineNo := 0;
-
-        //     //if TEMPbuffer_Bnk."Source Type" = TEMPbuffer_Bnk."Source Type"::Customer then
-        //     //    InsertwithGrip()
-        //     //else
-        //     InsertwithDetailBuffer(testMode);
-        // end;
-
-        TEMPDetailedLedger.Setrange("Applied Ledger Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start", TEMPbuffer_Bnk."Init LedgerEntryNo End");
-        InsertwithDetailBuffer(testMode);
-    end;
-
-    local procedure InsertwithDetailBuffer(testMode: Boolean)
+    local procedure InsertDetailedLedBuffer(factor: Decimal; testMode: Boolean);
     var
         CashFlowLine: Record "Cashflow Analyse Line";    //"Realized Cash Flow";
         GLentry: Record "G/L Entry";
         GLaccount: Record "G/L Account";
         Sign: Integer;
     begin
-        if not TEMPDetailedLedger.FindSet() then
-            exit; //change exit with cash flow line from bank amount due to no applied entries
-        CashFlowLineNo := 0;
-        repeat
-            if not TEMPDetailedLedger."Is Init" then begin
-                TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."led_Document No.");
-                if (Not TEMPgrip.findset) or testMode then begin
-                    Sign := -1;
-                    GLentry.Get(TEMPbuffer_Bnk."Entry No.");
-                    // Bank/Cash Block
-                    CashFlowLine."G/L Entry No." := GLentry."Entry No.";
-                    CashFlowLine."Posting Date" := GLentry."Posting Date";
-                    CashFlowLine."Dimension Set ID" := GLentry."Dimension Set ID";
-                    CashFlowLine."Global Dimension 1 Code" := GLentry."Global Dimension 1 Code";
-                    CashFlowLine."Global Dimension 2 Code" := GLentry."Global Dimension 2 Code";
-                    CashFlowLine."Amount to Analyze" := GLentry.Amount;
+        Sign := -1;
+        CashFlowLineNo += 1;
+        CashFlowLine."G/L Entry No." := TEMPbuffer_Bnk."Gl_EntryNo_Bnk";
+        CashFlowLine."Entry Line No." := CashFlowLineNo;
+        // Bank/Cash Block
+        GLentry.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
+        CashFlowLine."Posting Date" := GLentry."Posting Date";
+        CashFlowLine."Dimension Set ID" := GLentry."Dimension Set ID";
+        CashFlowLine."Global Dimension 1 Code" := GLentry."Global Dimension 1 Code";
+        CashFlowLine."Global Dimension 2 Code" := GLentry."Global Dimension 2 Code";
 
-                    // Realized block
-                    CashFlowLine."G/L Account" := GLentry."G/L Account No.";
-                    CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
-                    CashFlowLine."Cash Flow Category Amount" := Sign * TEMPDetailedLedger."Amount";
 
-                    case TEMPDetailedLedger."led_Document Type" of
-                        TEMPDetailedLedger."led_Document Type"::Invoice:
-                            CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Invoice;
-                        TEMPDetailedLedger."led_Document Type"::"Credit Memo":
-                            CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::"Credit Memo";
-                        TEMPDetailedLedger."led_Document Type"::"Finance Charge Memo":
-                            CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::"Finance Charge Memo";
-                        TEMPDetailedLedger."led_Document Type"::Payment:
-                            CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Payment;
-                        TEMPDetailedLedger."led_Document Type"::Refund:
-                            CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Refund;
-                        TEMPDetailedLedger."led_Document Type"::Reminder:
-                            CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Reminder;
-                    end;
+        // Realized block
+        CashFlowLine."G/L Account" := GLentry."G/L Account No.";
+        CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
+        CashFlowLine."Cash Flow Category Amount" := round(Sign * TEMPDetailedLedger."Amount" * factor, 0.001);
 
-                    CashFlowLine."Applied Document No." := TEMPDetailedLedger."led_Document No.";
-                    CashFlowLine."Applied Document Entry No." := TEMPDetailedLedger."led_Entry No.";
-                    CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
-                    // CashFlowLineNo += 1;
-                    // CashFlowLine."Entry Line No." := CashFlowLineNo;
-                    CashFlowLine.GetLastEntryNo();
-                    //CashFlowLine.Validate("Dimension Set ID", CLE_Applied."Dimension Set ID");
-                    CashFlowLine."Place of Birth" := 'Applied Customer Ledger Entry';
-                    CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-                    CashFlowLine.Insert();
-                end else begin
-                    GLentry.Get(TEMPbuffer_Bnk."Entry No.");
-                    // Bank/Cash Block
-                    CashFlowLine."G/L Entry No." := GLentry."Entry No.";
-                    CashFlowLine."Posting Date" := GLentry."Posting Date";
-                    CashFlowLine."Dimension Set ID" := GLentry."Dimension Set ID";
-                    CashFlowLine."Global Dimension 1 Code" := GLentry."Global Dimension 1 Code";
-                    CashFlowLine."Global Dimension 2 Code" := GLentry."Global Dimension 2 Code";
-                    CashFlowLine."Amount to Analyze" := GLentry.Amount;
+        case TEMPDetailedLedger."led_Document Type" of
+            TEMPDetailedLedger."led_Document Type"::Invoice:
+                CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Invoice;
+            TEMPDetailedLedger."led_Document Type"::"Credit Memo":
+                CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::"Credit Memo";
+            TEMPDetailedLedger."led_Document Type"::"Finance Charge Memo":
+                CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::"Finance Charge Memo";
+            TEMPDetailedLedger."led_Document Type"::Payment:
+                CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Payment;
+            TEMPDetailedLedger."led_Document Type"::Refund:
+                CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Refund;
+            TEMPDetailedLedger."led_Document Type"::Reminder:
+                CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Reminder;
+        end;
 
-                    // Realized block
-                    CashFlowLine."Is Grip" := true;
-                    GLaccount.get(TEMPgrip."G/L Account");
-                    CashFlowLine."G/L Account" := TEMPgrip."G/L Account";
-                    CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
-
-                    CashFlowLine."Cash Flow Category Amount" := 1;//TEMPgrip.GetAmountFromDocumentNo(); //TEMPgrip.Amount;
-
-                    CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Invoice;
-                    CashFlowLine."Applied Document No." := TEMPgrip."Document No.";
-                    CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
-                    CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"CashFlow Category GRIP Invoice";
-
-                    // CashFlowLineNo += 1;
-                    // CashFlowLine."Entry Line No." := CashFlowLineNo;
-                    CashFlowLine.GetLastEntryNo();
-                    //CashFlowLine.Validate("Dimension Set ID", CLE_Applied."Dimension Set ID");
-                    CashFlowLine."Place of Birth" := 'CreateRealizedCashFlowFromGRIPInvoice 01';
-                    CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-                    CashFlowLine.insert();
-                end;
-            end;
-        until TEMPDetailedLedger.Next() = 0;
+        CashFlowLine."Applied Document No." := TEMPDetailedLedger."led_Document No.";
+        CashFlowLine."Applied Document Entry No." := TEMPDetailedLedger."led_Entry No.";
+        CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
+        CashFlowLine.Validate("Dimension Set ID", TEMPDetailedLedger."Led_Dimension Set ID");
+        CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
+        CashFlowLine."Place of Birth" := TEMPDetailedLedger."Birth place";
+        if CashFlowLine."Place of Birth" <> '' then
+            CashFlowLine."Amount to Analyze" := round(Sign * TEMPDetailedLedger."Amount" * factor, 0.001);
+        CashFlowLine.Insert();
     end;
 
-    // local procedure InsertwithGrip()
-    // var
-    //     CashFlowLine: Record "Cashflow Analyse Line";    //"Realized Cash Flow";
-    //     GLaccount: Record "G/L Account";
-    //     GLentry: Record "G/L Entry";
-    //     Sign: Integer;
-    // begin
-    //     repeat
-    //         TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."Cle_Document No.");
-    //         if Not TEMPgrip.findset then begin
-    //             //TEMPDetailedLedger.SetRange("Entry No.", TEMPDetailedLedger."Entry No.");
-    //             InsertwithDetailBuffer();
-    //             //TEMPDetailedLedger.SetRange("Entry No.");
-    //         end else
-    //             repeat
-    //                 GLentry.Get(TEMPbuffer_Bnk."Entry No.");
-    //                 // Bank/Cash Block
-    //                 CashFlowLine."G/L Entry No." := GLentry."Entry No.";
-    //                 CashFlowLine."Posting Date" := GLentry."Posting Date";
-    //                 CashFlowLine."Dimension Set ID" := GLentry."Dimension Set ID";
-    //                 CashFlowLine."Global Dimension 1 Code" := GLentry."Global Dimension 1 Code";
-    //                 CashFlowLine."Global Dimension 2 Code" := GLentry."Global Dimension 2 Code";
-    //                 CashFlowLine."Amount to Analyze" := GLentry.Amount;
+    local procedure InsertGrip(Factor: Decimal; testMode: Boolean);
+    var
+        CashFlowLine: Record "Cashflow Analyse Line";    //"Realized Cash Flow";
+        GLaccount: Record "G/L Account";
+        GLentry: Record "G/L Entry";
+        Sign: Integer;
+    begin
+        TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."led_Document No.");
+        if TEMPgrip.FindSet() then
+            repeat
+                CashFlowLineNo += 1;
+                CashFlowLine."G/L Entry No." := TEMPbuffer_Bnk."Gl_EntryNo_Bnk";
+                CashFlowLine."Entry Line No." := CashFlowLineNo;
+                // Bank/Cash Block
+                GLentry.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
+                CashFlowLine."Posting Date" := GLentry."Posting Date";
+                CashFlowLine."Dimension Set ID" := GLentry."Dimension Set ID";
+                CashFlowLine."Global Dimension 1 Code" := GLentry."Global Dimension 1 Code";
+                CashFlowLine."Global Dimension 2 Code" := GLentry."Global Dimension 2 Code";
 
-    //                 // Realized block
-    //                 CashFlowLine."Is Grip" := true;
-    //                 GLaccount.get(TEMPgrip."G/L Account");
-    //                 CashFlowLine."G/L Account" := TEMPgrip."G/L Account";
-    //                 CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
-    //                 CashFlowLine."Cash Flow Category Amount" := TEMPgrip.Amount;
-    //                 CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Invoice;
-    //                 CashFlowLine."Applied Document No." := TEMPgrip."Document No.";
-    //                 CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
-    //                 CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"CashFlow Category GRIP Invoice";
 
-    //                 CashFlowLineNo += 1;
-    //                 CashFlowLine."Entry Line No." := CashFlowLineNo;
-    //                 //CashFlowLine.Validate("Dimension Set ID", CLE_Applied."Dimension Set ID");
-    //                 CashFlowLine."Place of Birth" := 'CreateRealizedCashFlowFromGRIPInvoice 01';
-    //                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-    //                 CashFlowLine.insert();
-    //             until TEMPgrip.Next() = 0;
-    //     until TEMPDetailedLedger.Next() = 0;
-    // end;
+                // Realized block
+                CashFlowLine."Is Grip" := true;
+                GLaccount.get(TEMPgrip."G/L Account");
+                CashFlowLine."G/L Account" := TEMPgrip."G/L Account";
+                CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
+                CashFlowLine."Cash Flow Category Amount" := round(TEMPgrip.Amount * Factor, 0.001);
+                CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Invoice;
+                CashFlowLine."Applied Document No." := TEMPgrip."Document No.";
+                CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
+                CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"CashFlow Category GRIP Invoice";
+
+                CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
+                CashFlowLine."Place of Birth" := TEMPDetailedLedger."Birth place";
+                CashFlowLine.insert();
+            until TEMPgrip.Next() = 0;
+    end;
 
     local procedure GetCashFlowCategory(GLAccNo: Code[20]; pPostingDate: Date) CashFlowCategory: Code[20]
     var
@@ -500,7 +417,7 @@ codeunit 57204 "Cashflow Buffers"
         exit(TEMPCashFlowCategory."Cash Flow Category");
     end;
 
-    local procedure FillTEMPCashFlowCategory()
+    procedure FillTEMPCashFlowCategory()
     var
         CashFlowCategoryGLAccount: record "Cash Flow Category G/L Account";
     begin
@@ -514,8 +431,27 @@ codeunit 57204 "Cashflow Buffers"
             until CashFlowCategoryGLAccount.Next() = 0;
     end;
 
+    procedure FillTempGrip()
+    var
+        FilterBuilder: Codeunit FilterBuilder;
+        i, n : Integer;
+        DocFilter: Text;
+    begin
+        TEMPgrip.Reset();
+        TEMPgrip.DeleteAll();
+        TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice);
+        TEMPDetailedLedger.SetFilter("led_Document No.", '%1..', 'VF25');
+        TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
+        if not TEMPDetailedLedger.IsEmpty() then
+            n := FilterBuilder.BuildEntryNoFilter(TEMPDetailedLedger);
+        for i := 1 to n do begin
+            DocFilter := FilterBuilder.GetFilterChunk(i);
+            FillTempGrip(DocFilter);
+        end;
+        TEMPDetailedLedger.Reset();
+    end;
 
-    local procedure FillTempGrip(DocFilter: Text)
+    local procedure FillTempGrip(DocFilter: Text) HasRecords: Boolean;
     var
         GripQry: Query "Get Grip";
     // GRIPdata: record "GRIP Invoice Analyze Data";
@@ -535,7 +471,7 @@ codeunit 57204 "Cashflow Buffers"
             TEMPgrip."Amount" := GripQry.Amount;
             TEMPgrip."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
             TEMPgrip."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
-            TEMPgrip.Insert();
+            HasRecords := TEMPgrip.Insert();
         end;
         GripQry.Close();
     end;

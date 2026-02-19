@@ -86,6 +86,10 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(90; "Birth place"; Text[100])
+        {
+            DataClassification = ToBeClassified;
+        }
 
     }
 

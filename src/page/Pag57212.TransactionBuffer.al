@@ -12,9 +12,9 @@ page 57212 "Transaction Buffer"
         {
             repeater(GroupName)
             {
-                field("Entry No."; Rec."Entry No.")
+                field("Gl Entry No. Bank"; Rec."Gl_EntryNo_Bnk")
                 {
-                    ToolTip = 'Specifies the value of the Entry No. field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Gl Entry No. Bank field.', Comment = '%';
                 }
                 field(amount; Rec.amount)
                 {
@@ -24,13 +24,13 @@ page 57212 "Transaction Buffer"
                 {
                     ToolTip = 'Specifies the value of the Amount of Lines field.', Comment = '%';
                 }
-                field("Init LedgerEntryNo End"; Rec."Init LedgerEntryNo End")
+                field("GL Entry No. End"; Rec."GL_EntryNo End")
                 {
-                    ToolTip = 'Specifies the value of the Init LedgerEntryNo End field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the GL Entry No. End field.', Comment = '%';
                 }
-                field("Init LedgerEntryNo Start"; Rec."Init LedgerEntryNo Start")
+                field("GL Entry No. Start"; Rec."GL_EntryNo Start")
                 {
-                    ToolTip = 'Specifies the value of the Init LedgerEntryNo Start field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the GL Entry No. Start field.', Comment = '%';
                 }
                 field("Counter Posting"; Rec."Counter Posting")
                 {

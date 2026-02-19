@@ -84,47 +84,69 @@ page 57211 "Cash Entry Postings"
             action(runMyCodeunit)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Step 2: Fetch data in buffers';
+                Caption = 'Step 2: Fetch data in ALL buffers, also GRIP';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
 
                 trigger OnAction()
                 var
+                    t1, t2 : time;
+                    duration: Duration;
                 begin
-                    cu.Run(Rec);
+                    t1 := Time();
+                    if cu.Fill_All_Buffer(Rec) then begin
+                        t2 := Time();
+                        duration := t2 - t1;
+                        Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                    end else
+                        Message('No data fetched for the selected record.');
+
                 end;
             }
             action(runCreateAnalyzeLines)
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Step 3: Create Analyze Lines';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+
                 trigger OnAction()
                 var
+                    t1, t2 : time;
+                    duration: Duration;
                 begin
+                    t1 := Time();
                     Cu.CreateAnalyze();
+                    t2 := Time();
+                    duration := t2 - t1;
+                    Message('Analyze lines created successfully. \Time taken: %1', duration);
                 end;
             }
 
-            action(RunAnalyze)
-            {
-                ApplicationArea = Basic, Suite;
-                Caption = 'Analyze';
-                trigger OnAction()
-                var
-                begin
-                    cu.Run(Rec);
-                    Cu.CreateAnalyze();
-                end;
-            }
         }
         area(Reporting)
         {
-            action(ShowBuffers)
+            action(ShowtransactionBUfferPage)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show Buffer Contents';
+                Caption = 'Show Transaction Buffer';
                 trigger OnAction()
                 var
                 begin
-                    Cu.ShowPages();
+                    Cu.ShowTransactionBufferPage();
+                end;
+            }
+            action(showDetailedLedger)
+            {
+
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show detailed ledger Buffer';
+                trigger OnAction()
+                var
+                begin
+                    Cu.ShowDetailedLedgerPage();
                 end;
             }
             action(AnalyzeCardPage)
@@ -151,13 +173,7 @@ page 57211 "Cash Entry Postings"
             }
         }
     }
-
-
-
     var
-
         CU: Codeunit MyCodeunit;
-
-
 
 }

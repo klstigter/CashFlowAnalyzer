@@ -5,15 +5,15 @@ table 57211 "Transaction Buffer"
 
     fields
     {
-        field(1; "Entry No."; Integer)
+        field(1; "Gl_EntryNo_Bnk"; Integer)
         {
             DataClassification = ToBeClassified;
         }
-        field(2; "Init LedgerEntryNo Start"; Integer)
+        field(2; "GL_EntryNo Start"; Integer)
         {
             DataClassification = ToBeClassified;
         }
-        field(3; "Init LedgerEntryNo End"; Integer)
+        field(3; "GL_EntryNo End"; Integer)
         {
             DataClassification = ToBeClassified;
         }
@@ -100,7 +100,7 @@ table 57211 "Transaction Buffer"
 
     keys
     {
-        key(Key1; "Entry No.")
+        key(Key1; "Gl_EntryNo_Bnk")
         {
             Clustered = true;
         }

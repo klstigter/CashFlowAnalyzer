@@ -19,9 +19,9 @@ codeunit 57207 FilterBuilder
             exit(Chunks);
         repeat
             if HasPrevious then
-                AddToRange := buf."Entry No." = EndRange + 1;
-            BuildChunks(format(buf."Entry No."), StartRangeNo, EndRangeNo, AddToRange);
-            EndRange := Buf."Entry No.";
+                AddToRange := buf."Gl_EntryNo_Bnk" = EndRange + 1;
+            BuildChunks(format(buf."Gl_EntryNo_Bnk"), StartRangeNo, EndRangeNo, AddToRange);
+            EndRange := Buf."Gl_EntryNo_Bnk";
             HasPrevious := true;
         until Buf.Next() = 0;
         SingleFilter := CreateRangeFilter(StartRangeNo, EndRangeNo);

@@ -43,6 +43,11 @@ page 57201 "CashFLow Analyze List"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the description.';
                 }
+                field("Cashflow to Analyze"; Rec."Cashflow to Analyze")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the amount to analyze.';
+                }
                 field("Cashflow Amount"; Rec."Cashflow Amount")
                 {
                     ApplicationArea = All;
@@ -83,79 +88,139 @@ page 57201 "CashFLow Analyze List"
 
     actions
     {
+        area(Navigation)
+        {
+            action(ShowDetailedLedgers)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show Detailed Ledgers';
+
+                trigger OnAction()
+                var
+                    DetCustLedgEntries: page "Detailed Cust. Ledg. Entries";
+                    DetCustLedgEntry: Record "Detailed Cust. Ledg. Entry";
+                begin
+
+                    DetCustLedgEntry.SetRange("Customer No.", Rec."Source No.");
+                    DetCustLedgEntries.SetTableView(DetCustLedgEntry);
+                    DetCustLedgEntries.Run();
+                end;
+            }
+            action(ShowGlEntries)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show G/L Entries';
+
+                trigger OnAction()
+                var
+                    GLEntriesPage: page "General Ledger Entries";
+                    GLEntry: Record "G/L Entry";
+                begin
+
+                    GLEntry.SetRange("Entry No.", Rec."Entry No.");
+                    GLEntriesPage.SetTableView(GLEntry);
+                    GLEntriesPage.Run();
+                end;
+            }
+        }
         area(Processing)
         {
             group("Create Cash Flow Entries")
             {
-                CaptionML = ENU = 'Create Cash Flow Entries', NLD = 'Kasstroomposten Aanmaken';
-                action("Per Template and Documents")
+                action(FillDetailelLedgerBuffer)
                 {
-                    ApplicationArea = All;
-                    CaptionML = ENU = 'Create Per Template and Documents', NLD = 'Aanmaken per documentnummer';
-                    Image = CreateDocument;
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Fill Buffers without gripBuffer';
                     Promoted = true;
                     PromotedCategory = Process;
                     PromotedIsBig = true;
-                    ToolTipML = NLD = 'Maak nieuwe kasstroomposten aan voor het geselecteerde dagboeksjabloon, batch en documentnummer.', ENU = 'Create new cash flow entries for selected journal template, batch and document number.';
 
                     trigger OnAction()
                     var
-                        CreateCashFlowDialog: Page "Opt. Create Cash Flow Dialog";
-                        RealizedCashflowMgt: Codeunit "Opt. Realized Cashflow Mgt.";
-                        GenJournalTemplate: Code[10];
-                        JournalBatch: Code[10];
-                        DocumentNoFilter: Text;
-                        Lbl: Label 'Please fill in all required fields.', Comment = 'NLD=Vul alle verplichte velden in.;ENU=Please fill in all required fields.';
-                        bankEntryNoFilter: Integer;
+                        t1, t2 : time;
+                        duration: Duration;
+                        CashEntryPostingNo: Record "Cash Entry Posting No.";
+
                     begin
-                        GenJournalTemplate := 'BNG152';
-                        JournalBatch := 'DEFAULT';
-                        DocumentNoFilter := 'BNG152-10081';
-                        bankEntryNoFilter := 1440904;
-                        CreateCashFlowDialog.SetValues(GenJournalTemplate, JournalBatch, DocumentNoFilter, bankEntryNoFilter);
-                        if CreateCashFlowDialog.RunModal() = Action::OK then begin
-                            CreateCashFlowDialog.GetValues(GenJournalTemplate, JournalBatch, DocumentNoFilter, bankEntryNoFilter);
-                            if (GenJournalTemplate <> '') and (JournalBatch <> '') and (DocumentNoFilter <> '') then begin
-                                RealizedCashflowMgt.CreateCashFlowAnalyzeEntries(GenJournalTemplate, JournalBatch, DocumentNoFilter, bankEntryNoFilter);
-                            end else
-                                Message(lbl);
-                        end;
+                        t1 := Time();
+                        CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
+                        CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
+                        CashEntryPostingNo.FindFirst();
+                        if cu.Fill_NOT_GripBuffer(CashEntryPostingNo) then begin
+                            t2 := Time();
+                            duration := t2 - t1;
+                            Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                        end else
+                            Message('No data fetched for the selected record.');
                     end;
                 }
+                action(ShowDetailedLedgerPage)
+                {
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Show Detailed Ledger Page';
 
-                action("Per Date Range")
-                {
-                    ApplicationArea = All;
-                    CaptionML = ENU = 'Create Per Date Range', NLD = 'Aanmaken per datum';
-                    Image = CreateDocument;
-                    Promoted = true;
-                    PromotedCategory = Process;
-                    PromotedIsBig = true;
-                    ToolTipML = NLD = 'Maak nieuwe kasstroomposten aan op basis van datumfilter.', ENU = 'Create new cash flow entries based on date filter.';
-                    RunObject = report "Opt. Cash Flow Entries Calc.";
+                    trigger OnAction()
+                    begin
+                        cu.ShowDetailedLedgerPage();
+                    end;
                 }
-            }
-            group(Development_Tools)
-            {
-                Caption = 'Development Tools - Will be deleted';
-                action("DeleteAllEntries")
+                action(ShowTransactionBUfferPage)
                 {
-                    ApplicationArea = All;
-                    Caption = 'Delete All Entries';
-                    Image = DeleteRow;
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Show Transaction Buffer Page';
+
+                    trigger OnAction()
+                    begin
+                        cu.ShowTransactionBufferPage();
+                    end;
+                }
+                action(runMyCodeunit)
+                {
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Step 2: Fetch all data in all buffers';
 
                     trigger OnAction()
                     var
-                        Cashflowheader: record "CashFLow Analyze Header";
-                        ConfirmLbl: Label 'This will delete ALL Cash Flow Analyzer Header entries. Do you want to continue?', Comment = 'NLD=Dit zal ALLE kasstroomanalysator-kopteksten verwijderen. Wilt u doorgaan?;ENU=This will delete ALL Cash Flow Analyzer Header entries. Do you want to continue?';
+                        t1, t2 : time;
+                        duration: Duration;
+                        CashEntryPostingNo: Record "Cash Entry Posting No.";
+
                     begin
-                        if not confirm(ConfirmLbl, false) then
-                            exit;
-                        Cashflowheader.Reset();
-                        Cashflowheader.DeleteAll(true);
+                        t1 := Time();
+                        CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
+                        CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
+                        CashEntryPostingNo.FindFirst();
+                        if cu.Run(CashEntryPostingNo) then begin
+                            t2 := Time();
+                            duration := t2 - t1;
+                            Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                        end else
+                            Message('No data fetched for the selected record.');
+
+                    end;
+                }
+                action(runCreateAnalyzeLines)
+                {
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Step 3: Create Analyze Lines';
+                    Promoted = true;
+                    PromotedCategory = Process;
+                    PromotedIsBig = true;
+                    trigger OnAction()
+                    var
+                        t1, t2 : time;
+                        duration: Duration;
+                    begin
+                        t1 := Time();
+                        Cu.CreateAnalyze(rec);
+                        t2 := Time();
+                        duration := t2 - t1;
+                        Message('Analyze lines created successfully. \Time taken: %1', duration);
                     end;
                 }
             }
         }
     }
+    var
+        CU: Codeunit MyCodeunit;
 }
