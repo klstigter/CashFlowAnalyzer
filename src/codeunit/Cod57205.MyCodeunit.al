@@ -6,8 +6,8 @@ codeunit 57205 MyCodeunit
     var
         FilterTxt: text;
     begin
-        FilterTxt := TransActionBuffer.FillBuffer(Rec);
         TransActionBuffer.DeleteDetailedLedger();
+        FilterTxt := TransActionBuffer.FillBuffer(Rec);
         TransActionBuffer.FillDetCustLedgBuffer(Rec, FilterTxt);
         TransActionBuffer.FillDetVendorLedgBuffer(Rec, FilterTxt);
     end;

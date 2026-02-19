@@ -80,6 +80,11 @@ codeunit 57204 "Cashflow Buffers"
                     TEMPbuffer_Bnk."Init LedgerEntryNo End" := GLentry."Entry No.";
                     TEMPbuffer_Bnk."Source Type" := GLentry."Source Type";
                     TEMPbuffer_Bnk."Source No." := GLentry."Source No.";
+
+                    //<<Lagi: manage here for GLentry."Source Type" and GLentry."Source No." = blank
+                    FillDetCustLedgBuffer(GLentry);
+                    //>>
+
                     TEMPbuffer_Bnk."GL Account No." := GLentry."G/L Account No.";
                     if -1 * TEMPbuffer_Bnk."Balance Amount" >= TEMPbuffer_Bnk."Cashflow Amount" then
                         break;
@@ -93,6 +98,32 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger.Reset();
         TEMPDetailedLedger.DeleteAll();
         TEMPDetailedLedger_EntryNo := 0;
+    end;
+
+    procedure FillDetCustLedgBuffer(GLEntry: Record "G/L Entry")
+    begin
+        TEMPDetailedLedger_EntryNo += 1;
+        TEMPDetailedLedger.Init();
+        TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
+        TEMPDetailedLedger."Is Init" := false; //CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo;
+        TEMPDetailedLedger."Init Entry No." := 0; //CustLedgerEntry.Init_EntryNo;
+        TEMPDetailedLedger."Init Ledger Entry No." := 0; //CustLedgerEntry.Init_CustLedgEntryNo;
+        TEMPDetailedLedger."Entry No." := 0; //CustLedgerEntry.EntryNo;
+        TEMPDetailedLedger."Ledger Entry No." := GLEntry."Entry No."; //CustLedgerEntry.CustLedgEntryNo;
+        TEMPDetailedLedger."Applied Ledger Entry No." := GLEntry."Entry No."; //CustLedgerEntry.AppliedCustLedEntrNo;
+        TEMPDetailedLedger."Entry Type" := 0; //CustLedgerEntry.EntryType;
+        TEMPDetailedLedger."Transaction No." := GLEntry."Transaction No."; //CustLedgerEntry.TransactionNo;
+        TEMPDetailedLedger."Document No." := GLEntry."Document No."; //CustLedgerEntry.DocumentNo;
+        TEMPDetailedLedger."Amount" := GLEntry.Amount; //CustLedgerEntry.Amount;
+        TEMPDetailedLedger."Posting Date" := GLEntry."Posting Date"; //CustLedgerEntry.PostingDate;
+        TEMPDetailedLedger."led_Entry No." := GLEntry."Entry No."; //CustLedgerEntry.Cle_EntryNo;
+        TEMPDetailedLedger."led_Document Type" := GLEntry."Document Type"; //CustLedgerEntry.Cle_DocType;
+        TEMPDetailedLedger."led_Document No." := GLEntry."Document No."; //CustLedgerEntry.Cle_DocNo;
+        TEMPDetailedLedger."led_Posting Date" := GLEntry."Posting Date"; //CustLedgerEntry.Cle_PostingDate;
+        TEMPDetailedLedger."led_Account No." := GLEntry."G/L Account No."; //CustLedgerEntry.Cle_AccountNo;
+        TEMPDetailedLedger."led_Amount" := GLEntry.Amount; //CustLedgerEntry.Cle_Amount;
+        TEMPDetailedLedger."led_Dimension Set ID" := GLEntry."Dimension Set ID";
+        TEMPDetailedLedger.Insert();
     end;
 
     procedure FillDetCustLedgBuffer(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text)
@@ -171,8 +202,15 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice);
         TEMPDetailedLedger.SetFilter("led_Document No.", '%1..', 'VF25');
         TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
-        if not TEMPDetailedLedger.IsEmpty() then
+        if not TEMPDetailedLedger.IsEmpty() then begin
             n := FilterBuilder.BuildEntryNoFilter(TEMPDetailedLedger);
+            TEMPDetailedLedger.Reset;
+            TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice);
+            TEMPDetailedLedger.SetFilter("led_Document No.", '%1..', 'VF25');
+            TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
+        end;
+        TEMPgrip.Reset();
+        TEMPgrip.DeleteAll();
         for i := 1 to n do begin
             DocFilter := FilterBuilder.GetFilterChunk(i);
             if not testMode then
@@ -202,15 +240,19 @@ codeunit 57204 "Cashflow Buffers"
 
                 until TEMPDetailedLedger.Next() = 0;
         end;
-        // non grip loop here
+
+        // Delete TEMPbuffer_Bnk that used by above loop (grip)
         TEMPbuffer_Bnk.MarkedOnly := true;
         if TEMPbuffer_Bnk.FindSet() then
             TEMPbuffer_Bnk.DeleteAll();
+
+        // non grip loop here
+        TEMPDetailedLedger.Reset();
         TEMPbuffer_Bnk.Reset();
         if TEMPbuffer_Bnk.FindSet() then
             repeat
                 //TEMPDetailedLedger.SetRange("Is Init", true / false;
-                TEMPDetailedLedger.SetRange("Led_Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start");
+                //TEMPDetailedLedger.SetRange("Led_Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start");
                 CreateCashFlowLine(testMode);
 
             until TEMPbuffer_Bnk.Next() = 0;
@@ -273,24 +315,25 @@ codeunit 57204 "Cashflow Buffers"
         case TEMPbuffer_Bnk."Source Type" of
             TEMPbuffer_Bnk."Source Type"::" ":
                 begin
-                    TEMPDetailedLedger.SetFilter("Vendor Ledger Entry No.", '=%1', 0);
-                    TEMPDetailedLedger.SetFilter("Ledger Entry No.", '=%1', 0);
-
+                    // TEMPDetailedLedger.SetFilter("Vendor Ledger Entry No.", '=%1', 0);
+                    // TEMPDetailedLedger.SetFilter("Ledger Entry No.", '=%1', 0);                    
                 end;
-            TEMPbuffer_Bnk."Source Type"::Customer:
+            TEMPbuffer_Bnk."Source Type"::Customer,
+            TEMPbuffer_Bnk."Source Type"::Vendor:
                 begin
-                    TEMPDetailedLedger.Setrange("Applied Ledger Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start", TEMPbuffer_Bnk."Init LedgerEntryNo End");
+                    //TEMPDetailedLedger.Setrange("Applied Ledger Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start", TEMPbuffer_Bnk."Init LedgerEntryNo End");
+
                     // TEMPDetailedLedger.Setrange("Cle_Account No.", TEMPbuffer_Bnk."Source No.");
                     // TEMPDetailedLedger.FilterGroup(-1);
                     // TEMPDetailedLedger.SetFilter("Cust. Ledger Entry No.", '%1', TEMPbuffer_Bnk."Balance Entry No. End");
                     // TEMPDetailedLedger.SetFilter("Applied Ledger Entry No.", '%1', TEMPbuffer_Bnk."Balance Entry No. Start");
                     // TEMPDetailedLedger.FilterGroup(0);
                 end;
-            TEMPbuffer_Bnk."Source Type"::Vendor:
-                begin
-                    //TEMPDetailedLedger.Setrange("Account No.", TEMPbuffer_Bnk."Source No.");
-                    //TEMPDetailedLedger.Setrange("Target Amount", TEMPbuffer_Bnk."Cashflow Amount");
-                end;
+            // TEMPbuffer_Bnk."Source Type"::Vendor:
+            //     begin
+            //         //TEMPDetailedLedger.Setrange("Account No.", TEMPbuffer_Bnk."Source No.");
+            //         //TEMPDetailedLedger.Setrange("Target Amount", TEMPbuffer_Bnk."Cashflow Amount");
+            //     end;
             else
                 ;
         end;
@@ -302,6 +345,8 @@ codeunit 57204 "Cashflow Buffers"
         //     //else
         //     InsertwithDetailBuffer(testMode);
         // end;
+
+        TEMPDetailedLedger.Setrange("Applied Ledger Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start", TEMPbuffer_Bnk."Init LedgerEntryNo End");
         InsertwithDetailBuffer(testMode);
     end;
 
@@ -313,7 +358,7 @@ codeunit 57204 "Cashflow Buffers"
         Sign: Integer;
     begin
         if not TEMPDetailedLedger.FindSet() then
-            exit;
+            exit; //change exit with cash flow line from bank amount due to no applied entries
         CashFlowLineNo := 0;
         repeat
             if not TEMPDetailedLedger."Is Init" then begin
@@ -476,8 +521,8 @@ codeunit 57204 "Cashflow Buffers"
     // i, n : Integer;
     // GRIPdataOLD: Record "CashFlow Category GRIP Invoice";
     begin
-        TEMPgrip.Reset();
-        TEMPgrip.DeleteAll();
+        // TEMPgrip.Reset();
+        // TEMPgrip.DeleteAll();
         GripQry.SetFilter("Document_No_", DocFilter);
         GripQry.Open();
         while GripQry.Read() do begin
