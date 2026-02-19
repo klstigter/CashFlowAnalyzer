@@ -152,8 +152,12 @@ page 57211 "Cash Entry Postings"
         }
     }
 
+
+
     var
 
         CU: Codeunit MyCodeunit;
+
+
 
 }

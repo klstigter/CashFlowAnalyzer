@@ -162,7 +162,9 @@ codeunit 57204 "Cashflow Buffers"
         FilterBuilder: Codeunit FilterBuilder;
         i, n : Integer;
         DocFilter: Text;
+        testMode: Boolean;
     begin
+        testMode := true;
         DeleteOldAnalyzes();
         CreateCashFlowHeaders();
         FillTEMPCashFlowCategory();
@@ -173,23 +175,38 @@ codeunit 57204 "Cashflow Buffers"
             n := FilterBuilder.BuildEntryNoFilter(TEMPDetailedLedger);
         for i := 1 to n do begin
             DocFilter := FilterBuilder.GetFilterChunk(i);
-            FillTempGrip(DocFilter);
+            if not testMode then
+                FillTempGrip(DocFilter);
             TEMPDetailedLedger.SetFilter("led_Document No.", DocFilter);
             TEMPDetailedLedger.SetFilter("Ledger Entry No.", '<>%1', 0);
             if TEMPDetailedLedger.FindSet() then
                 repeat
-                    //TEMPDetailedLedger.SetRange("Is Init", true / false;
-                    TEMPbuffer_Bnk.SetRange("Init LedgerEntryNo Start", TEMPDetailedLedger."led_Entry No.");
+                    //TEMPDetailedLedger.SetRange("Is Init", true);
+                    TEMPDetailedLedger.SetRange("Init Ledger Entry No.", TEMPDetailedLedger."Init Ledger Entry No.");
+                    TEMPDetailedLedger.FindFirst();
+
+                    if TEMPDetailedLedger."Is Init" then
+                        TEMPbuffer_Bnk.SetRange("Init LedgerEntryNo Start", TEMPDetailedLedger."Init Entry No.")
+                    else
+                        TEMPbuffer_Bnk.SetRange("Init LedgerEntryNo Start", TEMPDetailedLedger."Init Ledger Entry No.");
                     TEMPbuffer_Bnk.FindFirst();
-                    CreateCashFlowLine();
+                    CreateCashFlowLine(testMode);
+
+                    TEMPDetailedLedger.SetRange("Init Ledger Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start");
+                    TEMPDetailedLedger.findlast;
+                    TEMPDetailedLedger.SetRange("Init Ledger Entry No.");
+
+                    TEMPbuffer_Bnk.Delete();
+
+
                 until TEMPDetailedLedger.Next() = 0;
-            TEMPbuffer_Bnk.Delete();
         end;
+        // non grip loop here
         if TEMPbuffer_Bnk.FindSet() then
             repeat
                 //TEMPDetailedLedger.SetRange("Is Init", true / false;
                 TEMPDetailedLedger.SetRange("Led_Entry No.", TEMPbuffer_Bnk."Init LedgerEntryNo Start");
-                CreateCashFlowLine();
+                CreateCashFlowLine(testMode);
 
             until TEMPbuffer_Bnk.Next() = 0;
 
@@ -202,37 +219,17 @@ codeunit 57204 "Cashflow Buffers"
         i, n : Integer;
         analyzeHeader: record "CashFLow Analyze Header";
         analyzeLine: record "Cashflow Analyse Line";
-
-        SelectionFilterMgt: Codeunit SelectionFilterManagement;
-        SelectionFilterMgt_DocFilter: Text;
-        SourceRecRef: RecordRef;
-        TargetRecRef: RecordRef;
     begin
-        // Filters := FilterBuilder.BuildEntryNoFilter(TEMPbuffer_Bnk);
-        // n := Filters.Count();
-        // for i := 1 to n do begin
-        //     analyzeHeader.SetFilter("Entry No.", Filters.Get(i));
-        //     if not analyzeHeader.IsEmpty() then
-        //         analyzeHeader.DeleteAll(false);
-        //     analyzeLine.SetFilter("G/L Entry No.", Filters.Get(i));
-        //     if not analyzeLine.IsEmpty() then
-        //         analyzeLine.DeleteAll(false);
-        // end;
-
-        // Create RecordRefs
-        SourceRecRef.GetTable(TEMPbuffer_Bnk);
-        TargetRecRef.GetTable(TEMPbuffer_Bnk);
-        TargetRecRef.Reset(); // Remove filters from target
-        // Get the filter using CreateFilterFromTempTable
-        SelectionFilterMgt_DocFilter := SelectionFilterMgt.CreateFilterFromTempTable(SourceRecRef, TargetRecRef, TEMPbuffer_Bnk.FieldNo("Entry No."));
-        if SelectionFilterMgt_DocFilter <> '' then begin
-            analyzeHeader.SetFilter("Entry No.", SelectionFilterMgt_DocFilter);
+        Filters := FilterBuilder.BuildEntryNoFilter(TEMPbuffer_Bnk);
+        n := Filters.Count();
+        for i := 1 to n do begin
+            analyzeHeader.SetFilter("Entry No.", Filters.Get(i));
             if not analyzeHeader.IsEmpty() then
                 analyzeHeader.DeleteAll(false);
-            analyzeLine.SetFilter("G/L Entry No.", SelectionFilterMgt_DocFilter);
+            analyzeLine.SetFilter("G/L Entry No.", Filters.Get(i));
             if not analyzeLine.IsEmpty() then
                 analyzeLine.DeleteAll(false);
-        end
+        end;
     end;
 
     local procedure CreateCashFlowHeaders()
@@ -262,7 +259,7 @@ codeunit 57204 "Cashflow Buffers"
             until TEMPbuffer_Bnk.Next() = 0;
     end;
 
-    local procedure CreateCashFlowLine()
+    local procedure CreateCashFlowLine(testMode: Boolean)
     var
         SourceType: enum "Realized Cash Flow Source Type";
         n: Integer;
@@ -292,27 +289,31 @@ codeunit 57204 "Cashflow Buffers"
             else
                 ;
         end;
-        if TEMPDetailedLedger.FindSet() then begin
-            CashFlowLineNo := 0;
+        // if TEMPDetailedLedger.FindSet() then begin
+        //     CashFlowLineNo := 0;
 
-            //if TEMPbuffer_Bnk."Source Type" = TEMPbuffer_Bnk."Source Type"::Customer then
-            //    InsertwithGrip()
-            //else
-            InsertwithDetailBuffer();
-        end;
+        //     //if TEMPbuffer_Bnk."Source Type" = TEMPbuffer_Bnk."Source Type"::Customer then
+        //     //    InsertwithGrip()
+        //     //else
+        //     InsertwithDetailBuffer(testMode);
+        // end;
+        InsertwithDetailBuffer(testMode);
     end;
 
-    local procedure InsertwithDetailBuffer()
+    local procedure InsertwithDetailBuffer(testMode: Boolean)
     var
         CashFlowLine: Record "Cashflow Analyse Line";    //"Realized Cash Flow";
         GLentry: Record "G/L Entry";
         GLaccount: Record "G/L Account";
         Sign: Integer;
     begin
+        if not TEMPDetailedLedger.FindSet() then
+            exit;
+        CashFlowLineNo := 0;
         repeat
             if not TEMPDetailedLedger."Is Init" then begin
                 TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."led_Document No.");
-                if Not TEMPgrip.findset then begin
+                if (Not TEMPgrip.findset) or testMode then begin
                     Sign := -1;
                     GLentry.Get(TEMPbuffer_Bnk."Entry No.");
                     // Bank/Cash Block
