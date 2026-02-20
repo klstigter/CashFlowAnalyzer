@@ -143,7 +143,7 @@ codeunit 57204 "Cashflow Buffers"
             TEMPDetailedLedger_EntryNo += 1;
             TEMPDetailedLedger.Init();
             TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
-            TEMPDetailedLedger."Is Init" := CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo;
+            TEMPDetailedLedger."Is Init" := (CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo) and (CustLedgerEntry.AppliedCustLedEntrNo = 0);
             TEMPDetailedLedger."Init Entry No." := CustLedgerEntry.Init_EntryNo;
             TEMPDetailedLedger."Init Ledger Entry No." := CustLedgerEntry.Init_CustLedgEntryNo;
             TEMPDetailedLedger."Entry No." := CustLedgerEntry.EntryNo;
