@@ -199,6 +199,7 @@ codeunit 57204 "Cashflow Buffers"
         Factor: Decimal;
         CashFlowLine: Record "Cashflow Analyse Line";
         ProcessAmount: Decimal;
+        BalCashFlowLineAmout: Decimal;
     begin
         TEMPbuffer_Bnk.get(AnalyzeHeader."Entry No.");
         CashFlowLine.SetRange("G/L Entry No.", TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
@@ -225,8 +226,13 @@ codeunit 57204 "Cashflow Buffers"
             TEMPDetailedLedger."Birth place" := 'No related ledger entry found';
             InsertDetailedLedBuffer(1, testMode, ProcessAmount);
         end;
-        AnalyzeHeader."Processed Amount" := ProcessAmount;
-        //AnalyzeHeader.Modify();
+        //LAGI: AnalyzeHeader."Processed Amount" := ProcessAmount;
+        BalCashFlowLineAmout := AnalyzeHeader."Amount" - ProcessAmount;
+        if BalCashFlowLineAmout > 0 then begin
+            TEMPDetailedLedger."Birth place" := 'Remaining Balance';
+            TEMPDetailedLedger."Amount" := BalCashFlowLineAmout;
+            InsertRemainingBalance(ProcessAmount);
+        end;
     end;
 
     procedure CreateAnalyze()
@@ -239,6 +245,7 @@ codeunit 57204 "Cashflow Buffers"
         ProcessAmount: Decimal;
         t1, t2 : time;
         Log: Record "Log Cashflow Analyzer";
+        BalCashFlowLineAmout: Decimal;
     begin
         testMode := false; // ************* Test mode, true = exclude grip
         DeleteOldAnalyzes();
@@ -269,8 +276,14 @@ codeunit 57204 "Cashflow Buffers"
                     TEMPDetailedLedger."Birth place" := 'No related ledger entry found';
                     InsertDetailedLedBuffer(1, testMode, ProcessAmount);
                 end;
-                AnalyzeHeader."Processed Amount" := ProcessAmount;
-                //AnalyzeHeader.Modify();
+                //LAGI: AnalyzeHeader."Processed Amount" := ProcessAmount;
+                BalCashFlowLineAmout := AnalyzeHeader."Amount" - ProcessAmount;
+                if BalCashFlowLineAmout > 0 then begin
+                    TEMPDetailedLedger."Birth place" := 'Remaining Balance';
+                    TEMPDetailedLedger."Amount" := BalCashFlowLineAmout;
+                    InsertRemainingBalance(ProcessAmount);
+                end;
+
                 n += 1;
                 if n mod 100 = 0 then begin
                     t2 := time();
@@ -328,6 +341,44 @@ codeunit 57204 "Cashflow Buffers"
             until TEMPbuffer_Bnk.Next() = 0;
     end;
 
+    local procedure InsertRemainingBalance(var ProcessAmount: Decimal);
+    var
+        CashFlowLine: Record "Cashflow Analyse Line";    //"Realized Cash Flow";
+        GLentry: Record "G/L Entry";
+        GLaccount: Record "G/L Account";
+        Sign: Integer;
+        factor: Decimal;
+    begin
+        factor := 1;
+        Sign := 1;
+        CashFlowLineNo += 1;
+        CashFlowLine."G/L Entry No." := TEMPbuffer_Bnk."Gl_EntryNo_Bnk";
+        CashFlowLine."Entry Line No." := CashFlowLineNo;
+        // Bank/Cash Block
+        GLentry.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
+        CashFlowLine."Posting Date" := GLentry."Posting Date";
+        CashFlowLine."Dimension Set ID" := GLentry."Dimension Set ID";
+        CashFlowLine."Global Dimension 1 Code" := GLentry."Global Dimension 1 Code";
+        CashFlowLine."Global Dimension 2 Code" := GLentry."Global Dimension 2 Code";
+
+
+        // Realized block
+        CashFlowLine."G/L Account" := GLentry."G/L Account No.";
+        CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
+        CashFlowLine."Cash Flow Category Amount" := round(Sign * TEMPDetailedLedger."Amount" * factor, 0.001);
+        ProcessAmount += CashFlowLine."Cash Flow Category Amount";
+
+        CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::GLEntry;
+        CashFlowLine."Applied Document No." := '';
+        CashFlowLine."Applied Document Entry No." := 0;
+        CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"G/L Ledger Entry";
+        CashFlowLine.Validate("Dimension Set ID", TEMPDetailedLedger."Led_Dimension Set ID");
+        CashFlowLine."Transaction No." := 0;
+        CashFlowLine."Place of Birth" := TEMPDetailedLedger."Birth place";
+        if CashFlowLine."Place of Birth" <> '' then
+            CashFlowLine."Amount to Analyze" := round(Sign * TEMPDetailedLedger."Amount" * factor, 0.001);
+        CashFlowLine.Insert();
+    end;
 
     local procedure InsertDetailedLedBuffer(factor: Decimal; testMode: Boolean; var ProcessAmount: Decimal);
     var
