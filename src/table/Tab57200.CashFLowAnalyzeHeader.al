@@ -96,6 +96,11 @@ table 57200 "CashFLow Analyze Header"
             FieldClass = FlowField;
             CalcFormula = sum("Cashflow Analyse Line"."Amount to Analyze" where("G/L Entry No." = field("Entry No.")));
         }
+        field(70; "Processed Amount"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
     }
 
     keys

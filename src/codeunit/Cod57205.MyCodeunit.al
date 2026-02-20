@@ -31,7 +31,7 @@ codeunit 57205 MyCodeunit
         TransActionBuffer.CreateAnalyze();
     end;
 
-    procedure CreateAnalyze(AnalyzeHder: Record "CashFLow Analyze Header");
+    procedure CreateAnalyze(var AnalyzeHder: Record "CashFLow Analyze Header");
     begin
         TransActionBuffer.CreateAnalyze(AnalyzeHder);
     end;

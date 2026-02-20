@@ -193,11 +193,12 @@ codeunit 57204 "Cashflow Buffers"
         end;
     end;
 
-    procedure CreateAnalyze(AnalyzeHeader: Record "CashFLow Analyze Header")
+    procedure CreateAnalyze(var AnalyzeHeader: Record "CashFLow Analyze Header")
     var
         testMode: Boolean;
         Factor: Decimal;
         CashFlowLine: Record "Cashflow Analyse Line";
+        ProcessAmount: Decimal;
     begin
         TEMPbuffer_Bnk.get(AnalyzeHeader."Entry No.");
         CashFlowLineNo := 0;
@@ -213,26 +214,30 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPgrip.DeleteAll();
                 IF FillTempGrip(TEMPDetailedLedger."led_Document No.") THEN
                     //TODO:Amount process as return value
-                    InsertGrip(factor, testMode)
+                    InsertGrip(factor, testMode, ProcessAmount)
                 ELSE
                     //TODO:Amount process as return value
-                    InsertDetailedLedBuffer(factor, testMode);
+                    InsertDetailedLedBuffer(factor, testMode, ProcessAmount);
             until TEMPDetailedLedger.Next() = 0;
         end else begin
             //ToDo: Rest amount also insert
             FillDetCustLedgBuffer(TEMPbuffer_Bnk."GL_EntryNo Start");
             TEMPDetailedLedger."Birth place" := 'No related ledger entry found';
-            InsertDetailedLedBuffer(1, testMode);
+            InsertDetailedLedBuffer(1, testMode, ProcessAmount);
         end;
+        AnalyzeHeader."Processed Amount" := ProcessAmount;
+        AnalyzeHeader.Modify();
     end;
 
     procedure CreateAnalyze()
     var
+        AnalyzeHeader: Record "CashFLow Analyze Header";
         testMode: Boolean;
         Factor: Decimal;
         n: Integer;
         ProgressDlg: Dialog;
         Counter: Integer;
+        ProcessAmount: Decimal;
     begin
         testMode := false; // ************* Test mode, true = exclude grip
         DeleteOldAnalyzes();
@@ -242,6 +247,8 @@ codeunit 57204 "Cashflow Buffers"
         if TEMPbuffer_Bnk.FindSet() then
             repeat
                 CashFlowLineNo := 0;
+                ProcessAmount := 0;
+                AnalyzeHeader.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
                 TEMPDetailedLedger.Reset();
                 TEMPDetailedLedger.setrange("Is Init", false);
                 TEMPDetailedLedger.SetRange("Init Ledger Entry No.", TEMPbuffer_Bnk."GL_EntryNo Start");
@@ -251,15 +258,17 @@ codeunit 57204 "Cashflow Buffers"
                         factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
                         TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."led_Document No.");
                         IF TEMPgrip.FindSet() THEN
-                            InsertGrip(factor, testMode)
+                            InsertGrip(factor, testMode, ProcessAmount)
                         ELSE
-                            InsertDetailedLedBuffer(factor, testMode);
+                            InsertDetailedLedBuffer(factor, testMode, ProcessAmount);
                     until TEMPDetailedLedger.Next() = 0;
                 end else begin
                     FillDetCustLedgBuffer(TEMPbuffer_Bnk."GL_EntryNo Start");
                     TEMPDetailedLedger."Birth place" := 'No related ledger entry found';
-                    InsertDetailedLedBuffer(1, testMode);
+                    InsertDetailedLedBuffer(1, testMode, ProcessAmount);
                 end;
+                AnalyzeHeader."Processed Amount" := ProcessAmount;
+                AnalyzeHeader.Modify();
             //n += 1;
             //ProgressDlg.Update(1, n);
             until (TEMPbuffer_Bnk.Next() = 0) or (n = 1000);
@@ -314,7 +323,7 @@ codeunit 57204 "Cashflow Buffers"
     end;
 
 
-    local procedure InsertDetailedLedBuffer(factor: Decimal; testMode: Boolean);
+    local procedure InsertDetailedLedBuffer(factor: Decimal; testMode: Boolean; var ProcessAmount: Decimal);
     var
         CashFlowLine: Record "Cashflow Analyse Line";    //"Realized Cash Flow";
         GLentry: Record "G/L Entry";
@@ -337,6 +346,7 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine."G/L Account" := GLentry."G/L Account No.";
         CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
         CashFlowLine."Cash Flow Category Amount" := round(Sign * TEMPDetailedLedger."Amount" * factor, 0.001);
+        ProcessAmount += CashFlowLine."Cash Flow Category Amount";
 
         case TEMPDetailedLedger."led_Document Type" of
             TEMPDetailedLedger."led_Document Type"::Invoice:
@@ -364,7 +374,7 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine.Insert();
     end;
 
-    local procedure InsertGrip(Factor: Decimal; testMode: Boolean);
+    local procedure InsertGrip(Factor: Decimal; testMode: Boolean; var ProcessAmount: Decimal);
     var
         CashFlowLine: Record "Cashflow Analyse Line";    //"Realized Cash Flow";
         GLaccount: Record "G/L Account";
@@ -391,6 +401,7 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."G/L Account" := TEMPgrip."G/L Account";
                 CashFlowLine."Cash Flow Category" := GetCashFlowCategory(CashFlowLine."G/L Account", CashFlowLine."Posting Date");
                 CashFlowLine."Cash Flow Category Amount" := round(TEMPgrip.Amount * Factor, 0.001);
+                ProcessAmount += CashFlowLine."Cash Flow Category Amount";
                 CashFlowLine."Applied Document Type" := CashFlowLine."Applied Document Type"::Invoice;
                 CashFlowLine."Applied Document No." := TEMPgrip."Document No.";
                 CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
