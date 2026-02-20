@@ -41,6 +41,13 @@ pageextension 57200 "Business Mngr Role Ext" extends "Business Manager Role Cent
                         RunObject = Page "GRIP Invoice data";
                         ToolTip = 'Review the history of your cash flow analyses to track changes and monitor trends in your company''s cash position over time.';
                     }
+                    action(log)
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Caption = 'Creation Log';
+                        RunObject = Page "Log Cashflow Analyzer";
+                        ToolTip = 'Review the log of cash flow analysis creation to track performance and identify any issues during the analysis process.';
+                    }
                 }
                 group(AnalyzerSetup)
                 {

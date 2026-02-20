@@ -46,7 +46,7 @@
             "type": "al",
             "environmentType": "Sandbox",
             "environmentName": "woonzorgtest",
-            "sessionId": 366369,
+            "sessionId": 508402,
             "breakOnNext": "WebClient",
             "breakOnError": "ExcludeTry",
             "tenant": "563ae06e-997e-424b-abcf-963949afe7ae"

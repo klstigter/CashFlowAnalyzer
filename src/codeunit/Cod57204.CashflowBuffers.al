@@ -201,14 +201,14 @@ codeunit 57204 "Cashflow Buffers"
         ProcessAmount: Decimal;
     begin
         TEMPbuffer_Bnk.get(AnalyzeHeader."Entry No.");
+        CashFlowLine.SetRange("G/L Entry No.", TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
+        CashFlowLine.DeleteAll();
         CashFlowLineNo := 0;
         TEMPDetailedLedger.Reset();
         TEMPDetailedLedger.setrange("Is Init", false);
         TEMPDetailedLedger.SetRange("Init Ledger Entry No.", TEMPbuffer_Bnk."GL_EntryNo Start");
         TEMPDetailedLedger.SetFilter(Amount, '<>%1', 0);
         IF TEMPDetailedLedger.FindSet() THEN begin
-            CashFlowLine.SetRange("G/L Entry No.", TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
-            CashFlowLine.DeleteAll();
             repeat
                 factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
                 TEMPgrip.DeleteAll();
@@ -226,7 +226,7 @@ codeunit 57204 "Cashflow Buffers"
             InsertDetailedLedBuffer(1, testMode, ProcessAmount);
         end;
         AnalyzeHeader."Processed Amount" := ProcessAmount;
-        AnalyzeHeader.Modify();
+        //AnalyzeHeader.Modify();
     end;
 
     procedure CreateAnalyze()
@@ -236,13 +236,15 @@ codeunit 57204 "Cashflow Buffers"
         Factor: Decimal;
         n: Integer;
         ProgressDlg: Dialog;
-        Counter: Integer;
         ProcessAmount: Decimal;
+        t1, t2 : time;
+        Log: Record "Log Cashflow Analyzer";
     begin
         testMode := false; // ************* Test mode, true = exclude grip
         DeleteOldAnalyzes();
         CreateCashFlowHeaders();
         //ProgressDlg.Open('Processing #1####');
+        t1 := Time();
         TEMPbuffer_Bnk.Reset();
         if TEMPbuffer_Bnk.FindSet() then
             repeat
@@ -268,10 +270,14 @@ codeunit 57204 "Cashflow Buffers"
                     InsertDetailedLedBuffer(1, testMode, ProcessAmount);
                 end;
                 AnalyzeHeader."Processed Amount" := ProcessAmount;
-                AnalyzeHeader.Modify();
-            //n += 1;
+                //AnalyzeHeader.Modify();
+                n += 1;
+                if n mod 100 = 0 then begin
+                    t2 := time();
+                    log.CreateLog(n, t1, t2, '');
+                end;
             //ProgressDlg.Update(1, n);
-            until (TEMPbuffer_Bnk.Next() = 0) or (n = 1000);
+            until (TEMPbuffer_Bnk.Next() = 0); // or (n = 1000);
         //ProgressDlg.Close();
     end;
 

@@ -9,6 +9,7 @@ table 57207 "Log Cashflow Analyzer"
         {
             Caption = 'Entry No.';
             DataClassification = SystemMetadata;
+            AutoIncrement = true;
         }
 
         field(2; "User ID"; Code[50])
@@ -65,9 +66,11 @@ table 57207 "Log Cashflow Analyzer"
         { }
         field(13; "Company"; Text[30])
         { }
-
+        field(14; "Comment"; Text[50])
+        {
+            Caption = 'Source No.';
+        }
     }
-
     keys
     {
         key(PK; "Entry No.")
@@ -128,4 +131,21 @@ table 57207 "Log Cashflow Analyzer"
         exit(StrFmt);
     end;
 
+    procedure createLog(Counter: Integer; t1: time; t2: time; Comment: Text)
+    var
+        Log: Record "Log Cashflow Analyzer";
+    begin
+        log.init;
+        log."User ID" := UserId();
+        log."Start Time" := t1;
+        log."End Time" := t2;
+        log."Total Time" := t2 - t1;
+        log."Source Line Counter" := Counter;
+        log."Vendor Flow" := 0;
+        log."Customer Flow" := 0;
+        log."Bank Flow" := 0;
+        log.Comment := Comment;
+        log.Insert();
+        commit;
+    end;
 }
