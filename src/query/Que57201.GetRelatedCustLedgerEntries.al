@@ -33,7 +33,7 @@ query 57201 GetRelatedCustLedgerEntries
 
                 dataitem(CustLedger; "Cust. Ledger Entry")
                 {
-                    DataItemLink = "Entry No." = DetNotInit."Cust. Ledger Entry No.";
+                    DataItemLink = "Entry No." = DetNotInit."Applied Cust. Ledger Entry No.";
                     column(Cle_EntryNo; "Entry No.")
                     {
                     }
