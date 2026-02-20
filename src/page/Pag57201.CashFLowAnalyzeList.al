@@ -58,6 +58,11 @@ page 57201 "CashFLow Analyze List"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the amount.';
                 }
+                field("Processed Amount"; Rec."Processed Amount")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the processed amount for cash flow analysis.';
+                }
                 field("Analyse Type"; Rec."Analyse Type")
                 {
                     ApplicationArea = All;
