@@ -43,25 +43,22 @@ page 57201 "CashFLow Analyze List"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the description.';
                 }
-                field("Cashflow to Analyze"; Rec."Cashflow to Analyze")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the amount to analyze.';
-                }
-                field("Cashflow Amount"; Rec."Cashflow Amount")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the cash flow amount.';
-                }
                 field(Amount; Rec.Amount)
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the amount.';
                 }
-                field("Processed Amount"; Rec."Processed Amount")
+                field("Cashflow Category Amount"; Rec."Cashflow Category Amount")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the processed amount for cash flow analysis.';
+                    ToolTip = 'Specifies the cash flow amount.';
+                    Visible = true;
+                }
+                field("Cashflow to Analyze"; Rec."Cashflow to Analyze")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the amount to analyze.';
+                    Visible = true;
                 }
                 field("Analyse Type"; Rec."Analyse Type")
                 {
@@ -95,22 +92,25 @@ page 57201 "CashFLow Analyze List"
     {
         area(Navigation)
         {
-            action(ShowDetailedLedgers)
+            action("Find Entries")
             {
-                ApplicationArea = Basic, Suite;
-                Caption = 'Show Detailed Ledgers';
+                ApplicationArea = All;
+                CaptionML = ENU = 'Find Entries', NLD = 'Posten zoeken';
+                Image = Navigate;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                ToolTipML = ENU = 'Find related entries for the selected document number.', NLD = 'Zoek gerelateerde posten voor het geselecteerde documentnummer.';
 
                 trigger OnAction()
                 var
-                    DetCustLedgEntries: page "Detailed Cust. Ledg. Entries";
-                    DetCustLedgEntry: Record "Detailed Cust. Ledg. Entry";
+                    Navigate: Page Navigate;
                 begin
-
-                    DetCustLedgEntry.SetRange("Customer No.", Rec."Source No.");
-                    DetCustLedgEntries.SetTableView(DetCustLedgEntry);
-                    DetCustLedgEntries.Run();
+                    Navigate.SetDoc(Rec."Posting Date", Rec."Document No.");
+                    Navigate.Run();
                 end;
             }
+
             action(ShowGlEntries)
             {
                 ApplicationArea = Basic, Suite;
@@ -127,11 +127,62 @@ page 57201 "CashFLow Analyze List"
                     GLEntriesPage.Run();
                 end;
             }
+            action(ShowDetailedLedgers)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show Detailed Ledgers';
+
+                trigger OnAction()
+                var
+                    DetCustLedgEntries: page "Detailed Cust. Ledg. Entries";
+                    DetCustLedgEntry: Record "Detailed Cust. Ledg. Entry";
+                    DetVendLedgEntries: page "Detailed Vendor Ledg. Entries";
+                    DetVendLedgEntry: Record "Detailed Vendor Ledg. Entry";
+                begin
+                    case rec."Source Type" of
+                        rec."Source Type"::Customer:
+                            begin
+                                DetCustLedgEntry.SetRange("Customer No.", Rec."Source No.");
+                                DetCustLedgEntries.SetTableView(DetCustLedgEntry);
+                                DetCustLedgEntries.Run();
+                            end;
+                        rec."Source Type"::Vendor:
+                            begin
+                                DetVendLedgEntry.SetRange("Vendor No.", Rec."Source No.");
+                                DetVendLedgEntries.SetTableView(DetVendLedgEntry);
+                                DetVendLedgEntries.Run();
+                            end;
+
+                    end;
+                end;
+            }
         }
         area(Processing)
         {
             group("Create Cash Flow Entries")
             {
+
+                action(ShowTransactionBUfferPage)
+                {
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Show Transaction Buffer Page';
+
+                    trigger OnAction()
+                    begin
+                        cu.ShowTransactionBufferPage();
+                    end;
+                }
+                action(ShowDetailedLedgerPage)
+                {
+                    ApplicationArea = Basic, Suite;
+                    Caption = 'Show Detailed Ledger Page';
+
+                    trigger OnAction()
+                    begin
+                        cu.ShowDetailedLedgerPage();
+                    end;
+                }
+
                 action(FillDetailelLedgerBuffer)
                 {
                     ApplicationArea = Basic, Suite;
@@ -157,26 +208,6 @@ page 57201 "CashFLow Analyze List"
                             Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
                         end else
                             Message('No data fetched for the selected record.');
-                    end;
-                }
-                action(ShowDetailedLedgerPage)
-                {
-                    ApplicationArea = Basic, Suite;
-                    Caption = 'Show Detailed Ledger Page';
-
-                    trigger OnAction()
-                    begin
-                        cu.ShowDetailedLedgerPage();
-                    end;
-                }
-                action(ShowTransactionBUfferPage)
-                {
-                    ApplicationArea = Basic, Suite;
-                    Caption = 'Show Transaction Buffer Page';
-
-                    trigger OnAction()
-                    begin
-                        cu.ShowTransactionBufferPage();
                     end;
                 }
                 action(runMyCodeunit)

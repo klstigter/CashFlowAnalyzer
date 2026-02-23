@@ -11,8 +11,10 @@ codeunit 57205 MyCodeunit
     begin
         TransActionBuffer.DeleteDetailedLedger();
         FilterTxt := TransActionBuffer.FillBuffer(Rec);
-        TransActionBuffer.FillDetCustLedgBuffer(Rec, FilterTxt);
-        TransActionBuffer.FillDetVendorLedgBuffer(Rec, FilterTxt);
+        TransActionBuffer.FillDetCustLedgBuffer1(Rec, FilterTxt);
+        TransActionBuffer.FillDetCustLedgBuffer2(Rec, FilterTxt);
+        //TransActionBuffer.FillDetVendorLedgBuffer1(Rec, FilterTxt);
+        TransActionBuffer.FillDetVendorLedgBuffer2(Rec, FilterTxt);
         TransActionBuffer.FillTEMPCashFlowCategory();
         exit(true);
     end;

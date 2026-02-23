@@ -23,13 +23,15 @@ table 57209 "Cash Entry Posting No."
         {
             DataClassification = ToBeClassified;
         }
-        field(40; "Debit Amount"; Decimal)
+        field(40; "Cash Flow Category Amount"; Decimal)
         {
-            DataClassification = ToBeClassified;
+            FieldClass = FlowField;
+            CalcFormula = Sum("Cashflow Analyse Line"."Cash Flow Category Amount" where("Posting Date" = field("Posting Date"), "Document No." = field("Document No.")));
         }
-        field(45; "Credit Amount"; Decimal)
+        field(45; "Amount to Analyze"; Decimal)
         {
-            DataClassification = ToBeClassified;
+            fieldClass = FlowField;
+            CalcFormula = Sum("Cashflow Analyse Line"."Amount to Analyze" where("Posting Date" = field("Posting Date"), "Document No." = field("Document No.")));
         }
         field(50; "Journal Templ. Name"; Code[10])
         {

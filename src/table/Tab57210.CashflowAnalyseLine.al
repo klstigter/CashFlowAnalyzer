@@ -21,9 +21,19 @@ table 57210 "Cashflow Analyse Line"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Is Grip', NLD = 'Is Grip';
         }
-        field(9; "Posting Date"; Date)
+        field(6; "Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Document No.', NLD = 'Documentnr.';
+        }
+        field(7; "Posting Date"; Date)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(9; "Applied Posting Date"; Date)
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Applied Posting Date', NLD = 'Vereffende boekingsdatum';
         }
         field(10; "Applied Document Entry No."; Integer)
         {
@@ -207,7 +217,6 @@ table 57210 "Cashflow Analyse Line"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Amount to Analyze', NLD = 'Bedrag te analyseren';
         }
-
     }
 
     keys
@@ -215,7 +224,8 @@ table 57210 "Cashflow Analyse Line"
         key(Key1; "G/L Entry No.", "Entry Line No.")
         {
             Clustered = true;
-            SumIndexFields = "Cash Flow Category Amount";
+            SumIndexFields = "Cash Flow Category Amount",
+                             "Amount to Analyze";
         }
 
     }

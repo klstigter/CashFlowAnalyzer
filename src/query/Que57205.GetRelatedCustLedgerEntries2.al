@@ -1,4 +1,4 @@
-query 57201 GetRelatedCustLedgerEntries
+query 57205 GetRelatedCustLedgerEntries2
 {
     QueryType = Normal;
 
@@ -34,36 +34,18 @@ query 57201 GetRelatedCustLedgerEntries
                 dataitem(CustLedger; "Cust. Ledger Entry")
                 {
                     DataItemLink = "Entry No." = DetNotInit."Applied Cust. Ledger Entry No.";
-                    column(Cle_EntryNo; "Entry No.")
-                    {
-                    }
-                    column(Cle_DocType; "Document Type")
-                    {
-                    }
-                    column(Cle_DocNo; "Document No.")
-                    {
-                    }
-                    column(Cle_PostingDate; "Posting Date")
-                    {
-                    }
-                    column(Cle_AccountNo; "Customer No.")
-                    {
-                    }
-                    column(Cle_Amount; Amount)
-                    {
-                    }
-                    Column(Cle_Dimension_Set_ID; "Dimension Set ID")
-                    {
-                    }
+                    //DataItemTableFilter = "Document Type" = filter(<> Payment & <> Refund);
+                    column(Cle_EntryNo; "Entry No.") { }
+                    column(Cle_DocType; "Document Type") { }
+                    column(Cle_DocNo; "Document No.") { }
+                    column(Cle_PostingDate; "Posting Date") { }
+                    column(Cle_AccountNo; "Customer No.") { }
+                    column(Cle_Amount; Amount) { }
+                    Column(Cle_Dimension_Set_ID; "Dimension Set ID") { }
                 }
             }
         }
     }
 
-
-    trigger OnBeforeOpen()
-    begin
-
-    end;
 }
 

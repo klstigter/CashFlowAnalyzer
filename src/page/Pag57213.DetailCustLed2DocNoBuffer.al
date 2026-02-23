@@ -91,6 +91,10 @@ page 57213 "DetailedLedger2DocNo Buffer"
                 {
                     ToolTip = 'Specifies the value of the Dimension Set ID field.', Comment = '%';
                 }
+                field("Query Nr."; Rec."Query Nr.")
+                {
+                    ToolTip = 'Specifies the value of the Query Nr. field.', Comment = '%';
+                }
 
             }
         }

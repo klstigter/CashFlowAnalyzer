@@ -33,15 +33,27 @@ page 57202 "CashFlow Analyze Card"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the description.';
                 }
-                field(Amount; Rec.Amount)
+                group(Amounts)
                 {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the amount.';
-                }
-                field("Processed Amount"; Rec."Processed Amount")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the processed amount for cash flow analysis.';
+                    Caption = 'Cash Flow Analysis';
+                    ShowCaption = false;
+                    field(Amount; Rec.Amount)
+                    {
+                        ApplicationArea = All;
+                        ToolTip = 'Specifies the amount.';
+                    }
+
+                    field("Cashflow CategoryAmount"; Rec."Cashflow Category Amount")
+                    {
+                        ApplicationArea = All;
+                        ToolTip = 'Specifies the cash flow amount.';
+                    }
+                    field("Cashflow to Analyze"; Rec."Cashflow to Analyze")
+                    {
+                        ApplicationArea = All;
+                        ToolTip = 'Specifies the amount to analyze.';
+                    }
+
                 }
                 field("Analyse Type"; Rec."Analyse Type")
                 {
@@ -69,16 +81,27 @@ page 57202 "CashFlow Analyze Card"
 
     actions
     {
-        area(Processing)
+        area(Navigation)
         {
-            action(ActionName)
+            action("Find Entries")
             {
+                ApplicationArea = All;
+                CaptionML = ENU = 'Find Entries', NLD = 'Posten zoeken';
+                Image = Navigate;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                ToolTipML = ENU = 'Find related entries for the selected document number.', NLD = 'Zoek gerelateerde posten voor het geselecteerde documentnummer.';
 
                 trigger OnAction()
+                var
+                    Navigate: Page Navigate;
                 begin
-
+                    Navigate.SetDoc(Rec."Posting Date", Rec."Document No.");
+                    Navigate.Run();
                 end;
             }
+
         }
     }
 

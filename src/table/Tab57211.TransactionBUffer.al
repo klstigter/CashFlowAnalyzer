@@ -94,8 +94,10 @@ table 57211 "Transaction Buffer"
         {
             DataClassification = ToBeClassified;
         }
-
-
+        field(33; "Dimension Set ID"; Integer)
+        {
+            DataClassification = ToBeClassified;
+        }
     }
 
     keys

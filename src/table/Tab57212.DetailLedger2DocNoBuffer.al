@@ -90,6 +90,10 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        Field(91; "Query Nr."; Integer)
+        {
+            DataClassification = ToBeClassified;
+        }
 
     }
 

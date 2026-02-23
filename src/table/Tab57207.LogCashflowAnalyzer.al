@@ -137,6 +137,7 @@ table 57207 "Log Cashflow Analyzer"
     begin
         log.init;
         log."User ID" := UserId();
+        Log."Created DateTime" := CurrentDateTime();
         log."Start Time" := t1;
         log."End Time" := t2;
         log."Total Time" := t2 - t1;

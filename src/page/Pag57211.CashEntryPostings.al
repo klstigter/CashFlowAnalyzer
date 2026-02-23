@@ -42,11 +42,11 @@ page 57211 "Cash Entry Postings"
                 {
                     ToolTip = 'Specifies the value of the Journal Batch Name field.', Comment = '%';
                 }
-                field("Debit Amount"; Rec."Debit Amount")
+                field("Amount to Analyze"; Rec."Amount to Analyze")
                 {
                     ToolTip = 'Specifies the debit amount.';
                 }
-                field("Credit Amount"; Rec."Credit Amount")
+                field("Cash Flow Category Amount"; Rec."Cash Flow Category Amount")
                 {
                     ToolTip = 'Specifies the credit amount.';
                 }
@@ -81,13 +81,10 @@ page 57211 "Cash Entry Postings"
                 Caption = 'Step 1: Get list from G/L Entry';
                 RunObject = Codeunit CreateCashEntryPostingNoList;
             }
-            action(runMyCodeunit)
+            action(runFilbuffers)
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Step 2: Fetch data in ALL buffers, also GRIP';
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedIsBig = true;
 
                 trigger OnAction()
                 var
@@ -108,9 +105,7 @@ page 57211 "Cash Entry Postings"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Step 3: Create Analyze Lines (buffer must be filled first)';
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedIsBig = true;
+
 
                 trigger OnAction()
                 var
@@ -156,8 +151,28 @@ page 57211 "Cash Entry Postings"
             }
 
         }
-        area(Reporting)
+        area(Navigation)
         {
+            action("Find Entries")
+            {
+                ApplicationArea = All;
+                CaptionML = ENU = 'Find Entries', NLD = 'Posten zoeken';
+                Image = Navigate;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                ToolTipML = ENU = 'Find related entries for the selected document number.', NLD = 'Zoek gerelateerde posten voor het geselecteerde documentnummer.';
+
+                trigger OnAction()
+                var
+                    Navigate: Page Navigate;
+                begin
+                    Navigate.SetDoc(Rec."Posting Date", Rec."Document No.");
+                    Navigate.Run();
+                end;
+            }
+
+
             action(ShowtransactionBUfferPage)
             {
                 ApplicationArea = Basic, Suite;
@@ -179,13 +194,7 @@ page 57211 "Cash Entry Postings"
                     Cu.ShowDetailedLedgerPage();
                 end;
             }
-            action(AnalyzeCardPage)
-            {
-                ApplicationArea = Basic, Suite;
-                Caption = 'Analyze Card';
-                RunPageLink = "Document No." = field("Document No.");
-                RunObject = Page "CashFlow Analyze Card";
-            }
+
             action(AnalyzeListPage)
             {
                 ApplicationArea = Basic, Suite;

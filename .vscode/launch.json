@@ -34,6 +34,8 @@
             "tenant": "563ae06e-997e-424b-abcf-963949afe7ae",
             "environmentType": "Sandbox",
             "environmentName": "woonzorgtest",
+            "startupObjectType": "Page",
+            "startupObjectId": 57201,
             "breakOnError": true,
             "launchBrowser": true,
             "enableLongRunningSqlStatements": true,
@@ -46,7 +48,7 @@
             "type": "al",
             "environmentType": "Sandbox",
             "environmentName": "woonzorgtest",
-            "sessionId": 1620556,
+            "sessionId": 1836322,
             "breakOnNext": "WebClient",
             "breakOnError": "ExcludeTry",
             "tenant": "563ae06e-997e-424b-abcf-963949afe7ae"
