@@ -13,6 +13,8 @@ query 57207 GetRelatedVendLedgerEntries2
             filter(PostingDateFilter; "Posting Date") { }
             column(Init_EntryNo; "Entry No.") { }
             column(Init_VendLedgEntryNo; "Vendor Ledger Entry No.") { }
+            column(Init_PostingDate; "Posting Date") { }
+            column(init_DocumentNo; "Document No.") { }
             dataitem(DetNotInit; "Detailed Vendor Ledg. Entry")
             {
                 DataItemTableFilter = "Entry Type" = filter(<> "Initial Entry");

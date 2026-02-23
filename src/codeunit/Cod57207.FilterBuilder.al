@@ -117,10 +117,12 @@ codeunit 57207 FilterBuilder
         if StrLen(Candidate) <= 1024 then
             CurrChunk := Candidate
         else begin
-            i += 1;
-            Chunks.Add(CurrChunk);
+            // i += 1;
+            // Chunks.Add(CurrChunk);
             CurrChunk := SingleRngFilter;
         end;
+        i += 1;
+        Chunks.Add(CurrChunk);
     end;
 }
 
