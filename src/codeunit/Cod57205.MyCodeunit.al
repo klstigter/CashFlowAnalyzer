@@ -13,7 +13,7 @@ codeunit 57205 MyCodeunit
         FilterTxt := TransActionBuffer.FillBuffer(Rec);
         TransActionBuffer.FillDetCustLedgBuffer1(Rec, FilterTxt);
         TransActionBuffer.FillDetCustLedgBuffer2(Rec, FilterTxt);
-        //TransActionBuffer.FillDetVendorLedgBuffer1(Rec, FilterTxt);
+        TransActionBuffer.FillDetVendorLedgBuffer1(Rec, FilterTxt);
         TransActionBuffer.FillDetVendorLedgBuffer2(Rec, FilterTxt);
         TransActionBuffer.FillTEMPCashFlowCategory();
         exit(true);
