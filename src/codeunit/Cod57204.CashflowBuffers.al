@@ -178,8 +178,6 @@ codeunit 57204 "Cashflow Buffers"
 
         CustLedgerEntry.Open();
         while CustLedgerEntry.Read() do begin
-            //if ((CustLedgerEntry.init_DocumentNo <> CustLedgerEntry.DocumentNo)
-            //    or (CustLedgerEntry.Init_PostingDate <> CustLedgerEntry.PostingDate))
             if (CustLedgerEntry.CustLedgEntryNo = CustLedgerEntry.Init_CustLedgEntryNo)
                 and (CustLedgerEntry.AppliedCustLedEntrNo <> CustLedgerEntry.CustLedgEntryNo)
 
