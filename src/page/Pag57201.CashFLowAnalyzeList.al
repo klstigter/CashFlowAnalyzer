@@ -156,6 +156,35 @@ page 57201 "CashFLow Analyze List"
                     end;
                 end;
             }
+            action(ShowLedgers)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show Ledgers';
+
+                trigger OnAction()
+                var
+                    CustLedgerEntries: page "Customer Ledger Entries";
+                    CustLedgerEntry: Record "Cust. Ledger Entry";
+                    VendLedgerEntries: page "Vendor Ledger Entries";
+                    VendLedgerEntry: Record "Vendor Ledger Entry";
+                begin
+                    case rec."Source Type" of
+                        rec."Source Type"::Customer:
+                            begin
+                                CustLedgerEntry.SetRange("Customer No.", Rec."Source No.");
+                                CustLedgerEntries.SetTableView(CustLedgerEntry);
+                                CustLedgerEntries.Run();
+                            end;
+                        rec."Source Type"::Vendor:
+                            begin
+                                VendLedgerEntry.SetRange("Vendor No.", Rec."Source No.");
+                                VendLedgerEntries.SetTableView(VendLedgerEntry);
+                                VendLedgerEntries.Run();
+                            end;
+
+                    end;
+                end;
+            }
         }
         area(Processing)
         {

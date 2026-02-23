@@ -35,7 +35,7 @@
             "environmentType": "Sandbox",
             "environmentName": "woonzorgtest",
             "startupObjectType": "Page",
-            "startupObjectId": 57201,
+            "startupObjectId": 57211,
             "breakOnError": true,
             "launchBrowser": true,
             "enableLongRunningSqlStatements": true,

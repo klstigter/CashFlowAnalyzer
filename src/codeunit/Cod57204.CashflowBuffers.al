@@ -35,11 +35,9 @@ codeunit 57204 "Cashflow Buffers"
         page.Run(Page::"Transaction Buffer", TEMPbuffer_Bnk);
     end;
 
-
     procedure FillBuffer("CashRec": Record "Cash Entry Posting No.") FilterTransactionNo: text;
     var
         GLentry: Record "G/L Entry";
-
     begin
         TEMPbuffer_Bnk.reset;
         TEMPbuffer_Bnk.DeleteAll();
@@ -142,7 +140,7 @@ codeunit 57204 "Cashflow Buffers"
 
         CustLedgerEntry.Open();
         while CustLedgerEntry.Read() do begin
-            if CustLedgerEntry.Init_CustLedgEntryNo <> CustLedgerEntry.CustLedgEntryNo then begin
+            if CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo then begin
                 TEMPDetailedLedger_EntryNo += 1;
                 TEMPDetailedLedger.Init();
                 TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
@@ -179,8 +177,12 @@ codeunit 57204 "Cashflow Buffers"
 
         CustLedgerEntry.Open();
         while CustLedgerEntry.Read() do begin
-            if (CustLedgerEntry.init_DocumentNo <> CustLedgerEntry.DocumentNo)
-                and (CustLedgerEntry.Init_PostingDate <> CustLedgerEntry.PostingDate) then begin
+            //if ((CustLedgerEntry.init_DocumentNo <> CustLedgerEntry.DocumentNo)
+            //    or (CustLedgerEntry.Init_PostingDate <> CustLedgerEntry.PostingDate))
+            if (CustLedgerEntry.CustLedgEntryNo = CustLedgerEntry.Init_CustLedgEntryNo)
+                and (CustLedgerEntry.AppliedCustLedEntrNo <> CustLedgerEntry.CustLedgEntryNo)
+
+                 then begin
                 TEMPDetailedLedger_EntryNo += 1;
                 TEMPDetailedLedger.Init();
                 TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
@@ -305,7 +307,7 @@ codeunit 57204 "Cashflow Buffers"
                     ELSE
                         InsertDetailedLedBuffer(factor, ProcessAmount);
                 until TEMPDetailedLedger.Next() = 0;
-                rest := round(abs(ProcessAmount), 01) - round(abs(TEMPbuffer_Bnk."Cashflow Amount"), 01);
+                rest := round(abs(ProcessAmount), 0.01) - round(abs(TEMPbuffer_Bnk."Cashflow Amount"), 0.01);
                 if rest <> 0 then
                     InsertDummyDetailedLedBuffer(TEMPbuffer_Bnk."GL_EntryNo Start", Rest);
             end else
@@ -347,7 +349,7 @@ codeunit 57204 "Cashflow Buffers"
                             ELSE
                                 InsertDetailedLedBuffer(factor, ProcessAmount);
                         until TEMPDetailedLedger.Next() = 0;
-                        REST := abs(ProcessAmount) - abs(TEMPbuffer_Bnk."Cashflow Amount");
+                        REST := round(abs(ProcessAmount), 0.01) - round(abs(TEMPbuffer_Bnk."Cashflow Amount"), 0.01);
                         if REST <> 0 then
                             InsertDummyDetailedLedBuffer(TEMPbuffer_Bnk."GL_EntryNo Start", Rest);
                     end else

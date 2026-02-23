@@ -42,13 +42,13 @@ page 57211 "Cash Entry Postings"
                 {
                     ToolTip = 'Specifies the value of the Journal Batch Name field.', Comment = '%';
                 }
-                field("Amount to Analyze"; Rec."Amount to Analyze")
-                {
-                    ToolTip = 'Specifies the debit amount.';
-                }
                 field("Cash Flow Category Amount"; Rec."Cash Flow Category Amount")
                 {
                     ToolTip = 'Specifies the credit amount.';
+                }
+                field("Amount to Analyze"; Rec."Amount to Analyze")
+                {
+                    ToolTip = 'Specifies the debit amount.';
                 }
                 field("Source Type"; Rec."Source Type")
                 {
