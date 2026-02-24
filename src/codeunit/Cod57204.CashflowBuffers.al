@@ -378,9 +378,9 @@ codeunit 57204 "Cashflow Buffers"
                                 InsertGrip(factor, ProcessAmount)
                             ELSE begin
                                 TEMPgrip_Vendor.SetRange("Document No.", TEMPDetailedLedger."led_Document No.");
-                                IF TEMPgrip_Vendor.FindSet() THEN
+                                IF TEMPgrip_Vendor.FindSet() THEN begin
                                     InsertGrip_vendor(factor, ProcessAmount)
-                                ELSE
+                                end ELSE
                                     InsertDetailedLedBuffer(factor, ProcessAmount);
                             end;
                         until TEMPDetailedLedger.Next() = 0;
@@ -665,6 +665,7 @@ codeunit 57204 "Cashflow Buffers"
         FilterBuilder: Codeunit FilterBuilder;
         i, n : Integer;
         DocFilter: Text;
+        Filters: List of [Text];
     begin
         TEMPgrip.Reset();
         TEMPgrip.DeleteAll();
@@ -682,12 +683,17 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger.Reset();
 
         //LAGI: Vendor scope here
+        n := 0;
         TEMPDetailedLedger.SetRange("Query Nr.", 3, 4);
+        TEMPDetailedLedger.Setrange("led_Entry No.", 693772);
+        message('force test for 693772 only');
         TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
-        if not TEMPDetailedLedger.IsEmpty() then
-            n := FilterBuilder.BuildEntryNoFilter2(TEMPDetailedLedger);
+        if not TEMPDetailedLedger.IsEmpty() then begin
+            Filters := FilterBuilder.BuildEntryNoFilter2(TEMPDetailedLedger);
+            n := Filters.Count();
+        end;
         for i := 1 to n do begin
-            DocFilter := FilterBuilder.GetFilterChunk(i);
+            DocFilter := Filters.Get(i);
             FillTempGrip_Vendor(DocFilter);
         end;
         TEMPDetailedLedger.Reset();
@@ -697,6 +703,7 @@ codeunit 57204 "Cashflow Buffers"
     var
         GripQry: Query "Get Vendor Ledger Entry Opt.";
         Inserted: Boolean;
+        x: Integer;
     begin
         GripQry.SetFilter(Entry_No_, DocFilter);
         GripQry.Open();
@@ -715,6 +722,8 @@ codeunit 57204 "Cashflow Buffers"
                     GripQry.Document_Type::Payment:
                         TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Payment;
                 end;
+                if GripQry.Document_No_ = 'IF25-107888' then
+                    x := 1;
                 TEMPgrip_Vendor."Document No." := GripQry.Document_No_;
                 TEMPgrip_Vendor."G/L Account" := GripQry.G_L_Account_No_;
                 TEMPgrip_Vendor."Amount" := GripQry.Amount;
