@@ -265,8 +265,10 @@ codeunit 57204 "Cashflow Buffers"
 
         VendorLedgerEntry.Open();
         while VendorLedgerEntry.Read() do begin
-            if (VendorLedgerEntry.init_DocumentNo <> VendorLedgerEntry.DocumentNo)
-                and (VendorLedgerEntry.Init_PostingDate <> VendorLedgerEntry.PostingDate) then begin
+            if (VendorLedgerEntry.VendLedgEntryNo = VendorLedgerEntry.Init_VendLedgEntryNo)
+                and (VendorLedgerEntry.AppliedVendLedgEntryNo <> VendorLedgerEntry.VendLedgEntryNo)
+
+                 then begin
                 TEMPDetailedLedger_EntryNo += 1;
                 TEMPDetailedLedger.Init();
                 TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
