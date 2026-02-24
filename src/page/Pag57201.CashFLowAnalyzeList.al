@@ -148,7 +148,8 @@ page 57201 "CashFLow Analyze List"
                         rec."Source Type"::Customer:
                             begin
                                 DetCustLedgEntry.SetRange("Customer No.", Rec."Source No.");
-                                DetCustLedgEntry.get(rec."Entry No.");
+                                DetCustLedgEntry.setrange("Posting Date", Rec."Posting Date");
+                                DetCustLedgEntry.setrange("Document No.", Rec."Document No.");
                                 DetCustLedgEntries.SetTableView(DetCustLedgEntry);
                                 DetCustLedgEntries.SetRecord(DetCustLedgEntry);
                                 DetCustLedgEntries.Run();
@@ -156,7 +157,8 @@ page 57201 "CashFLow Analyze List"
                         rec."Source Type"::Vendor:
                             begin
                                 DetVendLedgEntry.SetRange("Vendor No.", Rec."Source No.");
-                                DetVendLedgEntry.get(rec."Entry No.");
+                                DetVendLedgEntry.setrange("Posting Date", Rec."Posting Date");
+                                DetVendLedgEntry.setrange("Document No.", Rec."Document No.");
                                 DetVendLedgEntries.SetTableView(DetVendLedgEntry);
                                 DetVendLedgEntries.SetRecord(DetVendLedgEntry);
                                 DetVendLedgEntries.Run();

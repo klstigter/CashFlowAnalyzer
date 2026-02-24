@@ -23,10 +23,6 @@ page 57211 "Cash Entry Postings"
                     ToolTip = 'Specifies the value of the Last Entry No. field.', Comment = '%';
                     Visible = ShowTestFields;
                 }
-                field("Amount of Records"; Rec."Amount of Records")
-                {
-                    ToolTip = 'Specifies the value of the Amount of Records field.', Comment = '%';
-                }
                 field("Posting Date"; Rec."Posting Date")
                 {
                     ToolTip = 'Specifies the posting date.';
@@ -44,6 +40,11 @@ page 57211 "Cash Entry Postings"
                 {
                     ToolTip = 'Specifies the value of the Journal Batch Name field.', Comment = '%';
                 }
+                field("Amount of Records"; Rec."Amount of Records")
+                {
+                    ToolTip = 'Specifies the value of the Amount of Records field.', Comment = '%';
+                }
+
                 field("Cash Flow Category Amount"; Rec."Cash Flow Category Amount")
                 {
                     ToolTip = 'Specifies the credit amount.';
