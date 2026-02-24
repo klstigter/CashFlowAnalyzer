@@ -136,6 +136,7 @@ page 57201 "CashFLow Analyze List"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Show Detailed Ledgers';
+                Visible = ShowTestFields;
 
                 trigger OnAction()
                 var
@@ -171,7 +172,7 @@ page 57201 "CashFLow Analyze List"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Show Ledgers';
-                Visible = ShowTestFields;
+
 
                 trigger OnAction()
                 var
@@ -184,12 +185,16 @@ page 57201 "CashFLow Analyze List"
                         rec."Source Type"::Customer:
                             begin
                                 CustLedgerEntry.SetRange("Customer No.", Rec."Source No.");
+                                CustLedgerEntry.setrange("Posting Date", Rec."Posting Date");
+                                CustLedgerEntry.setrange("Document No.", Rec."Document No.");
                                 CustLedgerEntries.SetTableView(CustLedgerEntry);
                                 CustLedgerEntries.Run();
                             end;
                         rec."Source Type"::Vendor:
                             begin
                                 VendLedgerEntry.SetRange("Vendor No.", Rec."Source No.");
+                                VendLedgerEntry.setrange("Posting Date", Rec."Posting Date");
+                                VendLedgerEntry.setrange("Document No.", Rec."Document No.");
                                 VendLedgerEntries.SetTableView(VendLedgerEntry);
                                 VendLedgerEntries.Run();
                             end;
