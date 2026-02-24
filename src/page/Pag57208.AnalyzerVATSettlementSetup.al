@@ -22,6 +22,16 @@ page 57208 "Analyzer VAT Settlement Setup"
                     ApplicationArea = All;
                 }
             }
+            group(Test)
+            {
+                Caption = 'Test';
+
+                field("Show Testbuttons"; Rec."ShowTestButtons")
+                {
+                    ApplicationArea = All;
+                }
+            }
+
         }
     }
 

@@ -60,6 +60,13 @@ pageextension 57200 "Business Mngr Role Ext" extends "Business Manager Role Cent
                         RunObject = Page "Cash Flow Categories Setup";
                         ToolTip = 'Set up cash flow categories to classify your cash flow entries for better analysis and reporting.';
                     }
+                    action("Analyzer VAT Settlement Setup")
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Caption = 'Analyzer VAT Settlement Setup';
+                        RunObject = Page "Analyzer VAT Settlement Setup";
+                        ToolTip = 'Configure VAT settlement settings for your cash flow analysis to ensure accurate forecasting and reporting of VAT-related cash flow impacts.';
+                    }
                 }
                 group(CopyData)
                 {

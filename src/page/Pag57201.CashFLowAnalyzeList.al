@@ -17,15 +17,18 @@ page 57201 "CashFLow Analyze List"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the entry number.';
+                    Visible = ShowTestFields;
                 }
                 field("Transaction No. Start"; Rec."Transaction No. Start")
                 {
                     ApplicationArea = All;
+                    Visible = ShowTestFields;
                 }
                 field("Transaction No. End"; Rec."Transaction No. End")
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the end transaction number.';
+                    Visible = ShowTestFields;
                 }
 
                 field("Posting Date"; Rec."Posting Date")
@@ -42,6 +45,7 @@ page 57201 "CashFLow Analyze List"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the description.';
+                    Visible = ShowTestFields;
                 }
                 field(Amount; Rec.Amount)
                 {
@@ -64,6 +68,7 @@ page 57201 "CashFLow Analyze List"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the analysis type.';
+                    Visible = ShowTestFields;
                 }
                 field("Source Type"; Rec."Source Type")
                 {
@@ -143,13 +148,17 @@ page 57201 "CashFLow Analyze List"
                         rec."Source Type"::Customer:
                             begin
                                 DetCustLedgEntry.SetRange("Customer No.", Rec."Source No.");
+                                DetCustLedgEntry.get(rec."Entry No.");
                                 DetCustLedgEntries.SetTableView(DetCustLedgEntry);
+                                DetCustLedgEntries.SetRecord(DetCustLedgEntry);
                                 DetCustLedgEntries.Run();
                             end;
                         rec."Source Type"::Vendor:
                             begin
                                 DetVendLedgEntry.SetRange("Vendor No.", Rec."Source No.");
+                                DetVendLedgEntry.get(rec."Entry No.");
                                 DetVendLedgEntries.SetTableView(DetVendLedgEntry);
+                                DetVendLedgEntries.SetRecord(DetVendLedgEntry);
                                 DetVendLedgEntries.Run();
                             end;
 
@@ -160,6 +169,7 @@ page 57201 "CashFLow Analyze List"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Show Ledgers';
+                Visible = ShowTestFields;
 
                 trigger OnAction()
                 var
@@ -194,6 +204,7 @@ page 57201 "CashFLow Analyze List"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Show Transaction Buffer Page';
+                Visible = ShowTestFields;
 
                 trigger OnAction()
                 begin
@@ -204,6 +215,7 @@ page 57201 "CashFLow Analyze List"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Show Detailed Ledger Page';
+                Visible = ShowTestFields;
 
                 trigger OnAction()
                 begin
@@ -215,6 +227,7 @@ page 57201 "CashFLow Analyze List"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Fill Buffers without gripBuffer';
+                Visible = ShowTestFields;
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
@@ -242,6 +255,7 @@ page 57201 "CashFLow Analyze List"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Step 2: Fetch all data in all buffers';
+                Visible = ShowTestFields;
 
                 trigger OnAction()
                 var
@@ -274,18 +288,34 @@ page 57201 "CashFLow Analyze List"
                 var
                     t1, t2 : time;
                     duration: Duration;
+                    CashEntryPostingNo: Record "Cash Entry Posting No.";
+
                 begin
-                    t1 := Time();
-                    Cu.CreateAnalyze(rec);
-                    t2 := Time();
-                    duration := t2 - t1;
-                    Message('Analyze lines created successfully. \Time taken: %1', duration);
+                    if BuffersFilledFor <> Rec."Document No." then begin
+
+                        CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
+                        CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
+                        CashEntryPostingNo.FindFirst();
+                        if cu.Fill_NOT_GripBuffer(CashEntryPostingNo) then begin
+                            t2 := Time();
+                            duration := t2 - t1;
+                            BuffersFilledFor := Rec."Document No.";
+                            Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                        end;
+
+                        t1 := Time();
+                        Cu.CreateAnalyze(rec);
+                        t2 := Time();
+                        duration := t2 - t1;
+                        Message('Analyze lines created successfully. \Time taken: %1', duration);
+                    end;
                 end;
             }
             action(ShowFilterStrings)
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Show Filter Strings';
+                Visible = ShowTestFields;
 
                 trigger OnAction()
                 begin
@@ -296,4 +326,18 @@ page 57201 "CashFLow Analyze List"
     }
     var
         CU: Codeunit MyCodeunit;
+        ShowTestFields: Boolean;
+        BuffersFilledFor: code[20];
+
+    trigger OnOpenPage()
+    var
+        CashflowSetup: Record "Cashflow Analyzer Setup";
+    begin
+        if not CashflowSetup.get() then begin
+            CashflowSetup.init;
+            CashflowSetup.Insert();
+        end;
+        ShowTestFields := CashflowSetup.ShowTestButtons;
+
+    end;
 }

@@ -16,10 +16,12 @@ page 57211 "Cash Entry Postings"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the entry number.';
+                    Visible = ShowTestFields;
                 }
                 field("Last Entry No."; Rec."Last Entry No.")
                 {
                     ToolTip = 'Specifies the value of the Last Entry No. field.', Comment = '%';
+                    Visible = ShowTestFields;
                 }
                 field("Amount of Records"; Rec."Amount of Records")
                 {
@@ -53,14 +55,17 @@ page 57211 "Cash Entry Postings"
                 field("Source Type"; Rec."Source Type")
                 {
                     ToolTip = 'Specifies the source type.';
+                    Visible = ShowTestFields;
                 }
                 field("Source No."; Rec."Source No.")
                 {
                     ToolTip = 'Specifies the source number.';
+                    Visible = ShowTestFields;
                 }
                 field("Source Code"; Rec."Source Code")
                 {
                     ToolTip = 'Specifies the value of the source code.';
+                    Visible = ShowTestFields;
                 }
 
             }
@@ -80,11 +85,13 @@ page 57211 "Cash Entry Postings"
                 ApplicationArea = Basic, Suite;
                 Caption = 'Step 1: Get list from G/L Entry';
                 RunObject = Codeunit CreateCashEntryPostingNoList;
+                Visible = ShowTestFields;
             }
             action(runFilbuffers)
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Step 2: Fetch data in ALL buffers, also GRIP';
+                Visible = ShowTestFields;
 
                 trigger OnAction()
                 var
@@ -105,6 +112,7 @@ page 57211 "Cash Entry Postings"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Step 3: Create Analyze Lines (buffer must be filled first)';
+                Visible = ShowTestFields;
 
 
                 trigger OnAction()
@@ -177,6 +185,8 @@ page 57211 "Cash Entry Postings"
             {
                 ApplicationArea = Basic, Suite;
                 Caption = 'Show Transaction Buffer';
+                Visible = ShowTestFields;
+
                 trigger OnAction()
                 var
                 begin
@@ -188,6 +198,7 @@ page 57211 "Cash Entry Postings"
 
                 ApplicationArea = Basic, Suite;
                 Caption = 'Show detailed ledger Buffer';
+                Visible = ShowTestFields;
                 trigger OnAction()
                 var
                 begin
@@ -214,5 +225,17 @@ page 57211 "Cash Entry Postings"
     }
     var
         CU: Codeunit MyCodeunit;
+        ShowTestFields: Boolean;
 
+    trigger OnOpenPage()
+    var
+        CashflowSetup: Record "Cashflow Analyzer Setup";
+    begin
+        if not CashflowSetup.get() then begin
+            CashflowSetup.init;
+            CashflowSetup.Insert();
+        end;
+        ShowTestFields := CashflowSetup.ShowTestButtons;
+
+    end;
 }

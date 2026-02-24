@@ -16,6 +16,11 @@ table 57206 "Cashflow Analyzer Setup"
             TableRelation = "G/L Account";
             CaptionML = ENU = 'VAT Settlement G/L Account No.', NLD = 'BTW-vereffeningsrekening nr.';
         }
+        field(11; ShowTestButtons; Boolean)
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Show Testbuttons', NLD = 'Toon testknoppen';
+        }
     }
 
     keys
