@@ -17,7 +17,8 @@ query 57205 GetRelatedCustLedgerEntries2
             column(init_DocumentNo; "Document No.") { }
             dataitem(DetNotInit; "Detailed Cust. Ledg. Entry")
             {
-                DataItemTableFilter = "Entry Type" = filter(<> "Initial Entry");
+                DataItemTableFilter = "Entry Type" = filter(<> "Initial Entry"),
+                                      Unapplied = filter(false);
                 DataItemLink = "Cust. Ledger Entry No." = DetCustLed."Cust. Ledger Entry No.",
                     //"Document No." = DetCustLed."Document No.",
                     //"Transaction No." = DetCustLed."Transaction No.",

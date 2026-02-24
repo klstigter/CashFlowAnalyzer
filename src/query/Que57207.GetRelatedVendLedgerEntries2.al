@@ -17,7 +17,8 @@ query 57207 GetRelatedVendLedgerEntries2
             column(init_DocumentNo; "Document No.") { }
             dataitem(DetNotInit; "Detailed Vendor Ledg. Entry")
             {
-                DataItemTableFilter = "Entry Type" = filter(<> "Initial Entry");
+                DataItemTableFilter = "Entry Type" = filter(<> "Initial Entry"),
+                                      Unapplied = filter(false);
                 DataItemLink = "Vendor Ledger Entry No." = DetVendLed."Vendor Ledger Entry No.",
                     //"Document No." = DetVendLed."Document No.",
                     //"Transaction No." = DetVendLed."Transaction No.",

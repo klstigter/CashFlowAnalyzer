@@ -287,7 +287,7 @@ page 57201 "CashFLow Analyze List"
             action(runCreateAnalyzeLines)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Step 3: Create Analyze Lines';
+                Caption = 'Create Analyze Line';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
@@ -299,7 +299,7 @@ page 57201 "CashFLow Analyze List"
 
                 begin
                     if BuffersFilledFor <> Rec."Document No." then begin
-
+                        t1 := Time();
                         CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
                         CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
                         CashEntryPostingNo.FindFirst();
@@ -309,13 +309,12 @@ page 57201 "CashFLow Analyze List"
                             BuffersFilledFor := Rec."Document No.";
                             Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
                         end;
-
-                        t1 := Time();
-                        Cu.CreateAnalyze(rec);
-                        t2 := Time();
-                        duration := t2 - t1;
-                        Message('Analyze lines created successfully. \Time taken: %1', duration);
                     end;
+                    t1 := Time();
+                    Cu.CreateAnalyze(rec);
+                    t2 := Time();
+                    duration := t2 - t1;
+                    Message('Analyze lines created successfully. \Time taken: %1', duration);
                 end;
             }
             action(ShowFilterStrings)
