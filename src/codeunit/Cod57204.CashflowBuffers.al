@@ -328,7 +328,7 @@ codeunit 57204 "Cashflow Buffers"
                             end;
                         TEMPbuffer_Bnk."Source Type"::Vendor:
                             begin
-                                IF FillTempGrip_Vendor(TEMPDetailedLedger."led_Document No.") THEN
+                                IF FillTempGrip_Vendor(Format(TEMPDetailedLedger."led_Entry No.")) THEN
                                     InsertGrip_vendor(factor, ProcessAmount)
                                 ELSE
                                     InsertDetailedLedBuffer(factor, ProcessAmount);
@@ -698,7 +698,7 @@ codeunit 57204 "Cashflow Buffers"
         GripQry: Query "Get Vendor Ledger Entry Opt.";
         Inserted: Boolean;
     begin
-        GripQry.SetFilter("Document_No_", DocFilter);
+        GripQry.SetFilter(Entry_No_, DocFilter);
         GripQry.Open();
         while GripQry.Read() do begin
             if (GripQry.Init_Entry_No_ <> GripQry.G_L_Entry_No_) then begin
