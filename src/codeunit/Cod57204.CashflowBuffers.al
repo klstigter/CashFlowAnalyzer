@@ -316,8 +316,15 @@ codeunit 57204 "Cashflow Buffers"
             IF TEMPDetailedLedger.FindSet() THEN begin
                 repeat
                     factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
+                    case TEMPbuffer_Bnk."Source Type" of
+                        TEMPbuffer_Bnk."Source Type"::Customer:
+                            ;
+                        TEMPbuffer_Bnk."Source Type"::Vendor:
+                            ;
+                    end;
+                    // [THEN] Then
+
                     TEMPgrip.DeleteAll();
-                    TEMPgrip_Vendor.DeleteAll();
                     IF FillTempGrip(TEMPDetailedLedger."led_Document No.") THEN
                         InsertGrip(factor, ProcessAmount)
                     ELSE
