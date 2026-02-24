@@ -10,11 +10,11 @@ codeunit 57205 MyCodeunit
         FilterTxt: text;
     begin
         TransActionBuffer.DeleteDetailedLedger();
-        FilterTxt := TransActionBuffer.FillBuffer(Rec);
         TransActionBuffer.FillDetCustLedgBuffer1(Rec, FilterTxt);
         TransActionBuffer.FillDetCustLedgBuffer2(Rec, FilterTxt);
         TransActionBuffer.FillDetVendorLedgBuffer1(Rec, FilterTxt);
         TransActionBuffer.FillDetVendorLedgBuffer2(Rec, FilterTxt);
+        FilterTxt := TransActionBuffer.FillBuffer(Rec);
         TransActionBuffer.FillTEMPCashFlowCategory();
         exit(true);
     end;
@@ -47,6 +47,12 @@ codeunit 57205 MyCodeunit
     begin
         TransActionBuffer.ShowPageDetailedLedg();
     end;
+
+    procedure ShowPageFilterStrings()
+    begin
+        TransActionBuffer.ShowPageFilterStrings();
+    end;
+
 
 
 

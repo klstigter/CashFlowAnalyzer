@@ -29,11 +29,20 @@ codeunit 57204 "Cashflow Buffers"
         page.Run(Page::"DetailedLedger2DocNo Buffer", TEMPDetailedLedger);
     end;
 
-    procedure ShowPageTransactionBuffer()
+    procedure ShowPageFilterStrings()
     var
-        TransactionBufferPage: Page "Transaction Buffer";
+        FilterStringPage: Page "FilterStrings";
+        FilterBuilder: Codeunit FilterBuilder;
+        i, n : Integer;
     begin
-        page.Run(Page::"Transaction Buffer", TEMPbuffer_Bnk);
+        TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice);
+        TEMPDetailedLedger.SetFilter("led_Document No.", '%1..', 'VF25');
+        TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
+        if not TEMPDetailedLedger.IsEmpty() then
+            n := FilterBuilder.BuildEntryNoFilter(TEMPDetailedLedger);
+        for i := 1 to n do
+            FilterStringPage.SetFIlterValue(i, FilterBuilder.GetFilterChunk(i));
+        FilterStringPage.Run(); //Run the page after setting the filter values to display them on the page.
     end;
 
     procedure FillBuffer("CashRec": Record "Cash Entry Posting No.") FilterTransactionNo: text;
@@ -141,7 +150,7 @@ codeunit 57204 "Cashflow Buffers"
 
         CustLedgerEntry.Open();
         while CustLedgerEntry.Read() do begin
-            if CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo then begin
+            if CustLedgerEntry.Init_CustLedgEntryNo <> CustLedgerEntry.CustLedgEntryNo then begin
                 TEMPDetailedLedger_EntryNo += 1;
                 TEMPDetailedLedger.Init();
                 TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
@@ -374,7 +383,7 @@ codeunit 57204 "Cashflow Buffers"
                     log.CreateLog(n, t1, t2, '');
                 end;
                 ProgressDlg.Update(1, n);
-            until (TEMPbuffer_Bnk.Next() = 0) or (n = 1000);
+            until (TEMPbuffer_Bnk.Next() = 0); // or (n = 1000);
         ProgressDlg.Close();
     end;
 

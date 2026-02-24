@@ -40,13 +40,13 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Cash Flow Category field.', Comment = '%';
                 }
-                field("Amount to Analyze"; Rec."Amount to Analyze")
-                {
-                    ToolTip = 'Specifies the value of the Amount to Analyze field.', Comment = '%';
-                }
                 field("Cash Flow Category Amount"; Rec."Cash Flow Category Amount")
                 {
                     ToolTip = 'Specifies the value of the Cash Flow Category Amount field.', Comment = '%';
+                }
+                field("Amount to Analyze"; Rec."Amount to Analyze")
+                {
+                    ToolTip = 'Specifies the value of the Amount to Analyze field.', Comment = '%';
                 }
                 field("Cash Flow Category Desc."; Rec."Cash Flow Category Desc.")
                 {

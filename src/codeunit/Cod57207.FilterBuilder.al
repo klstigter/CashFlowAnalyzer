@@ -29,6 +29,7 @@ codeunit 57207 FilterBuilder
 
         if CurrChunk <> '' then
             Chunks.Add(CurrChunk);
+        i += 1;
         exit(Chunks);
     end;
 
@@ -58,8 +59,10 @@ codeunit 57207 FilterBuilder
         SingleFilter := CreateRangeFilter(StartRangeNo, EndRangeNo);
         AddToChunks(SingleFilter);
 
-        if CurrChunk <> '' then
+        if CurrChunk <> '' then begin
             Chunks.Add(CurrChunk);
+            i += 1;
+        end;
         exit(i);
     end;
 
@@ -121,8 +124,7 @@ codeunit 57207 FilterBuilder
             // Chunks.Add(CurrChunk);
             CurrChunk := SingleRngFilter;
         end;
-        i += 1;
-        Chunks.Add(CurrChunk);
+
     end;
 }
 

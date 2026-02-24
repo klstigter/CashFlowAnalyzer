@@ -188,101 +188,109 @@ page 57201 "CashFLow Analyze List"
         }
         area(Processing)
         {
-            group("Create Cash Flow Entries")
+
+
+            action(ShowTransactionBUfferPage)
             {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show Transaction Buffer Page';
 
-                action(ShowTransactionBUfferPage)
-                {
-                    ApplicationArea = Basic, Suite;
-                    Caption = 'Show Transaction Buffer Page';
+                trigger OnAction()
+                begin
+                    cu.ShowTransactionBufferPage();
+                end;
+            }
+            action(ShowDetailedLedgerPage)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show Detailed Ledger Page';
 
-                    trigger OnAction()
-                    begin
-                        cu.ShowTransactionBufferPage();
-                    end;
-                }
-                action(ShowDetailedLedgerPage)
-                {
-                    ApplicationArea = Basic, Suite;
-                    Caption = 'Show Detailed Ledger Page';
+                trigger OnAction()
+                begin
+                    cu.ShowDetailedLedgerPage();
+                end;
+            }
 
-                    trigger OnAction()
-                    begin
-                        cu.ShowDetailedLedgerPage();
-                    end;
-                }
+            action(FillDetailelLedgerBuffer)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Fill Buffers without gripBuffer';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
 
-                action(FillDetailelLedgerBuffer)
-                {
-                    ApplicationArea = Basic, Suite;
-                    Caption = 'Fill Buffers without gripBuffer';
-                    Promoted = true;
-                    PromotedCategory = Process;
-                    PromotedIsBig = true;
+                trigger OnAction()
+                var
+                    t1, t2 : time;
+                    duration: Duration;
+                    CashEntryPostingNo: Record "Cash Entry Posting No.";
 
-                    trigger OnAction()
-                    var
-                        t1, t2 : time;
-                        duration: Duration;
-                        CashEntryPostingNo: Record "Cash Entry Posting No.";
-
-                    begin
-                        t1 := Time();
-                        CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
-                        CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
-                        CashEntryPostingNo.FindFirst();
-                        if cu.Fill_NOT_GripBuffer(CashEntryPostingNo) then begin
-                            t2 := Time();
-                            duration := t2 - t1;
-                            Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
-                        end else
-                            Message('No data fetched for the selected record.');
-                    end;
-                }
-                action(runMyCodeunit)
-                {
-                    ApplicationArea = Basic, Suite;
-                    Caption = 'Step 2: Fetch all data in all buffers';
-
-                    trigger OnAction()
-                    var
-                        t1, t2 : time;
-                        duration: Duration;
-                        CashEntryPostingNo: Record "Cash Entry Posting No.";
-
-                    begin
-                        t1 := Time();
-                        CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
-                        CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
-                        CashEntryPostingNo.FindFirst();
-                        if cu.Run(CashEntryPostingNo) then begin
-                            t2 := Time();
-                            duration := t2 - t1;
-                            Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
-                        end else
-                            Message('No data fetched for the selected record.');
-
-                    end;
-                }
-                action(runCreateAnalyzeLines)
-                {
-                    ApplicationArea = Basic, Suite;
-                    Caption = 'Step 3: Create Analyze Lines';
-                    Promoted = true;
-                    PromotedCategory = Process;
-                    PromotedIsBig = true;
-                    trigger OnAction()
-                    var
-                        t1, t2 : time;
-                        duration: Duration;
-                    begin
-                        t1 := Time();
-                        Cu.CreateAnalyze(rec);
+                begin
+                    t1 := Time();
+                    CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
+                    CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
+                    CashEntryPostingNo.FindFirst();
+                    if cu.Fill_NOT_GripBuffer(CashEntryPostingNo) then begin
                         t2 := Time();
                         duration := t2 - t1;
-                        Message('Analyze lines created successfully. \Time taken: %1', duration);
-                    end;
-                }
+                        Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                    end else
+                        Message('No data fetched for the selected record.');
+                end;
+            }
+            action(runMyCodeunit)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Step 2: Fetch all data in all buffers';
+
+                trigger OnAction()
+                var
+                    t1, t2 : time;
+                    duration: Duration;
+                    CashEntryPostingNo: Record "Cash Entry Posting No.";
+
+                begin
+                    t1 := Time();
+                    CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
+                    CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
+                    CashEntryPostingNo.FindFirst();
+                    if cu.Run(CashEntryPostingNo) then begin
+                        t2 := Time();
+                        duration := t2 - t1;
+                        Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                    end else
+                        Message('No data fetched for the selected record.');
+
+                end;
+            }
+            action(runCreateAnalyzeLines)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Step 3: Create Analyze Lines';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                trigger OnAction()
+                var
+                    t1, t2 : time;
+                    duration: Duration;
+                begin
+                    t1 := Time();
+                    Cu.CreateAnalyze(rec);
+                    t2 := Time();
+                    duration := t2 - t1;
+                    Message('Analyze lines created successfully. \Time taken: %1', duration);
+                end;
+            }
+            action(ShowFilterStrings)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Show Filter Strings';
+
+                trigger OnAction()
+                begin
+                    cu.ShowPageFilterStrings();
+                end;
             }
         }
     }
