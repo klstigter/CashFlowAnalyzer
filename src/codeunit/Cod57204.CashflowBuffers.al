@@ -316,22 +316,26 @@ codeunit 57204 "Cashflow Buffers"
             IF TEMPDetailedLedger.FindSet() THEN begin
                 repeat
                     factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
+                    TEMPgrip.DeleteAll();
+                    TEMPgrip_Vendor.DeleteAll();
                     case TEMPbuffer_Bnk."Source Type" of
                         TEMPbuffer_Bnk."Source Type"::Customer:
-                            ;
+                            begin
+                                IF FillTempGrip(TEMPDetailedLedger."led_Document No.") THEN
+                                    InsertGrip(factor, ProcessAmount)
+                                ELSE
+                                    InsertDetailedLedBuffer(factor, ProcessAmount);
+                            end;
                         TEMPbuffer_Bnk."Source Type"::Vendor:
-                            ;
-                    end;
-                    // [THEN] Then
-
-                    TEMPgrip.DeleteAll();
-                    IF FillTempGrip(TEMPDetailedLedger."led_Document No.") THEN
-                        InsertGrip(factor, ProcessAmount)
-                    ELSE
-                        if FillTempGrip_Vendor(TEMPDetailedLedger."led_Document No.") then
-                            InsertGrip_vendor(factor, ProcessAmount)
+                            begin
+                                IF FillTempGrip_Vendor(TEMPDetailedLedger."led_Document No.") THEN
+                                    InsertGrip_vendor(factor, ProcessAmount)
+                                ELSE
+                                    InsertDetailedLedBuffer(factor, ProcessAmount);
+                            end;
                         else
                             InsertDetailedLedBuffer(factor, ProcessAmount);
+                    end;
                 until TEMPDetailedLedger.Next() = 0;
                 rest := round(abs(ProcessAmount), 0.01) - round(abs(TEMPbuffer_Bnk."Cashflow Amount"), 0.01);
                 if rest <> 0 then
@@ -681,7 +685,7 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger.SetRange("Query Nr.", 3, 4);
         TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
         if not TEMPDetailedLedger.IsEmpty() then
-            n := FilterBuilder.BuildEntryNoFilter(TEMPDetailedLedger);
+            n := FilterBuilder.BuildEntryNoFilter2(TEMPDetailedLedger);
         for i := 1 to n do begin
             DocFilter := FilterBuilder.GetFilterChunk(i);
             FillTempGrip_Vendor(DocFilter);
@@ -697,27 +701,29 @@ codeunit 57204 "Cashflow Buffers"
         GripQry.SetFilter("Document_No_", DocFilter);
         GripQry.Open();
         while GripQry.Read() do begin
-            TEMPgrip_Vendor.Init();
-            TEMPgrip_Vendor."Exploitation No." := GripQry.Entry_No_;
-            case GripQry.Document_Type of
-                GripQry.Document_Type::Invoice,
-                GripQry.Document_Type::" ":
-                    TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Invoice;
-                GripQry.Document_Type::"Credit Memo":
-                    TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::"Credit Memo";
-                GripQry.Document_Type::Refund:
-                    TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Refund;
-                GripQry.Document_Type::Payment:
-                    TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Payment;
+            if (GripQry.Init_Entry_No_ <> GripQry.G_L_Entry_No_) then begin
+                TEMPgrip_Vendor.Init();
+                TEMPgrip_Vendor."Exploitation No." := GripQry.G_L_Entry_No_;
+                case GripQry.Document_Type of
+                    GripQry.Document_Type::Invoice,
+                    GripQry.Document_Type::" ":
+                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Invoice;
+                    GripQry.Document_Type::"Credit Memo":
+                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::"Credit Memo";
+                    GripQry.Document_Type::Refund:
+                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Refund;
+                    GripQry.Document_Type::Payment:
+                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Payment;
+                end;
+                TEMPgrip_Vendor."Document No." := GripQry.Document_No_;
+                TEMPgrip_Vendor."G/L Account" := GripQry.G_L_Account_No_;
+                TEMPgrip_Vendor."Amount" := GripQry.Amount;
+                TEMPgrip_Vendor."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
+                TEMPgrip_Vendor."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
+                Inserted := TEMPgrip_Vendor.Insert();
+                if not HasRecords and Inserted then
+                    HasRecords := true;
             end;
-            TEMPgrip_Vendor."Document No." := GripQry.Document_No_;
-            TEMPgrip_Vendor."G/L Account" := GripQry.G_L_Account_No_;
-            TEMPgrip_Vendor."Amount" := GripQry.Amount;
-            TEMPgrip_Vendor."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
-            TEMPgrip_Vendor."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
-            Inserted := TEMPgrip_Vendor.Insert();
-            if not HasRecords and Inserted then
-                HasRecords := true;
         end;
         GripQry.Close();
         if not HasRecords then

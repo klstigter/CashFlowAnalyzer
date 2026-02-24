@@ -12,12 +12,17 @@ page 57210 CashAnalyzerFactBox
             {
                 field(Name; rec."Cash Flow Category")
                 {
-
+                    ApplicationArea = All;
                 }
                 field(Amount; rec."Cash Flow Category Amount")
                 {
-
+                    ApplicationArea = All;
                 }
+                field("Amount to Analyze"; Rec."Amount to Analyze")
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
 

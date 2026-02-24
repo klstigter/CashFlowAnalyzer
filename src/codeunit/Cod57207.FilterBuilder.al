@@ -33,6 +33,35 @@ codeunit 57207 FilterBuilder
         exit(Chunks);
     end;
 
+    procedure BuildEntryNoFilter2(var Buf: Record "DetailLedger2DocNo Buffer"): integer
+    var
+        StartRangeNo: Text;
+        EndRangeNo: Text;
+        SingleFilter: Text;
+        EndRange: Integer;
+        AddToRange: Boolean;
+        HasPrevious: Boolean;
+    begin
+        ClearGlobalvars();
+        if not Buf.FindSet(false) then
+            exit(0);
+        repeat
+            if HasPrevious then
+                AddToRange := buf."led_Entry No." = EndRange + 1;
+            BuildChunks(format(buf."led_Entry No."), StartRangeNo, EndRangeNo, AddToRange);
+            EndRange := Buf."led_Entry No.";
+            HasPrevious := true;
+        until Buf.Next() = 0;
+        SingleFilter := CreateRangeFilter(StartRangeNo, EndRangeNo);
+        AddToChunks(SingleFilter);
+
+        if CurrChunk <> '' then begin
+            Chunks.Add(CurrChunk);
+            i += 1;
+        end;
+        exit(i);
+    end;
+
     procedure GetFilterChunk(i: Integer): Text
     begin
         Chunks.Get(i, CurrChunk);

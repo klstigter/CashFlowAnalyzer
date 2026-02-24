@@ -15,9 +15,10 @@ query 57208 "Get Vendor Ledger Entry Opt."
             dataitem(G_L_Entry; "G/L Entry")
             {
                 DataItemLink = "Posting Date" = Vendor_Gl_Entry."Posting Date",
-                     "Document No." = Vendor_Gl_Entry."Document No.";
+                               "Document No." = Vendor_Gl_Entry."Document No.";
                 //Init_Entry No is not the same as this entry no;
 
+                column(G_L_Entry_No_; "Entry No.") { }
                 column(G_L_Account_No_; "G/L Account No.") { }
                 column(Amount; Amount) { }
                 column(Global_Dimension_1_Code; "Global Dimension 1 Code") { }
