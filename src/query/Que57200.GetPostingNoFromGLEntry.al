@@ -10,6 +10,10 @@ query 57200 "GetPostingNo From GLEntry"
             {
                 Caption = 'Source Type Filter';
             }
+            filter(JournalTemplNameFlt; "Journal Templ. Name")
+            {
+                Caption = 'Journal Template Name Filter';
+            }
             filter(PostingDateFilter; "Posting Date")
             {
             }

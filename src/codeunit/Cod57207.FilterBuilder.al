@@ -5,7 +5,7 @@ codeunit 57207 FilterBuilder
         CurrChunk: Text;
         i: Integer;
 
-    procedure BuildEntryNoFilter(var Buf: Record "Transaction Buffer") Chunks: List of [Text]
+    procedure BuildEntryNoFilter(var Buf: Record "Transaction Buffer"): integer
     var
         StartRangeNo: Text;
         EndRangeNo: Text;
@@ -16,7 +16,7 @@ codeunit 57207 FilterBuilder
     begin
         ClearGlobalvars();
         if not Buf.FindSet(false) then
-            exit(Chunks);
+            exit(0);
         repeat
             if HasPrevious then
                 AddToRange := buf."Gl_EntryNo_Bnk" = EndRange + 1;
@@ -27,10 +27,11 @@ codeunit 57207 FilterBuilder
         SingleFilter := CreateRangeFilter(StartRangeNo, EndRangeNo);
         AddToChunks(SingleFilter);
 
-        if CurrChunk <> '' then
+        if CurrChunk <> '' then begin
             Chunks.Add(CurrChunk);
-        i += 1;
-        exit(Chunks);
+            i += 1;
+        end;
+        exit(i);
     end;
 
     procedure BuildEntryNoFilter2(var Buf: Record "DetailLedger2DocNo Buffer"): integer
@@ -44,7 +45,6 @@ codeunit 57207 FilterBuilder
     begin
         ClearGlobalvars();
         if not Buf.FindSet(false) then
-            //exit(0);
             exit(0);
         repeat
             if HasPrevious then
@@ -123,7 +123,6 @@ codeunit 57207 FilterBuilder
                     AddToChunks(SingleFilterRng);
                 end;
 
-                // Start new range
                 StartRangeNo := SingleStrValue;
                 EndRangeNo := SingleStrValue;
             end;

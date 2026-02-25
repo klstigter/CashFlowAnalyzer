@@ -1,15 +1,30 @@
 codeunit 57203 CreateCashEntryPostingNoList
 {
     trigger OnRun()
+    var
+        Dateselector: page DateSelector;
     begin
+        counterInserted := 0;
+        counterSkipped := 0;
+
+        if Dateselector.RunModal() <> Action::OK then
+            exit;
+        Dateselector.GetValues(StartDate, EndDate);
+
+        if (StartDate <> 0D) and (EndDate <> 0D) and (EndDate < StartDate) then
+            Error('End Date cannot be earlier than Start Date.');
+
         if not CreateCashEntryPostingNoList() then
             Message(GetLastErrorText)
         else
-            Message('Process completed. Total records inserted: %1', counter);
+            Message('Process completed. \\Total records inserted: %1\Total records skipped: %2', counterInserted, counterSkipped);
     end;
 
     var
-        counter: Integer;
+        counterInserted: Integer;
+        counterSkipped: Integer;
+        StartDate: Date;
+        EndDate: Date;
 
     [TryFunction]
     procedure CreateCashEntryPostingNoList()
@@ -17,29 +32,43 @@ codeunit 57203 CreateCashEntryPostingNoList
         CashEntryPostingNo: Record "Cash Entry Posting No.";
         qry: query "GetPostingNo From GLEntry";
         SourceType: Enum "Gen. Journal Source Type";
+        i: Integer;
     begin
-        //TODO filter on date and source type, delete table remove
-        CashEntryPostingNo.DeleteAll();
-        SourceType := SourceType::"Bank Account";
-        qry.setfilter(SourceTypeFilter, '%1', SourceType);
-        qry.SetFilter(PostingDateFilter, '%1..%2', 20250701D, 20250830D);
+        for i := 1 to 2 do begin
+            case i of
+                1:
+                    begin
+                        SourceType := SourceType::"Bank Account";
+                        qry.setfilter(SourceTypeFilter, '%1', SourceType);
+                        qry.SetFilter(PostingDateFilter, '%1..%2', StartDate, EndDate);
+                    end;
+                2:
+                    begin
+                        SourceType := SourceType::" ";
+                        qry.setfilter(JournalTemplNameFlt, GetFilterCashTemplates());
+                        qry.SetFilter(PostingDateFilter, '%1..%2', StartDate, EndDate);
+                    end;
+            end;
 
-        qry.Open();
-        while qry.Read() do begin
-            CashEntryPostingNo.Init();
-            CashEntryPostingNo."Entry No." := qry.firstEntryNo;
-            CashEntryPostingNo."Posting Date" := qry.PostingDate;
-            CashEntryPostingNo."Document No." := qry.DocumentNo;
-            CashEntryPostingNo."Journal Templ. Name" := qry.Journal_Templ__Name;
-            CashEntryPostingNo."Journal Batch Name" := qry.JournalBatchName;
-            CashEntryPostingNo."Last Entry No." := qry.lastEntryNo;
-            CashEntryPostingNo."Amount of Records" := qry.EntryCount;
-            CashEntryPostingNo."Source Type" := qry.SourceType;
-            CashEntryPostingNo."Source No." := qry.SourceNo;
-            CashEntryPostingNo."Source Code" := qry.Source_Code;
-            if not CashEntryPostingNo.Insert() then
-                CashEntryPostingNo.Modify();
-            counter += 1;
+            qry.Open();
+            while qry.Read() do begin
+                CashEntryPostingNo.Init();
+                CashEntryPostingNo."Entry No." := qry.firstEntryNo;
+                CashEntryPostingNo."Posting Date" := qry.PostingDate;
+                CashEntryPostingNo."Document No." := qry.DocumentNo;
+                CashEntryPostingNo."Journal Templ. Name" := qry.Journal_Templ__Name;
+                CashEntryPostingNo."Journal Batch Name" := qry.JournalBatchName;
+                CashEntryPostingNo."Last Entry No." := qry.lastEntryNo;
+                CashEntryPostingNo."Amount of Records" := qry.EntryCount;
+                CashEntryPostingNo."Source Type" := qry.SourceType;
+                CashEntryPostingNo."Source No." := qry.SourceNo;
+                CashEntryPostingNo."Source Code" := qry.Source_Code;
+                if not CashEntryPostingNo.Insert() then
+                    counterInserted += 1
+                else
+                    counterSkipped += 1;
+            end;
+            qry.Close();
         end;
     end;
 

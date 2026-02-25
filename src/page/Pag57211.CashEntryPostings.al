@@ -84,14 +84,49 @@ page 57211 "Cash Entry Postings"
             action("Copy GRIP Invoice Data")
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Step 1: Get list from G/L Entry';
+                Caption = 'Collect postings';
                 RunObject = Codeunit CreateCashEntryPostingNoList;
-                Visible = ShowTestFields;
+                Visible = true;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                Image = Import;
+            }
+
+            action(runProcess)
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Run process';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+
+                trigger OnAction()
+                var
+                    t1, t2 : time;
+                    duration: Duration;
+                    log: Record "Log Cashflow Analyzer";
+                begin
+                    t1 := Time();
+                    if cu.Fill_All_Buffer(Rec) then begin
+                        t2 := Time();
+                        duration := t2 - t1;
+                        log.createLog(0, t1, t2, 'Duration Fetch all buffers');
+                    end;
+
+                    t1 := Time();
+                    Cu.CreateAnalyze();
+                    t2 := Time();
+                    duration := t2 - t1;
+                    log.createLog(0, t1, t2, 'Duration Create analyze lines');
+
+                    Message('Process is completely done. \Time taken: %1', duration);
+                end;
             }
             action(runFilbuffers)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Step 2: Fetch data in ALL buffers, also GRIP';
+                Caption = 'Fetch data in ALL buffers, also GRIP';
                 Visible = ShowTestFields;
 
                 trigger OnAction()
@@ -126,36 +161,6 @@ page 57211 "Cash Entry Postings"
                     t2 := Time();
                     duration := t2 - t1;
                     Message('Analyze lines created successfully. \Time taken: %1', duration);
-                end;
-            }
-            action(runProcess)
-            {
-                ApplicationArea = Basic, Suite;
-                Caption = 'Run process';
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedIsBig = true;
-
-                trigger OnAction()
-                var
-                    t1, t2 : time;
-                    duration: Duration;
-                    log: Record "Log Cashflow Analyzer";
-                begin
-                    t1 := Time();
-                    if cu.Fill_All_Buffer(Rec) then begin
-                        t2 := Time();
-                        duration := t2 - t1;
-                        log.createLog(0, t1, t2, 'Duration Fetch all buffers');
-                    end;
-
-                    t1 := Time();
-                    Cu.CreateAnalyze();
-                    t2 := Time();
-                    duration := t2 - t1;
-                    log.createLog(0, t1, t2, 'Duration Create analyze lines');
-
-                    Message('Process is completely done. \Time taken: %1', duration);
                 end;
             }
 

@@ -408,13 +408,12 @@ codeunit 57204 "Cashflow Buffers"
         analyzeHeader: record "CashFLow Analyze Header";
         analyzeLine: record "Cashflow Analyse Line";
     begin
-        Filters := FilterBuilder.BuildEntryNoFilter(TEMPbuffer_Bnk);
-        n := Filters.Count();
+        n := FilterBuilder.BuildEntryNoFilter(TEMPbuffer_Bnk);
         for i := 1 to n do begin
-            analyzeHeader.SetFilter("Entry No.", Filters.Get(i));
+            analyzeHeader.SetFilter("Entry No.", FilterBuilder.GetFilterChunk(i));
             if not analyzeHeader.IsEmpty() then
                 analyzeHeader.DeleteAll(false);
-            analyzeLine.SetFilter("G/L Entry No.", Filters.Get(i));
+            analyzeLine.SetFilter("G/L Entry No.", FilterBuilder.GetFilterChunk(i));
             if not analyzeLine.IsEmpty() then
                 analyzeLine.DeleteAll(false);
         end;
@@ -682,12 +681,9 @@ codeunit 57204 "Cashflow Buffers"
         end;
         TEMPDetailedLedger.Reset();
 
-        //LAGI: Vendor scope here
         n := 0;
         TEMPDetailedLedger.SetRange("Query Nr.", 3, 4);
         TEMPDetailedLedger.SetFilter("led_Document Type", '%1|%2', TEMPDetailedLedger."led_Document Type"::Invoice, TEMPDetailedLedger."led_Document Type"::"Credit Memo");
-        //TEMPDetailedLedger.Setrange("led_Entry No.", 693772);
-        //message('force test for 693772 only');
         TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
         if not TEMPDetailedLedger.IsEmpty() then
             n := FilterBuilder.BuildEntryNoFilter2(TEMPDetailedLedger);

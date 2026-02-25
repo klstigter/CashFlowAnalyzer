@@ -8,6 +8,8 @@ page 57203 "Opt. CashFlow Analyzer Subform"
     Caption = 'CashFlow Analyzer Subform';
     AutoSplitKey = true;
     DelayedInsert = true;
+    DeleteAllowed = false;
+    InsertAllowed = false;
 
     layout
     {
@@ -19,13 +21,14 @@ page 57203 "Opt. CashFlow Analyzer Subform"
                 {
                     ApplicationArea = All;
                     Caption = 'Entry No.';
+                    Visible = false;
                 }
                 field(EntryLineNo; Rec."Entry Line No.")
                 {
                     ApplicationArea = All;
                     Caption = 'Entry Line No.';
                 }
-                field("Posting Date"; Rec."Posting Date")
+                field("Applied Posting Date"; Rec."Applied Posting Date")
                 {
                     ApplicationArea = All;
                     Caption = 'Posting Date';
@@ -34,6 +37,7 @@ page 57203 "Opt. CashFlow Analyzer Subform"
                 {
                     ApplicationArea = All;
                     Caption = 'Applied Document Entry No.';
+                    Visible = false;
                 }
                 field("Applied Document Type"; Rec."Applied Document Type")
                 {
@@ -144,18 +148,11 @@ page 57203 "Opt. CashFlow Analyzer Subform"
         }
     }
 
-    actions
-    {
-        area(Processing)
-        {
-            action(ActionName)
-            {
 
-                trigger OnAction()
-                begin
+    procedure GetCurrRecordFromSub(var CashLine: Record "Cashflow Analyse Line")
+    begin
+        CashLine := Rec;
+    end;
 
-                end;
-            }
-        }
-    }
 }
+
