@@ -53,6 +53,12 @@ codeunit 57205 MyCodeunit
         TransActionBuffer.ShowPageFilterStrings();
     end;
 
+    procedure FillTempGrip()
+
+    begin
+        TransActionBuffer.FillTempGrip();
+    end;
+
 
 
 

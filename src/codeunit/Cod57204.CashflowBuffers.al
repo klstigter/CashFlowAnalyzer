@@ -685,15 +685,14 @@ codeunit 57204 "Cashflow Buffers"
         //LAGI: Vendor scope here
         n := 0;
         TEMPDetailedLedger.SetRange("Query Nr.", 3, 4);
-        TEMPDetailedLedger.Setrange("led_Entry No.", 693772);
-        message('force test for 693772 only');
+        TEMPDetailedLedger.SetFilter("led_Document Type", '%1|%2', TEMPDetailedLedger."led_Document Type"::Invoice, TEMPDetailedLedger."led_Document Type"::"Credit Memo");
+        //TEMPDetailedLedger.Setrange("led_Entry No.", 693772);
+        //message('force test for 693772 only');
         TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
-        if not TEMPDetailedLedger.IsEmpty() then begin
-            Filters := FilterBuilder.BuildEntryNoFilter2(TEMPDetailedLedger);
-            n := Filters.Count();
-        end;
+        if not TEMPDetailedLedger.IsEmpty() then
+            n := FilterBuilder.BuildEntryNoFilter2(TEMPDetailedLedger);
         for i := 1 to n do begin
-            DocFilter := Filters.Get(i);
+            DocFilter := FilterBuilder.GetFilterChunk(i);
             FillTempGrip_Vendor(DocFilter);
         end;
         TEMPDetailedLedger.Reset();

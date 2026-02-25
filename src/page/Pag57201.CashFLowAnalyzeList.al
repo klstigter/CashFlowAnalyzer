@@ -325,6 +325,7 @@ page 57201 "CashFLow Analyze List"
 
                 trigger OnAction()
                 begin
+                    cu.FillTempGrip();
                     cu.ShowPageFilterStrings();
                 end;
             }

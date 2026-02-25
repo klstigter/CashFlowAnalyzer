@@ -33,7 +33,7 @@ codeunit 57207 FilterBuilder
         exit(Chunks);
     end;
 
-    procedure BuildEntryNoFilter2(var Buf: Record "DetailLedger2DocNo Buffer") Chunks: List of [Text]
+    procedure BuildEntryNoFilter2(var Buf: Record "DetailLedger2DocNo Buffer"): integer
     var
         StartRangeNo: Text;
         EndRangeNo: Text;
@@ -45,7 +45,7 @@ codeunit 57207 FilterBuilder
         ClearGlobalvars();
         if not Buf.FindSet(false) then
             //exit(0);
-            exit(Chunks);
+            exit(0);
         repeat
             if HasPrevious then
                 AddToRange := buf."led_Entry No." = EndRange + 1;
@@ -56,14 +56,12 @@ codeunit 57207 FilterBuilder
         SingleFilter := CreateRangeFilter(StartRangeNo, EndRangeNo);
         AddToChunks(SingleFilter);
 
-        // if CurrChunk <> '' then begin
-        //     Chunks.Add(CurrChunk);
-        //     i += 1;
-        // end;
-        // exit(i);
-        if CurrChunk <> '' then
+        if CurrChunk <> '' then begin
             Chunks.Add(CurrChunk);
-        exit(Chunks);
+            i += 1;
+        end;
+        exit(i);
+
     end;
 
     procedure GetFilterChunk(i: Integer): Text
@@ -153,8 +151,8 @@ codeunit 57207 FilterBuilder
         if StrLen(Candidate) <= 1024 then
             CurrChunk := Candidate
         else begin
-            // i += 1;
-            // Chunks.Add(CurrChunk);
+            i += 1;
+            Chunks.Add(CurrChunk);
             CurrChunk := SingleRngFilter;
         end;
 
