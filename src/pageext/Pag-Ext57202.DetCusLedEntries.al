@@ -7,6 +7,7 @@ pageextension 57202 DetCusLedEntries extends "Detailed Cust. Ledg. Entries"
             field("Applied Cust. Ledger Entry No."; Rec."Applied Cust. Ledger Entry No.")
             {
                 ToolTip = 'Specifies the value of the Applied Cust. Ledger Entry No. field.', Comment = '%';
+                ApplicationArea = All;
             }
         }
         modify("Cust. Ledger Entry No.")
