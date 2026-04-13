@@ -10,28 +10,34 @@ table 57209 "Cash Entry Posting No."
         field(1; "Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Entry No.', NLD = 'Volgnummer';
         }
         field(10; "Posting Date"; Date)
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Posting Date', NLD = 'Boekingsdatum';
         }
         field(20; "Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Document No.', NLD = 'Documentnr.';
         }
         field(30; Description; Text[100])
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Description', NLD = 'Omschrijving';
         }
         field(40; "Cash Flow Category Amount"; Decimal)
         {
             FieldClass = FlowField;
             CalcFormula = Sum("Cashflow Analyse Line"."Cash Flow Category Amount" where("Posting Date" = field("Posting Date"), "Document No." = field("Document No.")));
+            CaptionML = ENU = 'Cash Flow Category Amount', NLD = 'Bedrag kasstroomcategorie';
         }
         field(45; "Amount to Analyze"; Decimal)
         {
             fieldClass = FlowField;
             CalcFormula = Sum("Cashflow Analyse Line"."Amount to Analyze" where("Posting Date" = field("Posting Date"), "Document No." = field("Document No.")));
+            CaptionML = ENU = 'Amount to Analyze', NLD = 'Te analyseren bedrag';
         }
         field(50; "Journal Templ. Name"; Code[10])
         {
@@ -58,11 +64,11 @@ table 57209 "Cash Entry Posting No."
         }
         field(100; "Source Type"; Enum "Gen. Journal Source Type")
         {
-            Caption = 'Source Type';
+            CaptionML = ENU = 'Source Type', NLD = 'Bronsoort';
         }
         field(101; "Source No."; Code[20])
         {
-            Caption = 'Source No.';
+            CaptionML = ENU = 'Source No.', NLD = 'Bronnr.';
             TableRelation = if ("Source Type" = const(Customer)) Customer
             else
             if ("Source Type" = const(Vendor)) Vendor
@@ -75,7 +81,8 @@ table 57209 "Cash Entry Posting No."
         }
         field(102; "Source Code"; Code[20])
         {
-            Caption = 'Source Code';
+            CaptionML = ENU = 'Source Code', NLD = 'Broncode';
+
         }
 
     }

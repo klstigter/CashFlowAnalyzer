@@ -10,7 +10,7 @@ table 57203 "CashFlow_Category"
         field(1; "Code"; Code[20])
         {
             DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Code';
+            CaptionML = ENU = 'Code', NLD = 'Code';
             NotBlank = true;
         }
         field(2; "Description"; Text[100])

@@ -7,63 +7,63 @@ pageextension 57200 "Business Mngr Role Ext" extends "Business Manager Role Cent
         {
             group(cashflowAnalyzerGroup)
             {
-                Caption = 'Cash Flow Analyzer';
+                CaptionML = ENU = 'Cash Flow Analyzer', NLD = 'Kasstroomanalyse';
                 ToolTip = 'Analyze and forecast your cash flow based on various financial data sources.';
                 action(CashEntryPostings)
                 {
                     ApplicationArea = Basic, Suite;
-                    Caption = 'Cash Entry Postings';
+                    CaptionML = ENU = 'Cash Entry Postings', NLD = 'Kas- en Bankmutaties';
                     RunObject = Page "Cash Entry Postings";
                     ToolTip = 'View and manage cash entry postings to analyze your cash flow based on actual transactions.';
                 }
                 action("Cashflow Analyze` List")
                 {
                     ApplicationArea = Basic, Suite;
-                    Caption = 'G/L Entry List';
+                    CaptionML = ENU = 'G/L Entry List', NLD = 'Te analyseren kasstromen';
                     RunObject = Page "Cashflow Analyze List";
                 }
                 action("ChartofCashFlowCategory")
                 {
                     ApplicationArea = Basic, Suite;
-                    Caption = 'Chart of CashFlow Category';
+                    CaptionML = ENU = 'Chart of CashFlow Category', NLD = 'Kasstroomcategorieën';
                     RunObject = Page "Chart of CashFlow Category";
                     ToolTip = 'View and manage cash flow categories to classify your cash flow entries for better analysis and reporting.';
                 }
 
                 group(AnalyzerHistory)
                 {
-                    Caption = 'Analyzer History';
+                    CaptionML = ENU = 'Analyzer History', NLD = 'Analyse log';
                     ToolTip = 'Review the history of your cash flow analyses to track changes and monitor trends in your company''s cash position over time.';
                     action("GRIPInvoiceData")
                     {
                         ApplicationArea = Basic, Suite;
-                        Caption = 'GRIP Invoice Data';
+                        CaptionML = ENU = 'GRIP Invoice Data', NLD = 'Kasstroomcategorie GRIP factuur';
                         RunObject = Page "GRIP Invoice data";
                         ToolTip = 'Review the history of your cash flow analyses to track changes and monitor trends in your company''s cash position over time.';
                     }
                     action(log)
                     {
                         ApplicationArea = Basic, Suite;
-                        Caption = 'Creation Log';
+                        CaptionML = ENU = 'Creation Log', NLD = 'Logboekvermeldingen';
                         RunObject = Page "Log Cashflow Analyzer";
                         ToolTip = 'Review the log of cash flow analysis creation to track performance and identify any issues during the analysis process.';
                     }
                 }
                 group(AnalyzerSetup)
                 {
-                    Caption = 'Analyzer Setup';
+                    CaptionML = ENU = 'Analyzer Setup', NLD = 'Kasstromen instellingen';
                     ToolTip = 'Set up your cash flow analysis parameters and categories to ensure accurate forecasting and reporting.';
                     action("Cashflow Category Setup")
                     {
                         ApplicationArea = Basic, Suite;
-                        Caption = 'CashFlow Category Setup';
+                        CaptionML = ENU = 'CashFlow Category Setup', NLD = 'Kasstroomcategorie grootboekrekening';
                         RunObject = Page "Cash Flow Categories Setup";
                         ToolTip = 'Set up cash flow categories to classify your cash flow entries for better analysis and reporting.';
                     }
                     action("Analyzer VAT Settlement Setup")
                     {
                         ApplicationArea = Basic, Suite;
-                        Caption = 'Analyzer VAT Settlement Setup';
+                        CaptionML = ENU = 'Analyzer VAT Settlement Setup', NLD = 'Kasstroom BTW-aangifte instellingen';
                         RunObject = Page "Analyzer VAT Settlement Setup";
                         ToolTip = 'Configure VAT settlement settings for your cash flow analysis to ensure accurate forecasting and reporting of VAT-related cash flow impacts.';
                     }

@@ -84,7 +84,7 @@ page 57211 "Cash Entry Postings"
             action("Copy GRIP Invoice Data")
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Collect postings';
+                CaptionML = ENU = 'Collect postings', NLD = 'Verzamelen mutaties';
                 RunObject = Codeunit CreateCashEntryPostingNoList;
                 Visible = true;
                 Promoted = true;
@@ -96,7 +96,7 @@ page 57211 "Cash Entry Postings"
             action(runProcess)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Run process';
+                CaptionML = ENU = 'Run process', NLD = 'Verwerken mutaties';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
@@ -126,7 +126,7 @@ page 57211 "Cash Entry Postings"
             action(runFilbuffers)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Fetch data in ALL buffers, also GRIP';
+                CaptionML = ENU = 'Fetch data in ALL buffers, also GRIP', NLD = 'Gegevens ophalen in ALLE buffers, ook GRIP';
                 Visible = ShowTestFields;
 
                 trigger OnAction()
@@ -147,7 +147,7 @@ page 57211 "Cash Entry Postings"
             action(runCreateAnalyzeLines)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Step 3: Create Analyze Lines (buffer must be filled first)';
+                CaptionML = ENU = 'Step 3: Create Analyze Lines (buffer must be filled first)', NLD = 'Stap 3: Analyse regels maken (buffer moet eerst worden gevuld)';
                 Visible = ShowTestFields;
 
 
@@ -190,7 +190,7 @@ page 57211 "Cash Entry Postings"
             action(ShowtransactionBUfferPage)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show Transaction Buffer';
+                CaptionML = ENU = 'Show Transaction Buffer', NLD = 'Toon transactiebuffer';
                 Visible = ShowTestFields;
 
                 trigger OnAction()
@@ -203,7 +203,7 @@ page 57211 "Cash Entry Postings"
             {
 
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show detailed ledger Buffer';
+                CaptionML = ENU = 'Show detailed ledger Buffer', NLD = 'Toon gedetailleerde grootboekbuffer';
                 Visible = ShowTestFields;
                 trigger OnAction()
                 var
@@ -215,7 +215,7 @@ page 57211 "Cash Entry Postings"
             action(AnalyzeListPage)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Analyze List';
+                CaptionML = ENU = 'Analyze List', NLD = 'Kasstroomposten';
                 trigger OnAction()
                 var
                     cashFlowheader: Record "CashFlow Analyze Header";

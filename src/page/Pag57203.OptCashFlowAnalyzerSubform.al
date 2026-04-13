@@ -134,10 +134,11 @@ page 57203 "Opt. CashFlow Analyzer Subform"
                     ApplicationArea = All;
                     Caption = 'Error message unbalance';
                 }
-                field("Place of Birth"; Rec."Place of Birth")
+                field("Place of Birth"; Rec."Location Creation Record")
                 {
                     ApplicationArea = All;
                     Caption = 'Place of Birth';
+                    Visible = false;
                 }
                 field("Transaction No."; Rec."Transaction No.")
                 {

@@ -9,6 +9,7 @@ table 57206 "Cashflow Analyzer Setup"
         field(1; "Primary Key"; Code[10])
         {
             Caption = 'Primary Key';
+
         }
         field(10; "VAT Settlement G/L Account No."; Code[20])
         {

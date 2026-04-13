@@ -41,7 +41,7 @@ table 57205 "GRIP Invoice Analyze Data"
         {
 
             CaptionClass = '1,1,1';
-            Caption = 'Global Dimension 1 Code';
+            CaptionML = ENU = 'Global Dimension 1 Code', NLD = 'Globale dimensiecode1';
             TableRelation = "Dimension Value".Code where("Global Dimension No." = const(1),
                                                           Blocked = const(false));
 
@@ -53,7 +53,7 @@ table 57205 "GRIP Invoice Analyze Data"
         field(70; "Global Dimension 2 Code"; Code[20])
         {
             CaptionClass = '1,1,2';
-            Caption = 'Global Dimension 2 Code';
+            CaptionML = ENU = 'Global Dimension 2 Code', NLD = 'Globale dimensiecode2';
             TableRelation = "Dimension Value".Code where("Global Dimension No." = const(2),
                                                           Blocked = const(false));
 

@@ -5,6 +5,7 @@ page 57207 "Log Cashflow Analyzer"
     UsageCategory = Lists;
     SourceTable = "Log Cashflow Analyzer";
     Editable = false;
+    CaptionML = ENU = 'Log CashFlow Analyzer', NLD = 'Logposten kasstromen';
 
     layout
     {
@@ -49,25 +50,6 @@ page 57207 "Log Cashflow Analyzer"
                 {
                     ToolTip = 'Specifies the value of the Comment field.', Comment = '%';
                 }
-            }
-        }
-        area(Factboxes)
-        {
-
-        }
-    }
-
-    actions
-    {
-        area(Processing)
-        {
-            action(ActionName)
-            {
-
-                trigger OnAction()
-                begin
-
-                end;
             }
         }
     }

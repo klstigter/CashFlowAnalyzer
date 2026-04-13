@@ -15,6 +15,7 @@ table 57210 "Cashflow Analyse Line"
         field(2; "Entry Line No."; Integer)
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Entry Line No.', NLD = 'Volgnummer kasstroompost';
         }
         field(3; "Is Grip"; Boolean)
         {
@@ -29,6 +30,7 @@ table 57210 "Cashflow Analyse Line"
         field(7; "Posting Date"; Date)
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Posting Date', NLD = 'Boekingsdatum';
         }
         field(9; "Applied Posting Date"; Date)
         {
@@ -97,19 +99,19 @@ table 57210 "Cashflow Analyse Line"
         field(18; "Global Dimension 1 Code"; Code[20])
         {
             CaptionClass = '1,1,1';
-            Caption = 'Global Dimension 1 Code';
+            CaptionML = ENU = 'Global Dimension 1 Code', NLD = 'Globale dimensie 1 code';
             TableRelation = "Dimension Value".Code where("Global Dimension No." = const(1));
         }
         field(19; "Global Dimension 2 Code"; Code[20])
         {
             CaptionClass = '1,1,2';
-            Caption = 'Global Dimension 2 Code';
+            CaptionML = ENU = 'Global Dimension 2 Code', NLD = 'Globale dimensie 2 code';
             TableRelation = "Dimension Value".Code where("Global Dimension No." = const(2));
         }
         field(20; "Shortcut Dimension 3 Code"; Code[20])
         {
             CaptionClass = '1,2,3';
-            Caption = 'Shortcut Dimension 3 Code';
+            CaptionML = ENU = 'Shortcut Dimension 3 Code', NLD = 'Snelkoppeling dimensie 3 code';
             Editable = false;
             FieldClass = FlowField;
             CalcFormula = lookup("Dimension Set Entry"."Dimension Value Code" where("Dimension Set ID" = field("Dimension Set ID"),
@@ -118,7 +120,7 @@ table 57210 "Cashflow Analyse Line"
         field(21; "Shortcut Dimension 4 Code"; Code[20])
         {
             CaptionClass = '1,2,4';
-            Caption = 'Shortcut Dimension 4 Code';
+            CaptionML = ENU = 'Shortcut Dimension 4 Code', NLD = 'Snelkoppeling dimensie 4 code';
             Editable = false;
             FieldClass = FlowField;
             CalcFormula = lookup("Dimension Set Entry"."Dimension Value Code" where("Dimension Set ID" = field("Dimension Set ID"),
@@ -127,7 +129,7 @@ table 57210 "Cashflow Analyse Line"
         field(22; "Shortcut Dimension 5 Code"; Code[20])
         {
             CaptionClass = '1,2,5';
-            Caption = 'Shortcut Dimension 5 Code';
+            CaptionML = ENU = 'Shortcut Dimension 5 Code', NLD = 'Snelkoppeling dimensie 5 code';
             Editable = false;
             FieldClass = FlowField;
             CalcFormula = lookup("Dimension Set Entry"."Dimension Value Code" where("Dimension Set ID" = field("Dimension Set ID"),
@@ -136,7 +138,7 @@ table 57210 "Cashflow Analyse Line"
         field(23; "Shortcut Dimension 6 Code"; Code[20])
         {
             CaptionClass = '1,2,6';
-            Caption = 'Shortcut Dimension 6 Code';
+            CaptionML = ENU = 'Shortcut Dimension 6 Code', NLD = 'Snelkoppeling dimensie 6 code';
             Editable = false;
             FieldClass = FlowField;
             CalcFormula = lookup("Dimension Set Entry"."Dimension Value Code" where("Dimension Set ID" = field("Dimension Set ID"),
@@ -145,7 +147,7 @@ table 57210 "Cashflow Analyse Line"
         field(24; "Shortcut Dimension 7 Code"; Code[20])
         {
             CaptionClass = '1,2,7';
-            Caption = 'Shortcut Dimension 7 Code';
+            CaptionML = ENU = 'Shortcut Dimension 7 Code', NLD = 'Snelkoppeling dimensie 7 code';
             Editable = false;
             FieldClass = FlowField;
             CalcFormula = lookup("Dimension Set Entry"."Dimension Value Code" where("Dimension Set ID" = field("Dimension Set ID"),
@@ -154,7 +156,7 @@ table 57210 "Cashflow Analyse Line"
         field(25; "Shortcut Dimension 8 Code"; Code[20])
         {
             CaptionClass = '1,2,8';
-            Caption = 'Shortcut Dimension 8 Code';
+            CaptionML = ENU = 'Shortcut Dimension 8 Code', NLD = 'Snelkoppeling dimensie 8 code';
             Editable = false;
             FieldClass = FlowField;
             CalcFormula = lookup("Dimension Set Entry"."Dimension Value Code" where("Dimension Set ID" = field("Dimension Set ID"),
@@ -163,7 +165,7 @@ table 57210 "Cashflow Analyse Line"
 
         field(50; "Dimension Set ID"; Integer)
         {
-            Caption = 'Dimension Set ID';
+            CaptionML = ENU = 'Dimension Set ID', NLD = 'Dimensie Set ID';
             Editable = false;
             TableRelation = "Dimension Set Entry";
 
@@ -202,10 +204,10 @@ table 57210 "Cashflow Analyse Line"
             CaptionML = ENU = 'Vendor No.', NLD = 'Leveranciersnr.';
             TableRelation = Vendor;
         }
-        field(63; "Place of Birth"; Text[100])
+        field(63; "Location Creation Record"; Text[100])
         {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Place of Birth', NLD = 'Geboorteplaats';
+            DataClassification = SystemMetadata;
+
         }
         field(64; "Transaction No."; integer)
         {
@@ -226,6 +228,10 @@ table 57210 "Cashflow Analyse Line"
             Clustered = true;
             SumIndexFields = "Cash Flow Category Amount",
                              "Amount to Analyze";
+        }
+        key(key2; "Cash Flow Category")
+        {
+
         }
 
     }

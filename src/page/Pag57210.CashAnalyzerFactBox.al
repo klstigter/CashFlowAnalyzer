@@ -3,6 +3,9 @@ page 57210 CashAnalyzerFactBox
     PageType = ListPart;
     ApplicationArea = All;
     SourceTable = "Cashflow Analyse Line";
+    CaptionML = ENU = 'Cash Flow Analysis', NLD = 'Gedetailleerde Kasstroomposten';
+
+    SourceTableView = sorting("Cash Flow Category") order(ascending);
 
     layout
     {

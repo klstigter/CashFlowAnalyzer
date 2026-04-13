@@ -6,6 +6,7 @@ page 57201 "CashFLow Analyze List"
     CardPageId = "CashFlow Analyze Card";
     SourceTable = "CashFLow Analyze Header";
     Editable = false;
+    CaptionML = ENU = 'Cash Flow Analysis List', NLD = 'Kasstroomposten';
 
     layout
     {
@@ -119,7 +120,7 @@ page 57201 "CashFLow Analyze List"
             action(ShowGlEntries)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show G/L Entries';
+                CaptionML = ENU = 'Show G/L Entries', NLD = 'Toon grootboekposten';
 
                 trigger OnAction()
                 var
@@ -135,7 +136,7 @@ page 57201 "CashFLow Analyze List"
             action(ShowDetailedLedgers)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show Detailed Ledgers';
+                CaptionML = ENU = 'Show Detailed Ledgers', NLD = 'Toon gedetailleerde posten';
                 Visible = ShowTestFields;
 
                 trigger OnAction()
@@ -171,7 +172,7 @@ page 57201 "CashFLow Analyze List"
             action(ShowLedgers)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show Ledgers';
+                CaptionML = ENU = 'Show Ledgers', NLD = 'Toon bronsoort posten';
 
 
                 trigger OnAction()
@@ -210,7 +211,7 @@ page 57201 "CashFLow Analyze List"
             action(ShowTransactionBUfferPage)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show Transaction Buffer Page';
+                CaptionML = ENU = 'Show Transaction Buffer Page', NLD = 'Toon Transactiebufferpagina';
                 Visible = ShowTestFields;
 
                 trigger OnAction()
@@ -221,7 +222,7 @@ page 57201 "CashFLow Analyze List"
             action(ShowDetailedLedgerPage)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show Detailed Ledger Page';
+                CaptionML = ENU = 'Show Detailed Ledger Page', NLD = 'Toon Gedetailleerde posten';
                 Visible = ShowTestFields;
 
                 trigger OnAction()
@@ -233,7 +234,7 @@ page 57201 "CashFLow Analyze List"
             action(FillDetailelLedgerBuffer)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Fill Buffers without gripBuffer';
+                CaptionML = ENU = 'Fill Buffers without gripBuffer', NLD = 'Vul buffers zonder gripBuffer';
                 Visible = ShowTestFields;
                 Promoted = true;
                 PromotedCategory = Process;
@@ -261,7 +262,7 @@ page 57201 "CashFLow Analyze List"
             action(runMyCodeunit)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Step 2: Fetch all data in all buffers';
+                CaptionML = ENU = 'Step 2: Fetch all data in all buffers', NLD = 'Stap 2: Haal alle gegevens op in alle buffers';
                 Visible = ShowTestFields;
 
                 trigger OnAction()
@@ -287,7 +288,7 @@ page 57201 "CashFLow Analyze List"
             action(runCreateAnalyzeLines)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Create Analyze Line';
+                CaptionML = ENU = 'Create Analyze Line', NLD = 'Maak cashflow posten';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
@@ -320,7 +321,7 @@ page 57201 "CashFLow Analyze List"
             action(ShowFilterStrings)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show Filter Strings';
+                CaptionML = ENU = 'Show Filter Strings', NLD = 'Toon filterstrings';
                 Visible = ShowTestFields;
 
                 trigger OnAction()

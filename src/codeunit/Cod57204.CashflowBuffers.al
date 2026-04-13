@@ -543,7 +543,7 @@ codeunit 57204 "Cashflow Buffers"
             CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
         CashFlowLine.Validate("Dimension Set ID", TEMPDetailedLedger."Led_Dimension Set ID");
         CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-        CashFlowLine."Place of Birth" := TEMPDetailedLedger."Birth place";
+        CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";
 
         CashFlowLine.Insert();
     end;
@@ -584,7 +584,7 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"CashFlow Category GRIP Invoice";
 
                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-                CashFlowLine."Place of Birth" := TEMPDetailedLedger."Birth place";
+                CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";
                 CashFlowLine.insert();
             until TEMPgrip_Vendor.Next() = 0;
     end;
@@ -625,7 +625,7 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"CashFlow Category GRIP Invoice";
 
                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-                CashFlowLine."Place of Birth" := TEMPDetailedLedger."Birth place";
+                CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";
                 CashFlowLine.insert();
             until TEMPgrip.Next() = 0;
     end;

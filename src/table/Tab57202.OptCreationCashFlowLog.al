@@ -7,64 +7,68 @@ table 57202 "Opt. Creation Cash Flow Log"
     {
         field(1; "Entry No."; Integer)
         {
-            Caption = 'Entry No.';
             DataClassification = SystemMetadata;
+            captionML = ENU = 'Entry No.', NLD = 'Volgnummer';
         }
 
         field(2; "User ID"; Code[50])
         {
-            Caption = 'User ID';
+            CaptionML = ENU = 'User ID', NLD = 'Gebruikers-ID';
             DataClassification = EndUserIdentifiableInformation;
         }
 
         field(3; "Start Time"; Time)
         {
-            Caption = 'Start Time';
+            CaptionML = ENU = 'Start Time', NLD = 'Starttijd';
         }
 
         field(4; "End Time"; Time)
         {
-            Caption = 'End Time';
+            CaptionML = ENU = 'End Time', NLD = 'Eindtijd';
         }
 
         field(5; "Total Time"; Duration)
         {
-            Caption = 'Total Time';
+            CaptionML = ENU = 'Total Time', NLD = 'Totale tijd';
         }
 
         field(6; "Source Line Counter"; Integer)
         {
-            Caption = 'Total Source Line Counter';
+            CaptionML = ENU = 'Total Source Line Counter', NLD = 'Totaal aantal bronregels';
         }
 
         field(7; "Vendor Flow"; Integer)
         {
-            Caption = 'Vendor Flow';
+            CaptionML = ENU = 'Vendor Flow', NLD = 'Leveranciersstroom';
         }
 
         field(8; "Customer Flow"; Integer)
         {
-            Caption = 'Customer Flow';
+            CaptionML = ENU = 'Customer Flow', NLD = 'Klantenstroom';
         }
 
         field(9; "Bank Flow"; Integer)
         {
-            Caption = 'Bank Flow';
+            CaptionML = ENU = 'Bank Flow', NLD = 'Bankstroom';
         }
 
         field(10; "G/L Flow"; Integer)
         {
-            Caption = 'G/L Flow';
+            CaptionML = ENU = 'G/L Flow', NLD = 'G/L Stroom';
         }
 
         field(11; "Created DateTime"; DateTime)
         {
-            Caption = 'Created DateTime';
+            CaptionML = ENU = 'Created DateTime', NLD = 'Aangemaakte DatumTijd';
         }
         field(12; "Session ID"; Integer)
-        { }
+        {
+            CaptionML = ENU = 'Session ID', NLD = 'Sessie-ID';
+        }
         field(13; "Company"; Text[30])
-        { }
+        {
+            CaptionML = ENU = 'Company', NLD = 'Bedrijf';
+        }
 
     }
 

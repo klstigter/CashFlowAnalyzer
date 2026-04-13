@@ -2,6 +2,7 @@ page 57217 DateSelector
 {
     PageType = StandardDialog;
     ApplicationArea = All;
+    CaptionML = ENU = 'Select Date Range', NLD = 'Kasstroomposten aanmaken per datum';
 
     layout
     {
@@ -10,10 +11,12 @@ page 57217 DateSelector
             field("Start Date"; StartDate)
             {
                 ApplicationArea = All;
+                CaptionML = ENU = 'Start Date', NLD = 'Startdatum';
             }
             field("End Date"; EndDate)
             {
                 ApplicationArea = All;
+                CaptionML = ENU = 'End Date', NLD = 'Einddatum';
             }
         }
         area(Factboxes)

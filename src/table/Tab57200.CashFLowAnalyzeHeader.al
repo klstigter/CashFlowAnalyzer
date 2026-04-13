@@ -10,35 +10,41 @@ table 57200 "CashFLow Analyze Header"
         field(1; "Entry No."; Integer)
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Entry No.', NLD = 'Volgnummer';
         }
         field(2; "Balance Entry No. Start"; Integer)
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Balance Entry No. Start', NLD = 'Beginnend balansvolgnummer';
         }
         field(3; "Balance Entry No. End"; Integer)
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Balance Entry No. End', NLD = 'Eindigend balansvolgnummer';
         }
 
         field(10; "Posting Date"; Date)
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Posting Date', NLD = 'Boekingsdatum';
         }
         field(20; "Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Document No.', NLD = 'Documentnr.';
         }
         field(30; Description; Text[100])
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Description', NLD = 'Omschrijving';
         }
         field(31; "Source Type"; Enum "Gen. Journal Source Type")
         {
-            Caption = 'Source Type';
+            CaptionML = ENU = 'Source Type', NLD = 'Bronsoort';
         }
         field(32; "Source No."; Code[20])
         {
-            Caption = 'Source No.';
+            CaptionML = ENU = 'Source No.', NLD = 'Bronnr.';
             TableRelation = if ("Source Type" = const(Customer)) Customer
             else
             if ("Source Type" = const(Vendor)) Vendor
@@ -52,6 +58,7 @@ table 57200 "CashFLow Analyze Header"
         field(40; Amount; Decimal)
         {
             DataClassification = ToBeClassified;
+            captionML = ENU = 'Amount', NLD = 'Bedrag';
         }
         field(50; "Analyse Type"; enum "Analyse Type")
         {
@@ -90,11 +97,13 @@ table 57200 "CashFLow Analyze Header"
         {
             FieldClass = FlowField;
             CalcFormula = sum("Cashflow Analyse Line"."Cash Flow Category Amount" where("G/L Entry No." = field("Entry No.")));
+            captionML = ENU = 'Cashflow Category Amount', NLD = 'Bedrag kasstroomcategorie';
         }
         field(61; "Cashflow to Analyze"; Decimal)
         {
             FieldClass = FlowField;
             CalcFormula = sum("Cashflow Analyse Line"."Amount to Analyze" where("G/L Entry No." = field("Entry No.")));
+            captionML = ENU = 'Amount to Analyze', NLD = 'Bedrag te analyseren';
         }
     }
 

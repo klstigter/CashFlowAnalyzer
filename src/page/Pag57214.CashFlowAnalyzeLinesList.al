@@ -4,6 +4,7 @@ page 57214 "CashFlowAnalyzeLines List"
     ApplicationArea = All;
     UsageCategory = Lists;
     SourceTable = "Cashflow Analyse Line";
+    CaptionML = ENU = 'Cash Flow Analysis Lines', NLD = 'Gedetailleerde Kasstroomposten';
 
     layout
     {
@@ -16,9 +17,10 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Entry Line No. field.', Comment = '%';
                 }
-                field("Place of Birth"; Rec."Place of Birth")
+                field("Place of Birth"; Rec."Location Creation Record")
                 {
                     ToolTip = 'Specifies the value of the Place of Birth field.', Comment = '%';
+                    Visible = false;
                 }
                 field("Applied Document Entry No."; Rec."Applied Document Entry No.")
                 {
