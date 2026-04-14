@@ -197,9 +197,10 @@ codeunit 57204 "Cashflow Buffers"
 
     end;
 
-    procedure FillDetCustLedgBuffer1(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text)
+    procedure FillDetCustLedgBuffer1(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text): Integer
     var
         CustLedgerEntry: Query GetRelatedCustLedgerEntries1;
+        nRec: Integer;
     begin
         CustLedgerEntry.SetFilter("DocNoFilter", '=%1', PostRec."Document No.");
         CustLedgerEntry.SetFilter("PostingDateFilter", '=%1', PostRec."Posting Date");
@@ -230,13 +231,16 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."led_Dimension Set ID" := CustLedgerEntry.Cle_Dimension_Set_ID;
                 TEMPDetailedLedger."Query Nr." := 1;
                 TEMPDetailedLedger.Insert();
+                nRec += 1;
             end;
         end;
+        exit(nRec);
     end;
 
-    procedure FillDetCustLedgBuffer2(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text)
+    procedure FillDetCustLedgBuffer2(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text): Integer
     var
         CustLedgerEntry: Query GetRelatedCustLedgerEntries2;
+        nRec: Integer;
     begin
         CustLedgerEntry.SetFilter("DocNoFilter", '=%1', PostRec."Document No.");
         CustLedgerEntry.SetFilter("PostingDateFilter", '=%1', PostRec."Posting Date");
@@ -270,13 +274,16 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."led_Dimension Set ID" := CustLedgerEntry.Cle_Dimension_Set_ID;
                 TEMPDetailedLedger."Query Nr." := 2;
                 TEMPDetailedLedger.Insert();
+                nRec += 1;
             end;
         end;
+        exit(nRec);
     end;
 
-    procedure FillDetVendorLedgBuffer1(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text)
+    procedure FillDetVendorLedgBuffer1(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text): Integer
     var
         VendorLedgerEntry: Query GetRelatedVendLedgerEntries1;
+        nRec: Integer;
     begin
         VendorLedgerEntry.SetFilter("DocNoFilter", '=%1', PostRec."Document No.");
         VendorLedgerEntry.SetFilter("PostingDateFilter", '=%1', PostRec."Posting Date");
@@ -307,14 +314,16 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."led_Dimension Set ID" := VendorLedgerEntry.Cle_Dimension_Set_ID;
                 TEMPDetailedLedger."Query Nr." := 3;
                 TEMPDetailedLedger.Insert();
+                nRec += 1;
             end;
         end;
+        exit(nRec);
     end;
 
-    procedure FillDetVendorLedgBuffer2(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text)
+    procedure FillDetVendorLedgBuffer2(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text): Integer
     var
         VendorLedgerEntry: Query GetRelatedVendLedgerEntries2;
-
+        nRec: Integer;
     begin
         VendorLedgerEntry.SetFilter("DocNoFilter", '=%1', PostRec."Document No.");
         VendorLedgerEntry.SetFilter("PostingDateFilter", '=%1', PostRec."Posting Date");
@@ -348,11 +357,52 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."led_Dimension Set ID" := VendorLedgerEntry.Cle_Dimension_Set_ID;
                 TEMPDetailedLedger."Query Nr." := 4;
                 TEMPDetailedLedger.Insert();
+                nRec += 1;
             end;
         end;
+        exit(nRec);
     end;
 
-    procedure CreateAnalyze(var AnalyzeHeader: Record "CashFLow Analyze Header")
+    procedure FillVATSettlement(PostRec: Record "Cash Entry Posting No."): Integer
+    var
+        RealizedSetup: record "Realized Cashflow Setup";
+        GLEntry: record "G/L Entry";
+        GLReviewEntry: record "G/L Entry Review Entry";
+        ReviewIdentifier: Integer;
+        rtv: Boolean;
+        x: Integer;
+    begin
+        RealizedSetup.Get(); //show error if no record
+        rtv := GLEntry.Get(PostRec."Entry No.");
+        if rtv then begin // Get the balancing entry for PostRec
+            GLEntry.SetRange("Document No.", PostRec."Document No.");
+            GLEntry.SetRange("Posting Date", PostRec."Posting Date");
+            GLEntry.SetRange("Source Type", GLEntry."Source Type"::" ");
+            GLEntry.SetRange("Source No.", '');
+            rtv := GLEntry.FindSet();
+        end;
+        if rtv then
+            repeat
+                if GLEntry."G/L Account No." = RealizedSetup."VAT Settlement G/L Account No." then begin
+                    if GLReviewEntry.Get(GLEntry."Entry No.") then begin
+                        ReviewIdentifier := GLReviewEntry."Reviewed Identifier";
+                        if ReviewIdentifier <> 0 then begin
+                            GLReviewEntry.Reset();
+                            GLReviewEntry.SetFilter("G/L Entry No.", '<>%1', GLEntry."Entry No.");
+                            GLReviewEntry.SetRange("Reviewed Identifier", ReviewIdentifier);
+                            if GLReviewEntry.FindSet() then
+                                repeat
+                                    x := 1;
+                                    error('force error for ah note: from here write code for filling the buffer');
+                                until GLReviewEntry.Next() = 0;
+                        end
+                    end;
+                end;
+            until GLEntry.Next() = 0;
+    end;
+
+    procedure CreateAnalyze(var
+                                AnalyzeHeader: Record "CashFLow Analyze Header")
     var
         Factor: Decimal;
         CashFlowLine: Record "Cashflow Analyse Line";

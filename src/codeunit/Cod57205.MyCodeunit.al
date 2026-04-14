@@ -8,12 +8,17 @@ codeunit 57205 MyCodeunit
     Procedure Fill_NOT_GripBuffer(rec: Record "Cash Entry Posting No."): Boolean
     var
         FilterTxt: text;
+        nRec: Integer;
     begin
         TransActionBuffer.DeleteDetailedLedger();
-        TransActionBuffer.FillDetCustLedgBuffer1(Rec, FilterTxt);
-        TransActionBuffer.FillDetCustLedgBuffer2(Rec, FilterTxt);
-        TransActionBuffer.FillDetVendorLedgBuffer1(Rec, FilterTxt);
-        TransActionBuffer.FillDetVendorLedgBuffer2(Rec, FilterTxt);
+        nRec += TransActionBuffer.FillDetCustLedgBuffer1(Rec, FilterTxt);
+        nRec += TransActionBuffer.FillDetCustLedgBuffer2(Rec, FilterTxt);
+        nRec += TransActionBuffer.FillDetVendorLedgBuffer1(Rec, FilterTxt);
+        nRec += TransActionBuffer.FillDetVendorLedgBuffer2(Rec, FilterTxt);
+
+        if nRec = 0 then
+            nRec += TransActionBuffer.FillVATSettlement(Rec);
+
         FilterTxt := TransActionBuffer.FillBuffer(Rec);
         TransActionBuffer.FillTEMPCashFlowCategory();
         exit(true);
