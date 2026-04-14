@@ -91,6 +91,7 @@ table 57209 "Cash Entry Posting No."
 
 
         }
+    }
 
     keys
     {
