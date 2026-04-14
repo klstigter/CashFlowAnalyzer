@@ -716,7 +716,6 @@ codeunit 57204 "Cashflow Buffers"
 
     procedure FillTempGrip()
     var
-        TEMP_: Record "DetailLedger2DocNo Buffer" temporary;
         TEMP_NotFound: Record "DetailLedger2DocNo Buffer" temporary;
         FilterBuilder: Codeunit FilterBuilder;
         GetNotGrip: Codeunit GetNotGrip;
@@ -728,7 +727,8 @@ codeunit 57204 "Cashflow Buffers"
         TEMPgrip.DeleteAll();
         TEMPgrip_Vendor.Reset();
         TEMPgrip_Vendor.DeleteAll();
-        TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice);
+        TEMPDetailedLedger.SetRange("Query Nr.", 1, 2);
+        TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice, TEMPDetailedLedger."led_Document Type"::"Credit Memo");
         TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
         if not TEMPDetailedLedger.IsEmpty() then
             n := FilterBuilder.BuildEntryNoFilter(TEMPDetailedLedger);
@@ -737,8 +737,7 @@ codeunit 57204 "Cashflow Buffers"
             FillTempGrip_Grip(DocFilter, True);
         end;
         if GetNotGrip.FindNotGripSalesInvoices(TEMPDetailedLedger, TEMPgrip, TEMP_NotFound) then begin
-            if not TEMP_NotFound.IsEmpty() then
-                n := FilterBuilder.BuildEntryNoFilter(TEMP_NotFound);
+            n := FilterBuilder.BuildEntryNoFilter(TEMP_NotFound);
             for i := 1 to n do begin
                 DocFilter := FilterBuilder.GetFilterChunk(i);
                 FillTempGrip_Customer(DocFilter);
