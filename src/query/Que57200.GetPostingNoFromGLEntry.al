@@ -56,6 +56,11 @@ query 57200 "GetPostingNo From GLEntry"
             {
                 Method = Count;
             }
+            Column(TotalAmount; amount)
+            {
+                Method = Sum;
+
+            }
         }
     }
 }

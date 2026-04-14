@@ -84,8 +84,13 @@ table 57209 "Cash Entry Posting No."
             CaptionML = ENU = 'Source Code', NLD = 'Broncode';
 
         }
+        field(110; "Total Amount"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Total Amount', NLD = 'Totaalbedrag';
 
-    }
+
+        }
 
     keys
     {

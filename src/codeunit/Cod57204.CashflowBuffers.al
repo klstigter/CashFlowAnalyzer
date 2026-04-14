@@ -48,60 +48,116 @@ codeunit 57204 "Cashflow Buffers"
     procedure FillBuffer("CashRec": Record "Cash Entry Posting No.") FilterTransactionNo: text;
     var
         GLentry: Record "G/L Entry";
+        TEMPGLentry: Record "G/L Entry" temporary;
     begin
         TEMPbuffer_Bnk.reset;
         TEMPbuffer_Bnk.DeleteAll();
         GLentry.SetCurrentKey("Entry No.");
-        GLentry.SetLoadFields("Entry No.", "Entry No.", Amount, "Source No.", "Source Type");
+        GLentry.SetLoadFields("Entry No.", "Document No.", "Posting Date", "Source Type", "Source No.", Amount, "G/L Account No.", "Journal Templ. Name", "Journal Batch Name", "Transaction No.", "Dimension Set ID", "Document Type");
         GLentry.SetRange("Document No.", "CashRec"."Document No.");
         GLentry.SetRange("Posting Date", "CashRec"."Posting Date");
         GLentry.SetRange("Source Code", "CashRec"."Source Code");
         GLentry.SetFilter(Amount, '<>%1', 0);
-        if GLentry.FindLast() then
-            FilterTransactionNo := format(GLentry."Transaction No.");
-        GLentry.SetRange("Source Type", CashRec."Source Type");
-        GLentry.SetRange("Source No.", CashRec."Source No.");
         if GLentry.FindSet() then
             repeat
-                TEMPbuffer_Bnk.Init();
-                TEMPbuffer_Bnk."Gl_EntryNo_Bnk" := GLentry."Entry No.";
-                TEMPbuffer_Bnk."Posting Date" := GLentry."Posting Date";
-                TEMPbuffer_Bnk."Document No." := GLentry."Document No.";
-                TEMPbuffer_Bnk."Document Type" := GLentry."Document Type";
-                if GLentry."Source Type" <> GLentry."Source Type"::" " then
-                    TEMPbuffer_Bnk."Source Type" := GLentry."Source Type";
-                if GLentry."Source No." <> '' then
-                    TEMPbuffer_Bnk."Source No." := GLentry."Source No.";
-                TEMPbuffer_Bnk."Cashflow Amount" += GLentry.Amount;
-                TEMPbuffer_Bnk."Journal Templ. Name" := GLentry."Journal Templ. Name";
-                TEMPbuffer_Bnk."Journal Batch Name" := GLentry."Journal Batch Name";
-                TEMPbuffer_Bnk."Transaction No." := GLentry."Transaction No.";
-                TEMPbuffer_Bnk."Dimension Set ID" := GLentry."Dimension Set ID";
-                TEMPbuffer_Bnk.Insert();
+                TransferGLEntyFields(GLentry, TEMPGLentry);
             until GLentry.Next() = 0;
 
-        FilterTransactionNo := format(GLentry."Transaction No.") + '..' + FilterTransactionNo;
+        TEMPGLentry.SetCurrentKey("Entry No.");
+        if TEMPGLentry.FindLast() then
+            FilterTransactionNo := format(TEMPGLentry."Transaction No.");
+        TEMPGLentry.SetRange("Source Type", CashRec."Source Type");
+        TEMPGLentry.SetRange("Source No.", CashRec."Source No.");
+        if TEMPGLentry.FindSet() then begin
+            FilterTransactionNo := format(TEMPGLentry."Transaction No.") + '..' + FilterTransactionNo;
+            repeat
+                TEMPbuffer_Bnk.Init();
+                TEMPbuffer_Bnk."Gl_EntryNo_Bnk" := TEMPGLentry."Entry No.";
+                TEMPbuffer_Bnk."Posting Date" := TEMPGLentry."Posting Date";
+                TEMPbuffer_Bnk."Document No." := TEMPGLentry."Document No.";
+                TEMPbuffer_Bnk."Document Type" := TEMPGLentry."Document Type";
+                if TEMPGLentry."Source Type" <> TEMPGLentry."Source Type"::" " then
+                    TEMPbuffer_Bnk."Source Type" := TEMPGLentry."Source Type";
+                if TEMPGLentry."Source No." <> '' then
+                    TEMPbuffer_Bnk."Source No." := TEMPGLentry."Source No.";
+                TEMPbuffer_Bnk."Cashflow Amount" += TEMPGLentry.Amount;
+                TEMPbuffer_Bnk."Journal Templ. Name" := TEMPGLentry."Journal Templ. Name";
+                TEMPbuffer_Bnk."Journal Batch Name" := TEMPGLentry."Journal Batch Name";
+                TEMPbuffer_Bnk."Transaction No." := TEMPGLentry."Transaction No.";
+                TEMPbuffer_Bnk."Dimension Set ID" := TEMPGLentry."Dimension Set ID";
+                TEMPbuffer_Bnk.Insert();
+            until TEMPGLentry.Next() = 0;
+        end;
 
-        GLentry.SetRange("Source Type");
-        GLentry.SetRange("Source No.");
+        RemoveNulTransactions(TEMPGLentry);
+        TEMPGLentry.SetFilter("Source Type", '<>%1', CashRec."Source Type");
+        TEMPGLentry.SetFilter("Source No.", '<>%1', CashRec."Source No.");
+        TEMPGLentry.SetCurrentKey("Entry No.");
         TEMPbuffer_Bnk.setrange("Gl_EntryNo_Bnk");
         if TEMPbuffer_Bnk.FindSet() then
             repeat
-                if GLentry.Next() = 0 then
+                if TEMPGLentry.Next() = 0 then
                     break;
-                TEMPbuffer_Bnk."GL_EntryNo Start" := GLentry."Entry No.";
+                TEMPbuffer_Bnk."GL_EntryNo Start" := TEMPGLentry."Entry No.";
                 repeat
-                    TEMPbuffer_Bnk."Balance Amount" += GLentry.Amount;
-                    TEMPbuffer_Bnk."GL_EntryNo End" := GLentry."Entry No.";
-                    TEMPbuffer_Bnk."Source Type" := GLentry."Source Type";
-                    TEMPbuffer_Bnk."Source No." := GLentry."Source No.";
+                    TEMPbuffer_Bnk."Balance Amount" += TEMPGLentry.Amount;
+                    TEMPbuffer_Bnk."GL_EntryNo End" := TEMPGLentry."Entry No.";
+                    TEMPbuffer_Bnk."Source Type" := TEMPGLentry."Source Type";
+                    TEMPbuffer_Bnk."Source No." := TEMPGLentry."Source No.";
 
-                    TEMPbuffer_Bnk."GL Account No." := GLentry."G/L Account No.";
+                    TEMPbuffer_Bnk."GL Account No." := TEMPGLentry."G/L Account No.";
                     if -1 * TEMPbuffer_Bnk."Balance Amount" >= TEMPbuffer_Bnk."Cashflow Amount" then
                         break;
-                until GLentry.Next() = 0;
+                until TEMPGLentry.Next() = 0;
                 TEMPbuffer_Bnk.Modify();
             until TEMPbuffer_Bnk.Next() = 0;
+    end;
+
+    Local procedure TransferGLEntyFields(var GLentry: Record "G/L Entry"; var TEMPGLentry: Record "G/L Entry" temporary)
+    begin
+        TempGLentry."Entry No." := GLentry."Entry No.";
+        TempGLentry."Document No." := GLentry."Document No.";
+        TempGLentry."Posting Date" := GLentry."Posting Date";
+        TempGLentry."Source Type" := GLentry."Source Type";
+        TempGLentry."Source No." := GLentry."Source No.";
+        TempGLentry.Amount := GLentry.Amount;
+        TempGLentry."G/L Account No." := GLentry."G/L Account No.";
+        TempGLentry."Journal Templ. Name" := GLentry."Journal Templ. Name";
+        TempGLentry."Journal Batch Name" := GLentry."Journal Batch Name";
+        TempGLentry."Transaction No." := GLentry."Transaction No.";
+        TempGLentry."Dimension Set ID" := GLentry."Dimension Set ID";
+        TempGLentry."Document Type" := GLentry."Document Type";
+        TEMPGLentry.insert;
+    end;
+
+    local procedure RemoveNulTransactions(var TEMPGLentry: Record "G/L Entry" temporary)
+    var
+        int: record integer temporary;
+        CheckAmount: Decimal;
+        EndOfRecords: Boolean;
+        "SourceType": Enum Microsoft.Finance.GeneralLedger.Journal."Gen. Journal Source Type";
+    begin
+        TEMPGLentry.setrange("Source Type", SourceType::" ");
+        TEMPGLentry.SetCurrentKey("Entry No.");
+        EndOfRecords := not TEMPGLentry.FindSet();
+        while not EndOfRecords do begin
+            TEMPGLentry.setrange("Transaction No.", TEMPGLentry."Transaction No.");
+            if TEMPGLentry.FindSet() then
+                repeat
+                    CheckAmount += TEMPGLentry.Amount;
+                until TEMPGLentry.Next() = 0;
+            TEMPGLentry.SetRange("Transaction No.");
+            if CheckAmount = 0 then
+                int.Number := TEMPGLentry."Transaction No.";
+            CheckAmount := 0;
+            EndOfRecords := TEMPGLentry.next = 0
+        end;
+        if int.FindSet() then
+            repeat
+                TEMPGLentry.SetRange("Transaction No.", int.Number);
+                TEMPGLentry.DeleteAll();
+            until int.Next() = 0;
+        TEMPGLentry.setrange("Source Type");
     end;
 
     procedure DeleteDetailedLedger()
@@ -468,7 +524,7 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine."G/L Entry No." := TEMPbuffer_Bnk."Gl_EntryNo_Bnk";
         CashFlowLine."Entry Line No." := CashFlowLineNo;
         // Bank/Cash Block
-        GLentry.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
+        GLentry.Get(TEMPbuffer_Bnk."GL_EntryNo Start");
         CashFlowLine."Document No." := GLentry."Document No.";
         CashFlowLine."Posting Date" := GLentry."Posting Date";
         CashFlowLine."Dimension Set ID" := GLentry."Dimension Set ID";
