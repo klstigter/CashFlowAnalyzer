@@ -91,7 +91,7 @@ table 57209 "Cash Entry Posting No."
 
 
         }
-
+    }
     keys
     {
         key(Key1; "Entry No.")
