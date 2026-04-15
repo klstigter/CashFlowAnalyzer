@@ -64,10 +64,11 @@ codeunit 57203 CreateCashEntryPostingNoList
                 CashEntryPostingNo."Source No." := qry.SourceNo;
                 CashEntryPostingNo."Source Code" := qry.Source_Code;
                 CashEntryPostingNo."Total Amount" := qry.TotalAmount;
-                if not CashEntryPostingNo.Insert() then
-                    counterInserted += 1
-                else
+                if not CashEntryPostingNo.Insert() then begin
                     counterSkipped += 1;
+                    cashentrypostingno.Modify();
+                end else
+                    counterInserted += 1;
             end;
             qry.Close();
         end;
