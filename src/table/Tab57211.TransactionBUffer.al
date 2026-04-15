@@ -98,6 +98,10 @@ table 57211 "Transaction Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(40; "GL vs GL"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
     }
 
     keys

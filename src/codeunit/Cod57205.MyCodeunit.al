@@ -5,7 +5,7 @@ codeunit 57205 MyCodeunit
     var
         TransActionBuffer: Codeunit "Cashflow Buffers";
 
-    Procedure Fill_NOT_GripBuffer(rec: Record "Cash Entry Posting No."): Boolean
+    Procedure Fill_NOT_GripBuffer(var rec: Record "Cash Entry Posting No."): Boolean
     var
         FilterTxt: text;
         nRec: Integer;
@@ -16,15 +16,19 @@ codeunit 57205 MyCodeunit
         nRec += TransActionBuffer.FillDetVendorLedgBuffer1(Rec, FilterTxt);
         nRec += TransActionBuffer.FillDetVendorLedgBuffer2(Rec, FilterTxt);
 
-        if nRec = 0 then
+        if nRec = 0 then begin
             nRec += TransActionBuffer.FillVATSettlement(Rec);
-
+            if nRec <> 0 then begin
+                Rec."GL vs GL" := true;
+                Rec.Modify();
+            end
+        end;
         FilterTxt := TransActionBuffer.FillBuffer(Rec);
         TransActionBuffer.FillTEMPCashFlowCategory();
         exit(true);
     end;
 
-    Procedure Fill_All_Buffer(rec: Record "Cash Entry Posting No."): Boolean
+    Procedure Fill_All_Buffer(var rec: Record "Cash Entry Posting No."): Boolean
     var
         FilterTxt: text;
     begin
