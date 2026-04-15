@@ -583,7 +583,9 @@ codeunit 57204 "Cashflow Buffers"
                     TEMPDetailedLedger.SetFilter(Amount, '<>%1', 0);
                     IF TEMPDetailedLedger.FindSet() THEN begin
                         repeat
-                            factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
+                            factor := 1;
+                            if TEMPDetailedLedger."led_Amount" <> 0 then
+                                factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
                             TEMPgrip.SetRange("Document No.", TEMPDetailedLedger."led_Document No.");
                             IF TEMPgrip.FindSet() THEN
                                 InsertGrip(factor, ProcessAmount)
