@@ -11,6 +11,11 @@ table 57205 "GRIP Invoice Analyze Data"
             AutoIncrement = true;
             DataClassification = CustomerContent;
         }
+        field(2; IsGrip; Boolean)
+        {
+            CaptionML = ENU = 'Is GRIP', NLD = 'Is GRIP';
+            DataClassification = CustomerContent;
+        }
 
         field(20; "Document Type"; Option)
         {

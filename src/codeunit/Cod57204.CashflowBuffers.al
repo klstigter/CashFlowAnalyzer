@@ -194,7 +194,6 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger."led_Amount" := 0; //GLEntry.Amount; //CustLedgerEntry.Cle_Amount;
         TEMPDetailedLedger."led_Dimension Set ID" := GLEntry."Dimension Set ID";
         TEMPDetailedLedger."Is Dummy Record" := true;
-
     end;
 
     procedure FillDetCustLedgBuffer1(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text)
@@ -377,7 +376,7 @@ codeunit 57204 "Cashflow Buffers"
                     case TEMPbuffer_Bnk."Source Type" of
                         TEMPbuffer_Bnk."Source Type"::Customer:
                             begin
-                                IF FillTempGrip(TEMPDetailedLedger."led_Document No.") THEN
+                                IF GetCounterBalanceDetails(TEMPDetailedLedger."led_Document No.") THEN
                                     InsertGrip(factor, ProcessAmount)
                                 ELSE
                                     InsertDetailedLedBuffer(factor, ProcessAmount);
@@ -717,7 +716,9 @@ codeunit 57204 "Cashflow Buffers"
 
     procedure FillTempGrip()
     var
+        TEMP_NotFound: Record "DetailLedger2DocNo Buffer" temporary;
         FilterBuilder: Codeunit FilterBuilder;
+        GetNotGrip: Codeunit GetNotGrip;
         i, n : Integer;
         DocFilter: Text;
         Filters: List of [Text];
@@ -726,14 +727,21 @@ codeunit 57204 "Cashflow Buffers"
         TEMPgrip.DeleteAll();
         TEMPgrip_Vendor.Reset();
         TEMPgrip_Vendor.DeleteAll();
-        TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice);
-        TEMPDetailedLedger.SetFilter("led_Document No.", '%1..', 'VF25');
+        TEMPDetailedLedger.SetRange("Query Nr.", 1, 2);
+        TEMPDetailedLedger.setrange("led_Document Type", TEMPDetailedLedger."led_Document Type"::Invoice, TEMPDetailedLedger."led_Document Type"::"Credit Memo");
         TEMPDetailedLedger.SetCurrentKey("led_Document Type", "led_Document No.");
         if not TEMPDetailedLedger.IsEmpty() then
             n := FilterBuilder.BuildEntryNoFilter(TEMPDetailedLedger);
         for i := 1 to n do begin
             DocFilter := FilterBuilder.GetFilterChunk(i);
-            FillTempGrip(DocFilter);
+            FillTempGrip_Grip(DocFilter, True);
+        end;
+        if GetNotGrip.FindNotGripSalesInvoices(TEMPDetailedLedger, TEMPgrip, TEMP_NotFound) then begin
+            n := FilterBuilder.BuildEntryNoFilter(TEMP_NotFound);
+            for i := 1 to n do begin
+                DocFilter := FilterBuilder.GetFilterChunk(i);
+                FillTempGrip_Customer(DocFilter);
+            end;
         end;
         TEMPDetailedLedger.Reset();
 
@@ -791,7 +799,7 @@ codeunit 57204 "Cashflow Buffers"
 
     end;
 
-    local procedure FillTempGrip(DocFilter: Text) HasRecords: Boolean;
+    local procedure FillTempGrip_Grip(DocFilter: Text; IsGrip: Boolean) HasRecords: Boolean;
     var
         GripQry: Query "Get Grip";
         VatQry: Query "VATEntries";
@@ -809,6 +817,7 @@ codeunit 57204 "Cashflow Buffers"
         GripQry.Open();
         while GripQry.Read() do begin
             TEMPgrip.Init();
+            TEMPgrip.IsGrip := IsGrip;
             TEMPgrip."Exploitation No." := GripQry."Exploitation_No_";
             TEMPgrip."Document Type" := GripQry.Document_Type;
             TEMPgrip."Document No." := GripQry.Document_No_;
@@ -849,6 +858,60 @@ codeunit 57204 "Cashflow Buffers"
         end;
         VatQry.Close();
     end;
+
+    local procedure GetCounterBalanceDetails() HasRecords: Boolean;
+    begin
+
+    end;
+
+    local procedure GetCounterBalanceDetails(Led_DocNo: Code[20]) HasRecords: Boolean;
+    begin
+        HasRecords := FillTempGrip_Grip(Led_DocNo, False);
+        if not HasRecords then
+            HasRecords := FillTempGrip_Customer(Led_DocNo);
+    end;
+
+    local procedure FillTempGrip_Customer(DocFilter: Text) HasRecords: Boolean;
+    var
+        GripQry: Query "Get Customer Ledger Entry Opt.";
+        Inserted: Boolean;
+        x: Integer;
+    begin
+        GripQry.SetFilter(Entry_No_, DocFilter);
+        GripQry.Open();
+        while GripQry.Read() do begin
+            if (GripQry.Init_Entry_No_ <> GripQry.G_L_Entry_No_) then begin
+                TEMPgrip.Init();
+                TEMPgrip."Exploitation No." := GripQry.G_L_Entry_No_;
+                case GripQry.Document_Type of
+                    GripQry.Document_Type::Invoice,
+                    GripQry.Document_Type::" ":
+                        TEMPgrip."Document Type" := TEMPgrip."Document Type"::Invoice;
+                    GripQry.Document_Type::"Credit Memo":
+                        TEMPgrip."Document Type" := TEMPgrip."Document Type"::"Credit Memo";
+                    GripQry.Document_Type::Refund:
+                        TEMPgrip."Document Type" := TEMPgrip."Document Type"::Refund;
+                    GripQry.Document_Type::Payment:
+                        TEMPgrip."Document Type" := TEMPgrip."Document Type"::Payment;
+                end;
+                if GripQry.Document_No_ = 'IF25-107888' then
+                    x := 1;
+                TEMPgrip."Document No." := GripQry.Document_No_;
+                TEMPgrip."G/L Account" := GripQry.G_L_Account_No_;
+                TEMPgrip."Amount" := GripQry.Amount;
+                TEMPgrip."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
+                TEMPgrip."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
+                Inserted := TEMPgrip.Insert();
+                if not HasRecords and Inserted then
+                    HasRecords := true;
+            end;
+        end;
+        GripQry.Close();
+        if not HasRecords then
+            exit(false);
+
+    end;
+
 
 }
 
