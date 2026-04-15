@@ -88,8 +88,10 @@ table 57209 "Cash Entry Posting No."
         {
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Total Amount', NLD = 'Totaalbedrag';
-
-
+        }
+        field(120; "GL vs GL"; Boolean)
+        {
+            DataClassification = ToBeClassified;
         }
     }
 

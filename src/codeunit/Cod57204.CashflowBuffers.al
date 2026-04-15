@@ -85,6 +85,7 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPbuffer_Bnk."Journal Batch Name" := TEMPGLentry."Journal Batch Name";
                 TEMPbuffer_Bnk."Transaction No." := TEMPGLentry."Transaction No.";
                 TEMPbuffer_Bnk."Dimension Set ID" := TEMPGLentry."Dimension Set ID";
+                TEMPbuffer_Bnk."GL vs GL" := CashRec."GL vs GL";
                 TEMPbuffer_Bnk.Insert();
             until TEMPGLentry.Next() = 0;
         end;
@@ -415,14 +416,14 @@ codeunit 57204 "Cashflow Buffers"
                                         repeat
                                             InsertToBuffer := GLEntrySettlement."Gen. Posting Type" = GLEntrySettlement."Gen. Posting Type"::Settlement;
                                             if (not InsertToBuffer) and (GLEntrySettlement."Gen. Posting Type" = GLEntrySettlement."Gen. Posting Type"::" ") then
-                                                InsertToBuffer := not CheckReverseChargeVAT(GLEntrySettlement, GLEntry2, nRec);
+                                                InsertToBuffer := not CheckReverseChargeVAT(GLEntrySettlement, GLEntry, GLEntry2, nRec);
                                             if InsertToBuffer then begin
                                                 TEMPDetailedLedger_EntryNo += 1;
                                                 TEMPDetailedLedger.Init();
                                                 TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
                                                 TEMPDetailedLedger."Is Init" := (GLEntry2."Entry No." = GLEntrySettlement."Entry No.");
                                                 TEMPDetailedLedger."Init Entry No." := GLEntry2."Entry No."; //VendorLedgerEntry.Init_EntryNo;
-                                                TEMPDetailedLedger."Init Ledger Entry No." := GLEntry2."Entry No."; //VendorLedgerEntry.Init_VendLedgEntryNo;
+                                                TEMPDetailedLedger."Init Ledger Entry No." := GLEntry."Entry No."; //VendorLedgerEntry.Init_VendLedgEntryNo;
                                                 TEMPDetailedLedger."Entry No." := GLEntrySettlement."Entry No."; //VendorLedgerEntry.EntryNo;
                                                                                                                  //TEMPDetailedLedger."Vendor Ledger Entry No." := VendorLedgerEntry.VendLedgEntryNo;
                                                                                                                  //TEMPDetailedLedger."Applied Ledger Entry No." := VendorLedgerEntry.AppliedVendLedgEntryNo;
@@ -451,7 +452,10 @@ codeunit 57204 "Cashflow Buffers"
         exit(nRec);
     end;
 
-    local procedure CheckReverseChargeVAT(GLEntrySettlement: Record "G/L Entry"; GLEntry2: Record "G/L Entry"; var nRec: Integer): Boolean
+    local procedure CheckReverseChargeVAT(GLEntrySettlement: Record "G/L Entry";
+                                          GLEntry: Record "G/L Entry";
+                                          GLEntry2: Record "G/L Entry";
+                                          var nRec: Integer): Boolean
     var
         VatEntry: Record "VAT Entry";
         VatEntry2: Record "VAT Entry";
@@ -478,7 +482,7 @@ codeunit 57204 "Cashflow Buffers"
                         TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
                         TEMPDetailedLedger."Is Init" := (GLEntry2."Entry No." = GLEntryInv."Entry No.");
                         TEMPDetailedLedger."Init Entry No." := GLEntry2."Entry No.";
-                        TEMPDetailedLedger."Init Ledger Entry No." := GLEntry2."Entry No.";
+                        TEMPDetailedLedger."Init Ledger Entry No." := GLEntry."Entry No.";
                         TEMPDetailedLedger."Entry No." := GLEntryInv."Entry No.";
                         //TEMPDetailedLedger."Vendor Ledger Entry No." := VendorLedgerEntry.VendLedgEntryNo;
                         //TEMPDetailedLedger."Applied Ledger Entry No." := VendorLedgerEntry.AppliedVendLedgEntryNo;
@@ -503,8 +507,7 @@ codeunit 57204 "Cashflow Buffers"
         exit(IsReverseChargeVAT);
     end;
 
-    procedure CreateAnalyze(var
-                                AnalyzeHeader: Record "CashFLow Analyze Header")
+    procedure CreateAnalyze(var AnalyzeHeader: Record "CashFLow Analyze Header")
     var
         Factor: Decimal;
         CashFlowLine: Record "Cashflow Analyse Line";
@@ -572,7 +575,7 @@ codeunit 57204 "Cashflow Buffers"
             repeat
                 CashFlowLineNo := 0;
                 ProcessAmount := 0;
-                if TEMPbuffer_Bnk."Source No." = '' then
+                if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."GL vs GL" = false) then
                     InsertTransactionBuffer(1, ProcessAmount)
                 else begin
                     TEMPDetailedLedger.Reset();
@@ -711,7 +714,10 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine."G/L Entry No." := TEMPbuffer_Bnk."Gl_EntryNo_Bnk";
         CashFlowLine."Entry Line No." := CashFlowLineNo;
         // Bank/Cash Block
-        GLentry.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
+        if not TEMPbuffer_Bnk."GL vs GL" then
+            GLentry.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk")
+        else
+            GLentry.Get(TEMPDetailedLedger."Entry No.");
         CashFlowLine."Document No." := GLentry."Document No.";
         CashFlowLine."Posting Date" := GLentry."Posting Date";
         CashFlowLine."Dimension Set ID" := GLentry."Dimension Set ID";
