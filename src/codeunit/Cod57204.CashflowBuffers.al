@@ -138,6 +138,7 @@ codeunit 57204 "Cashflow Buffers"
         "SourceType": Enum Microsoft.Finance.GeneralLedger.Journal."Gen. Journal Source Type";
     begin
         TEMPGLentry.setrange("Source Type", SourceType::" ");
+        TEMPGLentry.SetRange("Source No.", '');
         TEMPGLentry.SetCurrentKey("Entry No.");
         EndOfRecords := not TEMPGLentry.FindSet();
         while not EndOfRecords do begin
@@ -147,8 +148,10 @@ codeunit 57204 "Cashflow Buffers"
                     CheckAmount += TEMPGLentry.Amount;
                 until TEMPGLentry.Next() = 0;
             TEMPGLentry.SetRange("Transaction No.");
-            if CheckAmount = 0 then
+            if CheckAmount = 0 then begin
                 int.Number := TEMPGLentry."Transaction No.";
+                int.Insert();
+            end;
             CheckAmount := 0;
             EndOfRecords := TEMPGLentry.next = 0
         end;
@@ -157,7 +160,10 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPGLentry.SetRange("Transaction No.", int.Number);
                 TEMPGLentry.DeleteAll();
             until int.Next() = 0;
+        TEMPGLentry.SetRange("Transaction No.");
         TEMPGLentry.setrange("Source Type");
+        TEMPGLentry.SetRange("Source No.");
+        TEMPGLentry.FindFirst();
     end;
 
     procedure DeleteDetailedLedger()
@@ -376,7 +382,7 @@ codeunit 57204 "Cashflow Buffers"
                     case TEMPbuffer_Bnk."Source Type" of
                         TEMPbuffer_Bnk."Source Type"::Customer:
                             begin
-                                IF GetCounterBalanceDetails(TEMPDetailedLedger."led_Document No.") THEN
+                                IF GetCounterBalanceDetails(TEMPDetailedLedger."led_Document No.", TEMPDetailedLedger."led_Entry No.") THEN
                                     InsertGrip(factor, ProcessAmount)
                                 ELSE
                                     InsertDetailedLedBuffer(factor, ProcessAmount);
@@ -737,7 +743,7 @@ codeunit 57204 "Cashflow Buffers"
             FillTempGrip_Grip(DocFilter, True);
         end;
         if GetNotGrip.FindNotGripSalesInvoices(TEMPDetailedLedger, TEMPgrip, TEMP_NotFound) then begin
-            n := FilterBuilder.BuildEntryNoFilter(TEMP_NotFound);
+            n := FilterBuilder.BuildEntryNoFilter2(TEMP_NotFound);
             for i := 1 to n do begin
                 DocFilter := FilterBuilder.GetFilterChunk(i);
                 FillTempGrip_Customer(DocFilter);
@@ -859,16 +865,11 @@ codeunit 57204 "Cashflow Buffers"
         VatQry.Close();
     end;
 
-    local procedure GetCounterBalanceDetails() HasRecords: Boolean;
-    begin
-
-    end;
-
-    local procedure GetCounterBalanceDetails(Led_DocNo: Code[20]) HasRecords: Boolean;
+    local procedure GetCounterBalanceDetails(Led_DocNo: Code[20]; led_Entry_No_: Integer) HasRecords: Boolean;
     begin
         HasRecords := FillTempGrip_Grip(Led_DocNo, False);
         if not HasRecords then
-            HasRecords := FillTempGrip_Customer(Led_DocNo);
+            HasRecords := FillTempGrip_Customer(format(led_Entry_No_));
     end;
 
     local procedure FillTempGrip_Customer(DocFilter: Text) HasRecords: Boolean;

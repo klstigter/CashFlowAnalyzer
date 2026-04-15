@@ -40,6 +40,10 @@ page 57211 "Cash Entry Postings"
                 {
                     ToolTip = 'Specifies the value of the Journal Batch Name field.', Comment = '%';
                 }
+                field("Total Amount"; Rec."Total Amount")
+                {
+                    ToolTip = 'Specifies the total amount of the entries.', Comment = '%';
+                }
                 field("Amount of Records"; Rec."Amount of Records")
                 {
                     ToolTip = 'Specifies the value of the Amount of Records field.', Comment = '%';
