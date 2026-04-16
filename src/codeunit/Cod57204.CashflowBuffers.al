@@ -701,7 +701,8 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine."Applied Document No." := TEMPbuffer_Bnk."Document No.";
         //CashFlowLine."Applied Document Entry No." := TEMPbuffer_Bnk."Init Entry No.";
         //CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
-        CashFlowLine.Validate("Dimension Set ID", TEMPbuffer_Bnk."Dimension Set ID");
+        if TEMPbuffer_Bnk."Dimension Set ID" <> 0 then
+            CashFlowLine.Validate("Dimension Set ID", TEMPbuffer_Bnk."Dimension Set ID");
         CashFlowLine."Transaction No." := TEMPbuffer_Bnk."Transaction No.";
         CashFlowLine."Dimension Set ID" := TEMPbuffer_Bnk."Dimension Set ID";
         CashFlowLine.Insert();
@@ -760,7 +761,8 @@ codeunit 57204 "Cashflow Buffers"
             CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Vendor Ledger Entry";
         if TEMPbuffer_Bnk."Source Type" = TEMPbuffer_Bnk."Source Type"::"Customer" then
             CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
-        CashFlowLine.Validate("Dimension Set ID", TEMPDetailedLedger."Led_Dimension Set ID");
+        if TEMPDetailedLedger."Led_Dimension Set ID" <> 0 then
+            CashFlowLine.Validate("Dimension Set ID", TEMPDetailedLedger."Led_Dimension Set ID");
         CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
         CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";
 
