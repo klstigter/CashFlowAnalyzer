@@ -8,31 +8,56 @@ page 57217 DateSelector
     {
         area(Content)
         {
-            field("Start Date"; StartDate)
+            field(DateFilter; DateFilter)
             {
                 ApplicationArea = All;
-                CaptionML = ENU = 'Start Date', NLD = 'Startdatum';
-            }
-            field("End Date"; EndDate)
-            {
-                ApplicationArea = All;
-                CaptionML = ENU = 'End Date', NLD = 'Einddatum';
-            }
-        }
-        area(Factboxes)
-        {
+                CaptionML = ENU = 'Date Filter', NLD = 'Datumfilter';
 
+                trigger OnValidate()
+                var
+                    FilterTokens: Codeunit "Filter Tokens";
+                begin
+                    FilterTokens.MakeDateFilter(DateFilter);
+                end;
+            }
         }
     }
-    // In your StandardDialog page
-    var
-        StartDate: Date;
-        EndDate: Date;
 
+    var
+        DateFilter: Text;
+
+    procedure GetDateFilter(): Text
+    begin
+        exit(DateFilter);
+    end;
 
     procedure GetValues(var FromDate: Date; var ToDate: Date)
+    var
+        FilterTokens: Codeunit "Filter Tokens";
+        NormalizedFilter: Text;
+        Parts: List of [Text];
+        FromText: Text;
+        ToText: Text;
     begin
-        FromDate := StartDate;
-        ToDate := EndDate;
+        FromDate := 0D;
+        ToDate := 0D;
+
+        NormalizedFilter := DateFilter;
+        if NormalizedFilter = '' then
+            exit;
+
+        FilterTokens.MakeDateFilter(NormalizedFilter);
+
+        if NormalizedFilter.Contains('..') then begin
+            Parts := NormalizedFilter.Split('..');
+            FromText := Parts.Get(1);
+            ToText := Parts.Get(2);
+            if FromText <> '' then
+                Evaluate(FromDate, FromText);
+            if ToText <> '' then
+                Evaluate(ToDate, ToText);
+        end else
+            if Evaluate(FromDate, NormalizedFilter) then
+                ToDate := FromDate;
     end;
 }

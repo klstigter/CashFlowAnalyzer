@@ -107,24 +107,40 @@ page 57211 "Cash Entry Postings"
 
                 trigger OnAction()
                 var
+                    pRec: Record "Cash Entry Posting No.";
+                    ALL_t1, ALL_t2 : time;
                     t1, t2 : time;
                     duration: Duration;
                     log: Record "Log Cashflow Analyzer";
+                    LblMsg: Label 'Selected %1 records for processing. Do you want to continue?', comment = 'ENU=Selected %1 records for processing. Do you want to continue?,NLD=Er zijn %1 records geselecteerd voor verwerking. Wilt u doorgaan?';
                 begin
-                    t1 := Time();
-                    if cu.Fill_All_Buffer(Rec) then begin
-                        t2 := Time();
-                        duration := t2 - t1;
-                        log.createLog(0, t1, t2, 'Duration Fetch all buffers');
+                    CurrPage.SetSelectionFilter(pRec);
+                    if pRec.Count <> 0 then begin
+                        if not Confirm(StrSubstNo(LblMsg, pRec.Count), false) then
+                            exit;
+                        ALL_t1 := Time();
+                        pRec.FindSet(); //set to top
+                        repeat
+                            Rec := pRec;
+                            Rec.Find();
+
+                            t1 := Time();
+                            if cu.Fill_All_Buffer(Rec) then begin
+                                t2 := Time();
+                                duration := t2 - t1;
+                                log.createLog(0, t1, t2, 'Duration Fetch all buffers');
+                            end;
+
+                            t1 := Time();
+                            Cu.CreateAnalyze();
+                            t2 := Time();
+                            duration := t2 - t1;
+                            log.createLog(0, t1, t2, 'Duration Create analyze lines');
+                        until pRec.Next() = 0;
+                        ALL_t2 := Time();
+                        duration := ALL_t2 - ALL_t1;
+                        Message('Process is completely done. \Time taken: %1', duration);
                     end;
-
-                    t1 := Time();
-                    Cu.CreateAnalyze();
-                    t2 := Time();
-                    duration := t2 - t1;
-                    log.createLog(0, t1, t2, 'Duration Create analyze lines');
-
-                    Message('Process is completely done. \Time taken: %1', duration);
                 end;
             }
             action(runFilbuffers)

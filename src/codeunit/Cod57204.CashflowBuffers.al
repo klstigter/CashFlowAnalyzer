@@ -164,7 +164,7 @@ codeunit 57204 "Cashflow Buffers"
         TEMPGLentry.SetRange("Transaction No.");
         TEMPGLentry.setrange("Source Type");
         TEMPGLentry.SetRange("Source No.");
-        TEMPGLentry.FindFirst();
+        IF TEMPGLentry.FindFirst() THEN;
     end;
 
     procedure DeleteDetailedLedger()
@@ -185,7 +185,10 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger."Is Init" := true; //CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo;
         TEMPDetailedLedger."Init Entry No." := GLEntry."Entry No."; //CustLedgerEntry.Init_EntryNo;
         TEMPDetailedLedger."Init Ledger Entry No." := 0;//CustLedgerEntry.Init_CustLedgEntryNo;
-        TEMPDetailedLedger."Entry No." := 0; //CustLedgerEntry.EntryNo;
+        if not TEMPbuffer_Bnk."GL vs GL" then
+            TEMPDetailedLedger."Entry No." := 0 //CustLedgerEntry.EntryNo;
+        else
+            TEMPDetailedLedger."Entry No." := GLEntry."Entry No."; //CustLedgerEntry.EntryNo;
         TEMPDetailedLedger."Ledger Entry No." := GLEntry."Entry No."; //CustLedgerEntry.CustLedgEntryNo;
         TEMPDetailedLedger."Applied Ledger Entry No." := 0; //CustLedgerEntry.AppliedCustLedEntrNo;
         TEMPDetailedLedger."Entry Type" := 0; //CustLedgerEntry.EntryType;
@@ -518,7 +521,7 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine.SetRange("G/L Entry No.", TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
         CashFlowLine.DeleteAll();
         CashFlowLineNo := 0;
-        if TEMPbuffer_Bnk."Source No." = '' then
+        if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."GL vs GL" = false) then
             InsertTransactionBuffer(1, ProcessAmount)
         else begin
             TEMPDetailedLedger.Reset();
@@ -601,7 +604,7 @@ codeunit 57204 "Cashflow Buffers"
                         if REST <> 0 then
                             InsertDummyDetailedLedBuffer(TEMPbuffer_Bnk."GL_EntryNo Start", Rest);
                     end else
-                        InsertDummyDetailedLedBuffer(TEMPbuffer_Bnk."GL_EntryNo Start", TEMPbuffer_Bnk."Cashflow Amount");
+                        InsertDummyDetailedLedBuffer(TEMPbuffer_Bnk."Gl_EntryNo_Bnk", TEMPbuffer_Bnk."Cashflow Amount"); //TEMPbuffer_Bnk."GL_EntryNo Start"
                 end;
                 n += 1;
                 if n mod 100 = 0 then begin
