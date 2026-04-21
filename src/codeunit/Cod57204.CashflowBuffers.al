@@ -232,6 +232,7 @@ codeunit 57204 "Cashflow Buffers"
     procedure FillDetCustLedgBuffer1(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text): Integer
     var
         CustLedgerEntry: Query GetRelatedCustLedgerEntries1;
+        GLEntry: record "G/L Entry";
         nRec: Integer;
     begin
         CustLedgerEntry.SetFilter("DocNoFilter", '=%1', PostRec."Document No.");
@@ -254,9 +255,19 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."Document No." := CustLedgerEntry.DocumentNo;
                 TEMPDetailedLedger."Amount" := CustLedgerEntry.Amount;
 
-                // Payment Tolerance
-                if TEMPDetailedLedger."Entry Type" = TEMPDetailedLedger."Entry Type"::"Payment Tolerance" then
+                //<< Payment Tolerance
+                if TEMPDetailedLedger."Entry Type" = TEMPDetailedLedger."Entry Type"::"Payment Tolerance" then begin
                     TEMPDetailedLedger."Amount" := -TEMPDetailedLedger."Amount";
+                    GLEntry.SetRange("Posting Date", CustLedgerEntry.PostingDate);
+                    GLEntry.SetRange("Document Type", GLEntry."Document Type"::Payment);
+                    GLEntry.SetRange("Document No.", CustLedgerEntry.DocumentNo);
+                    GLEntry.SetRange("Source Type", GLEntry."Source Type"::Customer);
+                    GLEntry.SetRange("Source No.", CustLedgerEntry.CustomerNo);
+                    GLEntry.Setfilter("Entry No.", '<>%1', CustLedgerEntry.CustLedgEntryNo);
+                    if GLEntry.FindFirst then
+                        TEMPDetailedLedger."Ledger Entry No." := GLEntry."Entry No.";
+                end;
+                //>>
 
                 TEMPDetailedLedger."Posting Date" := CustLedgerEntry.PostingDate;
                 TEMPDetailedLedger."led_Entry No." := CustLedgerEntry.Cle_EntryNo;
@@ -279,6 +290,7 @@ codeunit 57204 "Cashflow Buffers"
     procedure FillDetCustLedgBuffer2(PostRec: Record "Cash Entry Posting No."; TransactionNoFilter: text): Integer
     var
         CustLedgerEntry: Query GetRelatedCustLedgerEntries2;
+        GLEntry: record "G/L Entry";
         nRec: Integer;
     begin
         CustLedgerEntry.SetFilter("DocNoFilter", '=%1', PostRec."Document No.");
@@ -304,9 +316,19 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."Document No." := CustLedgerEntry.DocumentNo;
                 TEMPDetailedLedger."Amount" := CustLedgerEntry.Amount;
 
-                // Payment Tolerance
-                if TEMPDetailedLedger."Entry Type" = TEMPDetailedLedger."Entry Type"::"Payment Tolerance" then
+                //<< Payment Tolerance
+                if TEMPDetailedLedger."Entry Type" = TEMPDetailedLedger."Entry Type"::"Payment Tolerance" then begin
                     TEMPDetailedLedger."Amount" := -TEMPDetailedLedger."Amount";
+                    GLEntry.SetRange("Posting Date", CustLedgerEntry.PostingDate);
+                    GLEntry.SetRange("Document Type", GLEntry."Document Type"::Payment);
+                    GLEntry.SetRange("Document No.", CustLedgerEntry.DocumentNo);
+                    GLEntry.SetRange("Source Type", GLEntry."Source Type"::Customer);
+                    GLEntry.SetRange("Source No.", CustLedgerEntry.CustomerNo);
+                    GLEntry.Setfilter("Entry No.", '<>%1', CustLedgerEntry.CustLedgEntryNo);
+                    if GLEntry.FindFirst then
+                        TEMPDetailedLedger."Ledger Entry No." := GLEntry."Entry No.";
+                end;
+                //>>
 
                 TEMPDetailedLedger."Posting Date" := CustLedgerEntry.PostingDate;
                 TEMPDetailedLedger."led_Entry No." := CustLedgerEntry.Cle_EntryNo;

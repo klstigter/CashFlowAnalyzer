@@ -29,6 +29,7 @@ query 57201 GetRelatedCustLedgerEntries1
                 column(AppliedCustLedEntrNo; "Applied Cust. Ledger Entry No.") { }
                 column(TransactionNo; "Transaction No.") { }
                 column(EntryType; "Entry Type") { }
+                column(CustomerNo; "Customer No.") { }
                 column(DocumentNo; "Document No.") { }
                 column(PostingDate; "Posting Date") { }
                 column(Amount; Amount) { }
