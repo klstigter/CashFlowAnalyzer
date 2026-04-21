@@ -3,6 +3,8 @@ codeunit 57203 CreateCashEntryPostingNoList
     trigger OnRun()
     var
         Dateselector: page DateSelector;
+        msgLbl: Label 'Proces verwerkt. \\Totaal records ingevoegd: %1\Aantal records overgeslagen: %2', comment = 'Message shown after process is completed. %1 is the number of records inserted, %2 is the number of records skipped.';
+
     begin
         counterInserted := 0;
         counterSkipped := 0;
@@ -17,7 +19,7 @@ codeunit 57203 CreateCashEntryPostingNoList
         if not CreateCashEntryPostingNoList() then
             Message(GetLastErrorText)
         else
-            Message('Process completed. \\Total records inserted: %1\Total records skipped: %2', counterInserted, counterSkipped);
+            Message(msgLbl, counterInserted, counterSkipped);
     end;
 
     var
@@ -31,6 +33,7 @@ codeunit 57203 CreateCashEntryPostingNoList
     var
         CashEntryPostingNo: Record "Cash Entry Posting No.";
         qry: query "GetPostingNo From GLEntry";
+        qry2: query "GetPostingNo From GLEntry";
         SourceType: Enum "Gen. Journal Source Type";
         i: Integer;
     begin
@@ -44,9 +47,8 @@ codeunit 57203 CreateCashEntryPostingNoList
                     end;
                 2:
                     begin
-                        SourceType := SourceType::" ";
-                        qry.setfilter(JournalTemplNameFlt, GetFilterCashTemplates());
-                        qry.SetFilter(PostingDateFilter, '%1..%2', StartDate, EndDate);
+                        qry2.setfilter(JournalTemplNameFlt, GetFilterCashTemplates());
+                        qry2.SetFilter(PostingDateFilter, '%1..%2', StartDate, EndDate);
                     end;
             end;
 

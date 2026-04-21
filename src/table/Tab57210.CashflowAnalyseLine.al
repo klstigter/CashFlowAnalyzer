@@ -25,7 +25,7 @@ table 57210 "Cashflow Analyse Line"
         field(6; "Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Document No.', NLD = 'Documentnr.';
+            CaptionML = ENU = 'Document No.', NLD = 'Vereffend documentnr.';
         }
         field(7; "Posting Date"; Date)
         {
