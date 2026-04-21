@@ -975,7 +975,10 @@ codeunit 57204 "Cashflow Buffers"
     var
         GripQry: Query "Get Vendor Ledger Entry Opt.";
         VATSettlementCheckQry: query "VAT Settlement Check Opt.";
+        VATSettlement: Boolean;
+        VATSettlement_GLEntryNo: Integer;
         Inserted: Boolean;
+        AllowInsert: Boolean;
         x: Integer;
     begin
         GripQry.SetFilter(Entry_No_, DocFilter);
@@ -983,31 +986,43 @@ codeunit 57204 "Cashflow Buffers"
         while GripQry.Read() do begin
             if (GripQry.Init_Entry_No_ <> GripQry.G_L_Entry_No_) then begin
                 //<< Check VAT Settlement
-                VATSettlementCheckQry.SetFilter(Document_Type_filter, format(GripQry.Document_Type));
-                VATSettlementCheckQry.SetFilter(Document_No_filter, GripQry.Document_No_);
-                //>>
-                TEMPgrip_Vendor.Init();
-                TEMPgrip_Vendor."Exploitation No." := GripQry.G_L_Entry_No_;
-                case GripQry.Document_Type of
-                    GripQry.Document_Type::Invoice,
-                    GripQry.Document_Type::" ":
-                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Invoice;
-                    GripQry.Document_Type::"Credit Memo":
-                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::"Credit Memo";
-                    GripQry.Document_Type::Refund:
-                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Refund;
-                    GripQry.Document_Type::Payment:
-                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Payment;
+                VATSettlementCheckQry.SetRange(Document_Type_filter, GripQry.Document_Type);
+                VATSettlementCheckQry.SetRange(Document_No_filter, GripQry.Document_No_);
+                VATSettlementCheckQry.SetRange(Closed, true);
+                VATSettlementCheckQry.Open();
+                VATSettlement := VATSettlementCheckQry.Read();
+                if VATSettlement then
+                    VATSettlement_GLEntryNo := VATSettlementCheckQry.GL_Entry_No_;
+                VATSettlementCheckQry.Close();
+
+                AllowInsert := true;
+                if VATSettlement and (VATSettlement_GLEntryNo <> GripQry.G_L_Entry_No_) then
+                    AllowInsert := false;
+                //>>                
+                if AllowInsert then begin
+                    TEMPgrip_Vendor.Init();
+                    TEMPgrip_Vendor."Exploitation No." := GripQry.G_L_Entry_No_;
+                    case GripQry.Document_Type of
+                        GripQry.Document_Type::Invoice,
+                        GripQry.Document_Type::" ":
+                            TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Invoice;
+                        GripQry.Document_Type::"Credit Memo":
+                            TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::"Credit Memo";
+                        GripQry.Document_Type::Refund:
+                            TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Refund;
+                        GripQry.Document_Type::Payment:
+                            TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Payment;
+                    end;
+                    TEMPgrip_Vendor."Document No." := GripQry.Document_No_;
+                    TEMPgrip_Vendor."G/L Account" := GripQry.G_L_Account_No_;
+                    TEMPgrip_Vendor."Amount" := GripQry.Amount;
+                    TEMPgrip_Vendor."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
+                    TEMPgrip_Vendor."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
+                    TEMPgrip_Vendor."Dimension Set ID" := GripQry.Dimension_Set_ID;
+                    Inserted := TEMPgrip_Vendor.Insert();
+                    if not HasRecords and Inserted then
+                        HasRecords := true;
                 end;
-                TEMPgrip_Vendor."Document No." := GripQry.Document_No_;
-                TEMPgrip_Vendor."G/L Account" := GripQry.G_L_Account_No_;
-                TEMPgrip_Vendor."Amount" := GripQry.Amount;
-                TEMPgrip_Vendor."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
-                TEMPgrip_Vendor."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
-                TEMPgrip_Vendor."Dimension Set ID" := GripQry.Dimension_Set_ID;
-                Inserted := TEMPgrip_Vendor.Insert();
-                if not HasRecords and Inserted then
-                    HasRecords := true;
             end;
         end;
         GripQry.Close();
