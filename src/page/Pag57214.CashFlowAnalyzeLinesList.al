@@ -70,10 +70,6 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the G/L Account Description field.', Comment = '%';
                 }
-                field("Is Grip"; Rec."Is Grip")
-                {
-                    ToolTip = 'Specifies the value of the Is Grip field.', Comment = '%';
-                }
                 field("Posting Date"; Rec."Posting Date")
                 {
                     ToolTip = 'Specifies the value of the Posting Date field.', Comment = '%';
