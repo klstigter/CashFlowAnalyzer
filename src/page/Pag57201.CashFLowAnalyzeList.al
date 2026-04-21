@@ -245,7 +245,8 @@ page 57201 "CashFLow Analyze List"
                     t1, t2 : time;
                     duration: Duration;
                     CashEntryPostingNo: Record "Cash Entry Posting No.";
-
+                    msg2Lbl: Label 'Gegevens succesvol opgehaald in alle buffers. Duur: %1.';
+                    msg3Lbl: Label 'Er zijn geen gegevens opgehaald voor het geselecteerde record.';
                 begin
                     t1 := Time();
                     CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
@@ -254,9 +255,9 @@ page 57201 "CashFLow Analyze List"
                     if cu.Fill_NOT_GripBuffer(CashEntryPostingNo) then begin
                         t2 := Time();
                         duration := t2 - t1;
-                        Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                        Message(msg2Lbl, format(duration));
                     end else
-                        Message('No data fetched for the selected record.');
+                        Message(msg3Lbl);
                 end;
             }
             action(runMyCodeunit)
@@ -270,7 +271,8 @@ page 57201 "CashFLow Analyze List"
                     t1, t2 : time;
                     duration: Duration;
                     CashEntryPostingNo: Record "Cash Entry Posting No.";
-
+                    msg2Lbl: Label 'Gegevens succesvol opgehaald in alle buffers. Duur: %1.';
+                    msg3Lbl: Label 'Er zijn geen gegevens opgehaald voor het geselecteerde record.';
                 begin
                     t1 := Time();
                     CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
@@ -279,16 +281,16 @@ page 57201 "CashFLow Analyze List"
                     if cu.Run(CashEntryPostingNo) then begin
                         t2 := Time();
                         duration := t2 - t1;
-                        Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                        Message(msg2Lbl, format(duration));
                     end else
-                        Message('No data fetched for the selected record.');
+                        Message(msg3Lbl);
 
                 end;
             }
             action(runCreateAnalyzeLines)
             {
                 ApplicationArea = Basic, Suite;
-                CaptionML = ENU = 'Create Analyze Line', NLD = 'Maak cashflow posten';
+                CaptionML = ENU = 'Create Analyze Line', NLD = 'Maak gedetailleerde kasstroompost';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
@@ -297,7 +299,8 @@ page 57201 "CashFLow Analyze List"
                     t1, t2 : time;
                     duration: Duration;
                     CashEntryPostingNo: Record "Cash Entry Posting No.";
-
+                    msgLbl: Label 'Gedetailleerde kasstroomposten succesvol aangemaakt. Duur: %1.';
+                    msg2Lbl: Label 'Gegevens succesvol opgehaald in alle buffers. Duur: %1.';
                 begin
                     if BuffersFilledFor <> Rec."Document No." then begin
                         t1 := Time();
@@ -308,14 +311,14 @@ page 57201 "CashFLow Analyze List"
                             t2 := Time();
                             duration := t2 - t1;
                             BuffersFilledFor := Rec."Document No.";
-                            Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                            Message(msg2Lbl, format(duration));
                         end;
                     end;
                     t1 := Time();
                     Cu.CreateAnalyze(rec);
                     t2 := Time();
                     duration := t2 - t1;
-                    Message('Analyze lines created successfully. \Time taken: %1', duration);
+                    Message(msgLbl, format(duration));
                 end;
             }
             action(ShowFilterStrings)

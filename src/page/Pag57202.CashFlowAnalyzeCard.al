@@ -1,10 +1,10 @@
 page 57202 "CashFlow Analyze Card"
 {
     PageType = Card;
+    CaptionML = ENU = 'CashFlow Analysis', NLD = 'Kasstroompost';
     ApplicationArea = All;
     UsageCategory = Administration;
     SourceTable = "CashFLow Analyze Header";
-    Caption = 'CashFlow Analyzer';
     Editable = false;
 
     layout
@@ -13,6 +13,7 @@ page 57202 "CashFlow Analyze Card"
         {
             group(GroupName)
             {
+                CaptionML = ENU = 'Cash Flow Analysis', NLD = 'Kasstroompost';
                 field("Entry No."; Rec."Entry No.")
                 {
                     ApplicationArea = All;
@@ -131,14 +132,15 @@ page 57202 "CashFlow Analyze Card"
             action(ShowGlEntries)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show G/L Entries';
-
+                CaptionML = ENU = 'Show G/L Entries', NLD = 'Toon bronsoort grootboekpost';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
                 trigger OnAction()
                 var
                     GLEntriesPage: page "General Ledger Entries";
                     GLEntry: Record "G/L Entry";
                 begin
-
                     GLEntry.SetRange("Entry No.", Rec."Entry No.");
                     GLEntriesPage.SetTableView(GLEntry);
                     GLEntriesPage.Run();
@@ -148,7 +150,7 @@ page 57202 "CashFlow Analyze Card"
             action(ShowLedgers)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Show Ledgers';
+                CaptionML = ENU = 'Show Ledgers', NLD = 'Toon bronsoort posten';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;

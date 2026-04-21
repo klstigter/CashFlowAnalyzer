@@ -58,6 +58,12 @@ query 57202 GetRelatedVendLedgerEntries1
                     Column(Cle_Dimension_Set_ID; "Dimension Set ID")
                     {
                     }
+                    column(Cle_Global_Dimension_1_Code; "Global Dimension 1 Code")
+                    {
+                    }
+                    column(Cle_Global_Dimension_2_Code; "Global Dimension 2 Code")
+                    {
+                    }
                 }
             }
         }

@@ -30,6 +30,7 @@ query 57205 GetRelatedCustLedgerEntries2
                 column(AppliedCustLedEntrNo; "Applied Cust. Ledger Entry No.") { }
                 column(TransactionNo; "Transaction No.") { }
                 column(EntryType; "Entry Type") { }
+                column(CustomerNo; "Customer No.") { }
                 column(DocumentNo; "Document No.") { }
                 column(PostingDate; "Posting Date") { }
                 column(Amount; Amount) { }
@@ -45,10 +46,13 @@ query 57205 GetRelatedCustLedgerEntries2
                     column(Cle_AccountNo; "Customer No.") { }
                     column(Cle_Amount; Amount) { }
                     Column(Cle_Dimension_Set_ID; "Dimension Set ID") { }
+                    column(Cle_Global_Dimension_1_Code; "Global Dimension 1 Code") { }
+                    column(Cle_Global_Dimension_2_Code; "Global Dimension 2 Code") { }
+
                 }
             }
         }
+
     }
 
 }
-

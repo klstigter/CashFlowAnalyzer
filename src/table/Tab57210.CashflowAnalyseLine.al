@@ -17,15 +17,11 @@ table 57210 "Cashflow Analyse Line"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Entry Line No.', NLD = 'Volgnummer kasstroompost';
         }
-        field(3; "Is Grip"; Boolean)
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Is Grip', NLD = 'Is Grip';
-        }
+
         field(6; "Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Document No.', NLD = 'Documentnr.';
+            CaptionML = ENU = 'Document No.', NLD = 'Vereffend documentnr.';
         }
         field(7; "Posting Date"; Date)
         {
@@ -168,6 +164,7 @@ table 57210 "Cashflow Analyse Line"
             CaptionML = ENU = 'Dimension Set ID', NLD = 'Dimensie Set ID';
             Editable = false;
             TableRelation = "Dimension Set Entry";
+            BlankZero = true;
 
             trigger OnLookup()
             begin
@@ -182,33 +179,13 @@ table 57210 "Cashflow Analyse Line"
             end;
         }
 
-        field(60; "Realized Type"; enum "Realized_Cash Flow Type")
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Realized Type', NLD = 'Kasstroom oorsprong';
-        }
+
         field(70; "Error message unbalance"; text[250])
         {
             DataClassification = ToBeClassified;
             CaptionMl = ENU = 'Error message when unbalance detected', NLD = 'Foutmelding bij een gevonden onbelans';
         }
-        field(61; "Customer No."; Code[20])
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Customer No.', NLD = 'Klantnr.';
-            TableRelation = Customer;
-        }
-        field(62; "Vendor No."; Code[20])
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Vendor No.', NLD = 'Leveranciersnr.';
-            TableRelation = Vendor;
-        }
-        field(63; "Location Creation Record"; Text[100])
-        {
-            DataClassification = SystemMetadata;
 
-        }
         field(64; "Transaction No."; integer)
         {
             DataClassification = ToBeClassified;

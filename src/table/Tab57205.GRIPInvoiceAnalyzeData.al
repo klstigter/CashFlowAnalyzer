@@ -47,8 +47,8 @@ table 57205 "GRIP Invoice Analyze Data"
 
             CaptionClass = '1,1,1';
             CaptionML = ENU = 'Global Dimension 1 Code', NLD = 'Globale dimensiecode1';
-            TableRelation = "Dimension Value".Code where("Global Dimension No." = const(1),
-                                                          Blocked = const(false));
+            // TableRelation = "Dimension Value".Code where("Global Dimension No." = const(1),
+            //                                               Blocked = const(false));
 
             trigger OnValidate()
             begin
@@ -59,13 +59,18 @@ table 57205 "GRIP Invoice Analyze Data"
         {
             CaptionClass = '1,1,2';
             CaptionML = ENU = 'Global Dimension 2 Code', NLD = 'Globale dimensiecode2';
-            TableRelation = "Dimension Value".Code where("Global Dimension No." = const(2),
-                                                          Blocked = const(false));
+            // TableRelation = "Dimension Value".Code where("Global Dimension No." = const(2),
+            //                                               Blocked = const(false));
 
             trigger OnValidate()
             begin
 
             end;
+        }
+        field(75; "Dimension Set ID"; Integer)
+        {
+            CaptionML = ENU = 'Dimension Set ID', NLD = 'Dimensieset-ID';
+
         }
         field(80; "Created DateTime"; DateTime)
         {

@@ -3,6 +3,8 @@ codeunit 57203 CreateCashEntryPostingNoList
     trigger OnRun()
     var
         Dateselector: page DateSelector;
+        msgLbl: Label 'Proces verwerkt. \\Totaal records ingevoegd: %1\Aantal records overgeslagen: %2', comment = 'Message shown after process is completed. %1 is the number of records inserted, %2 is the number of records skipped.';
+
     begin
         counterInserted := 0;
         counterSkipped := 0;
@@ -10,14 +12,15 @@ codeunit 57203 CreateCashEntryPostingNoList
         if Dateselector.RunModal() <> Action::OK then
             exit;
         Dateselector.GetValues(StartDate, EndDate);
+        DateFilter := Dateselector.GetDateFilter();
 
-        if (StartDate <> 0D) and (EndDate <> 0D) and (EndDate < StartDate) then
-            Error('End Date cannot be earlier than Start Date.');
+        // if (StartDate <> 0D) and (EndDate <> 0D) and (EndDate < StartDate) then
+        //     Error('End Date cannot be earlier than Start Date.');
 
         if not CreateCashEntryPostingNoList() then
             Message(GetLastErrorText)
         else
-            Message('Process completed. \\Total records inserted: %1\Total records skipped: %2', counterInserted, counterSkipped);
+            Message(msgLbl, counterInserted, counterSkipped);
     end;
 
     var
@@ -25,6 +28,7 @@ codeunit 57203 CreateCashEntryPostingNoList
         counterSkipped: Integer;
         StartDate: Date;
         EndDate: Date;
+        DateFilter: Text;
 
     [TryFunction]
     procedure CreateCashEntryPostingNoList()
@@ -40,13 +44,14 @@ codeunit 57203 CreateCashEntryPostingNoList
                     begin
                         SourceType := SourceType::"Bank Account";
                         qry.setfilter(SourceTypeFilter, '%1', SourceType);
-                        qry.SetFilter(PostingDateFilter, '%1..%2', StartDate, EndDate);
+                        qry.SetFilter(PostingDateFilter, DateFilter);
                     end;
                 2:
                     begin
                         SourceType := SourceType::" ";
+                        qry.setfilter(SourceTypeFilter, '%1', SourceType);
                         qry.setfilter(JournalTemplNameFlt, GetFilterCashTemplates());
-                        qry.SetFilter(PostingDateFilter, '%1..%2', StartDate, EndDate);
+                        qry.SetFilter(PostingDateFilter, DateFilter);
                     end;
             end;
 
