@@ -68,3 +68,4 @@ query 57202 GetRelatedVendLedgerEntries1
             }
         }
     }
+}
