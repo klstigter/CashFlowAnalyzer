@@ -54,10 +54,6 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Cash Flow Category Desc. field.', Comment = '%';
                 }
-                field("Customer No."; Rec."Customer No.")
-                {
-                    ToolTip = 'Specifies the value of the Customer No. field.', Comment = '%';
-                }
                 field("Dimension Set ID"; Rec."Dimension Set ID")
                 {
                     ToolTip = 'Specifies the value of the Dimension Set ID field.', Comment = '%';
@@ -86,10 +82,7 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Realized Type field.', Comment = '%';
                 }
-                field("Vendor No."; Rec."Vendor No.")
-                {
-                    ToolTip = 'Specifies the value of the Vendor No. field.', Comment = '%';
-                }
+
             }
         }
         area(Factboxes)
