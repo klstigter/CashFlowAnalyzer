@@ -12,9 +12,10 @@ codeunit 57203 CreateCashEntryPostingNoList
         if Dateselector.RunModal() <> Action::OK then
             exit;
         Dateselector.GetValues(StartDate, EndDate);
+        DateFilter := Dateselector.GetDateFilter();
 
-        if (StartDate <> 0D) and (EndDate <> 0D) and (EndDate < StartDate) then
-            Error('End Date cannot be earlier than Start Date.');
+        // if (StartDate <> 0D) and (EndDate <> 0D) and (EndDate < StartDate) then
+        //     Error('End Date cannot be earlier than Start Date.');
 
         if not CreateCashEntryPostingNoList() then
             Message(GetLastErrorText)
@@ -27,6 +28,7 @@ codeunit 57203 CreateCashEntryPostingNoList
         counterSkipped: Integer;
         StartDate: Date;
         EndDate: Date;
+        DateFilter: Text;
 
     [TryFunction]
     procedure CreateCashEntryPostingNoList()
@@ -43,12 +45,12 @@ codeunit 57203 CreateCashEntryPostingNoList
                     begin
                         SourceType := SourceType::"Bank Account";
                         qry.setfilter(SourceTypeFilter, '%1', SourceType);
-                        qry.SetFilter(PostingDateFilter, '%1..%2', StartDate, EndDate);
+                        qry.SetFilter(PostingDateFilter, DateFilter);
                     end;
                 2:
                     begin
                         qry2.setfilter(JournalTemplNameFlt, GetFilterCashTemplates());
-                        qry2.SetFilter(PostingDateFilter, '%1..%2', StartDate, EndDate);
+                        qry2.SetFilter(PostingDateFilter, DateFilter);
                     end;
             end;
 
