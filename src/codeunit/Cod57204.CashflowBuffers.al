@@ -805,10 +805,6 @@ codeunit 57204 "Cashflow Buffers"
 
         CashFlowLine."Applied Document No." := TEMPDetailedLedger."led_Document No.";
         CashFlowLine."Applied Document Entry No." := TEMPDetailedLedger."led_Entry No.";
-        if TEMPbuffer_Bnk."Source Type" = TEMPbuffer_Bnk."Source Type"::"vendor" then
-            CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Vendor Ledger Entry";
-        if TEMPbuffer_Bnk."Source Type" = TEMPbuffer_Bnk."Source Type"::"Customer" then
-            CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
         if TEMPDetailedLedger."Led_Dimension Set ID" <> 0 then
             CashFlowLine.Validate("Dimension Set ID", TEMPDetailedLedger."Led_Dimension Set ID");
         CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
@@ -848,7 +844,6 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."Applied Posting Date" := TEMPDetailedLedger."led_Posting Date";
                 CashFlowLine."Applied Document No." := TEMPgrip_Vendor."Document No.";
                 CashFlowLine."Applied Document Entry No." := TEMPgrip_Vendor."Exploitation No.";
-                CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"CashFlow Category GRIP Invoice";
 
                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
                 CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";
@@ -888,7 +883,6 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."Applied Posting Date" := TEMPDetailedLedger."led_Posting Date";
                 CashFlowLine."Applied Document No." := TEMPgrip."Document No.";
                 CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
-                CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"CashFlow Category GRIP Invoice";
 
                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
                 CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";

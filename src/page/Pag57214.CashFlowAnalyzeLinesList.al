@@ -74,10 +74,7 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Posting Date field.', Comment = '%';
                 }
-                field("Realized Type"; Rec."Realized Type")
-                {
-                    ToolTip = 'Specifies the value of the Realized Type field.', Comment = '%';
-                }
+
 
             }
         }

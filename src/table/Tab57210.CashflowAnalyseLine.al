@@ -179,11 +179,7 @@ table 57210 "Cashflow Analyse Line"
             end;
         }
 
-        field(60; "Realized Type"; enum "Realized_Cash Flow Type")
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Realized Type', NLD = 'Kasstroom oorsprong';
-        }
+
         field(70; "Error message unbalance"; text[250])
         {
             DataClassification = ToBeClassified;
