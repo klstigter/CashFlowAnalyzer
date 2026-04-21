@@ -145,6 +145,7 @@ codeunit 57204 "Cashflow Buffers"
         TempGLentry."Transaction No." := GLentry."Transaction No.";
         TempGLentry."Dimension Set ID" := GLentry."Dimension Set ID";
         TempGLentry."Document Type" := GLentry."Document Type";
+        TEMPGLentry."System-Created Entry" := GLentry."System-Created Entry";
         TEMPGLentry.insert;
     end;
 
