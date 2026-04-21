@@ -186,11 +186,6 @@ table 57210 "Cashflow Analyse Line"
             CaptionMl = ENU = 'Error message when unbalance detected', NLD = 'Foutmelding bij een gevonden onbelans';
         }
 
-        field(63; "Location Creation Record"; Text[100])
-        {
-            DataClassification = SystemMetadata;
-
-        }
         field(64; "Transaction No."; integer)
         {
             DataClassification = ToBeClassified;

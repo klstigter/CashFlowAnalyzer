@@ -106,11 +106,6 @@ page 57203 "Opt. CashFlow Analyzer Subform"
                 {
                     ApplicationArea = All;
                 }
-                field("Location Creation Record"; Rec."Location Creation Record")
-                {
-                    ApplicationArea = All;
-                    Visible = false;
-                }
                 field("Transaction No."; Rec."Transaction No.")
                 {
                     ApplicationArea = All;

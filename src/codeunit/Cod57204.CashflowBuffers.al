@@ -808,7 +808,7 @@ codeunit 57204 "Cashflow Buffers"
         if TEMPDetailedLedger."Led_Dimension Set ID" <> 0 then
             CashFlowLine.Validate("Dimension Set ID", TEMPDetailedLedger."Led_Dimension Set ID");
         CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-        CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";
+
 
         CashFlowLine.Insert();
     end;
@@ -846,7 +846,6 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."Applied Document Entry No." := TEMPgrip_Vendor."Exploitation No.";
 
                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-                CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";
                 CashFlowLine.insert();
             until TEMPgrip_Vendor.Next() = 0;
     end;
@@ -885,7 +884,6 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
 
                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
-                CashFlowLine."Location Creation Record" := TEMPDetailedLedger."Birth place";
                 CashFlowLine.insert();
             until TEMPgrip.Next() = 0;
     end;
