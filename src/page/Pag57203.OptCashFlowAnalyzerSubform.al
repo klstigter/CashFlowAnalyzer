@@ -101,18 +101,10 @@ page 57203 "Opt. CashFlow Analyzer Subform"
                 {
                     ApplicationArea = All;
                 }
-                field("Realized Type"; Rec."Realized Type")
-                {
-                    ApplicationArea = All;
-                }
+
                 field("Error message unbalance"; Rec."Error message unbalance")
                 {
                     ApplicationArea = All;
-                }
-                field("Location Creation Record"; Rec."Location Creation Record")
-                {
-                    ApplicationArea = All;
-                    Visible = false;
                 }
                 field("Transaction No."; Rec."Transaction No.")
                 {

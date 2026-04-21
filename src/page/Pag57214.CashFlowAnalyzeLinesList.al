@@ -17,11 +17,6 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Entry Line No. field.', Comment = '%';
                 }
-                field("Place of Birth"; Rec."Location Creation Record")
-                {
-                    ToolTip = 'Specifies the value of the Place of Birth field.', Comment = '%';
-                    Visible = false;
-                }
                 field("Applied Document Entry No."; Rec."Applied Document Entry No.")
                 {
                     ToolTip = 'Specifies the value of the Applied Document Entry No. field.', Comment = '%';
@@ -74,10 +69,7 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Posting Date field.', Comment = '%';
                 }
-                field("Realized Type"; Rec."Realized Type")
-                {
-                    ToolTip = 'Specifies the value of the Realized Type field.', Comment = '%';
-                }
+
 
             }
         }

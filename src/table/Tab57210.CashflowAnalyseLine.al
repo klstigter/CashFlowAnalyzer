@@ -164,6 +164,7 @@ table 57210 "Cashflow Analyse Line"
             CaptionML = ENU = 'Dimension Set ID', NLD = 'Dimensie Set ID';
             Editable = false;
             TableRelation = "Dimension Set Entry";
+            BlankZero = true;
 
             trigger OnLookup()
             begin
@@ -178,22 +179,13 @@ table 57210 "Cashflow Analyse Line"
             end;
         }
 
-        field(60; "Realized Type"; enum "Realized_Cash Flow Type")
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Realized Type', NLD = 'Kasstroom oorsprong';
-        }
+
         field(70; "Error message unbalance"; text[250])
         {
             DataClassification = ToBeClassified;
             CaptionMl = ENU = 'Error message when unbalance detected', NLD = 'Foutmelding bij een gevonden onbelans';
         }
 
-        field(63; "Location Creation Record"; Text[100])
-        {
-            DataClassification = SystemMetadata;
-
-        }
         field(64; "Transaction No."; integer)
         {
             DataClassification = ToBeClassified;
