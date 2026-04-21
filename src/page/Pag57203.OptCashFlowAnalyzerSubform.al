@@ -65,11 +65,6 @@ page 57203 "Opt. CashFlow Analyzer Subform"
                 {
                     ApplicationArea = All;
                 }
-                field("Is Grip"; Rec."Is Grip")
-                {
-                    ApplicationArea = All;
-                    Caption = 'Is Grip';
-                }
                 field(globalDimension1; Rec."Global Dimension 1 Code")
                 {
                     ApplicationArea = All;

@@ -17,11 +17,7 @@ table 57210 "Cashflow Analyse Line"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Entry Line No.', NLD = 'Volgnummer kasstroompost';
         }
-        field(3; "Is Grip"; Boolean)
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Is Grip', NLD = 'Is Grip';
-        }
+
         field(6; "Document No."; Code[20])
         {
             DataClassification = ToBeClassified;
