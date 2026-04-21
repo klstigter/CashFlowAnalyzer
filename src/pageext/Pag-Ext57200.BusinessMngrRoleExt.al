@@ -16,6 +16,13 @@ pageextension 57200 "Business Mngr Role Ext" extends "Business Manager Role Cent
                     RunObject = Page "Cash Entry Postings";
                     ToolTip = 'View and manage cash entry postings to analyze your cash flow based on actual transactions.';
                 }
+                action(CashFlowAnalyzeLinesList)
+                {
+                    ApplicationArea = Basic, Suite;
+                    CaptionML = ENU = 'Cash Flow Analyze Lines', NLD = 'Gedetailleerde Kasstroomposten';
+                    RunObject = Page "CashFlowAnalyzeLines List";
+                    ToolTip = 'View Cash Flow Analyze Lines.';
+                }
                 action("Cashflow Analyze` List")
                 {
                     ApplicationArea = Basic, Suite;

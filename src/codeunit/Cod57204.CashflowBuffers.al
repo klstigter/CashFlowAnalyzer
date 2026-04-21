@@ -589,7 +589,7 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine.SetRange("G/L Entry No.", TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
         CashFlowLine.DeleteAll();
         CashFlowLineNo := 0;
-        if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."GL vs GL" = false) then
+        if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."GL vs GL" = false) and (TEMPbuffer_Bnk."GL_EntryNo Start" <> 0) then
             InsertTransactionBuffer(1, ProcessAmount)
         else begin
             TEMPDetailedLedger.Reset();
@@ -648,7 +648,7 @@ codeunit 57204 "Cashflow Buffers"
             repeat
                 CashFlowLineNo := 0;
                 ProcessAmount := 0;
-                if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."GL vs GL" = false) then
+                if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."GL vs GL" = false) and (TEMPbuffer_Bnk."GL_EntryNo Start" <> 0) then
                     InsertTransactionBuffer(1, ProcessAmount)
                 else begin
                     TEMPDetailedLedger.Reset();
