@@ -23,6 +23,7 @@ query 57208 "Get Vendor Ledger Entry Opt."
                 column(Amount; Amount) { }
                 column(Global_Dimension_1_Code; "Global Dimension 1 Code") { }
                 column(Global_Dimension_2_Code; "Global Dimension 2 Code") { }
+                column(Dimension_Set_ID; "Dimension Set ID") { }
             }
         }
     }

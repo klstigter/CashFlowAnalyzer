@@ -86,6 +86,14 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(83; "Led_Global Dimension 1 Code"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(84; "Led_Global Dimension 2 Code"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
         field(90; "Birth place"; Text[100])
         {
             DataClassification = ToBeClassified;
