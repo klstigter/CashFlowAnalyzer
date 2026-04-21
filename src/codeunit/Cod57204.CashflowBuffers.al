@@ -230,6 +230,11 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."Transaction No." := CustLedgerEntry.TransactionNo;
                 TEMPDetailedLedger."Document No." := CustLedgerEntry.DocumentNo;
                 TEMPDetailedLedger."Amount" := CustLedgerEntry.Amount;
+
+                // Payment Tolerance
+                if TEMPDetailedLedger."Entry Type" = TEMPDetailedLedger."Entry Type"::"Payment Tolerance" then
+                    TEMPDetailedLedger."Amount" := -TEMPDetailedLedger."Amount";
+
                 TEMPDetailedLedger."Posting Date" := CustLedgerEntry.PostingDate;
                 TEMPDetailedLedger."led_Entry No." := CustLedgerEntry.Cle_EntryNo;
                 TEMPDetailedLedger."led_Document Type" := CustLedgerEntry.Cle_DocType;
@@ -273,6 +278,11 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."Transaction No." := CustLedgerEntry.TransactionNo;
                 TEMPDetailedLedger."Document No." := CustLedgerEntry.DocumentNo;
                 TEMPDetailedLedger."Amount" := CustLedgerEntry.Amount;
+
+                // Payment Tolerance
+                if TEMPDetailedLedger."Entry Type" = TEMPDetailedLedger."Entry Type"::"Payment Tolerance" then
+                    TEMPDetailedLedger."Amount" := -TEMPDetailedLedger."Amount";
+
                 TEMPDetailedLedger."Posting Date" := CustLedgerEntry.PostingDate;
                 TEMPDetailedLedger."led_Entry No." := CustLedgerEntry.Cle_EntryNo;
                 TEMPDetailedLedger."led_Document Type" := CustLedgerEntry.Cle_DocType;
@@ -529,26 +539,28 @@ codeunit 57204 "Cashflow Buffers"
             TEMPDetailedLedger.SetFilter(Amount, '<>%1', 0);
             IF TEMPDetailedLedger.FindSet() THEN begin
                 repeat
-                    factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
+                    Factor := 1;
+                    if TEMPDetailedLedger."led_Amount" <> 0 then
+                        Factor := TEMPDetailedLedger."Amount" / TEMPDetailedLedger."led_Amount";
                     TEMPgrip.DeleteAll();
                     TEMPgrip_Vendor.DeleteAll();
                     case TEMPbuffer_Bnk."Source Type" of
                         TEMPbuffer_Bnk."Source Type"::Customer:
                             begin
                                 IF GetCounterBalanceDetails(TEMPDetailedLedger."led_Document No.", TEMPDetailedLedger."led_Entry No.") THEN
-                                    InsertGrip(factor, ProcessAmount)
+                                    InsertGrip(Factor, ProcessAmount)
                                 ELSE
-                                    InsertDetailedLedBuffer(factor, ProcessAmount);
+                                    InsertDetailedLedBuffer(Factor, ProcessAmount);
                             end;
                         TEMPbuffer_Bnk."Source Type"::Vendor:
                             begin
                                 IF FillTempGrip_Vendor(Format(TEMPDetailedLedger."led_Entry No.")) THEN
-                                    InsertGrip_vendor(factor, ProcessAmount)
+                                    InsertGrip_vendor(Factor, ProcessAmount)
                                 ELSE
-                                    InsertDetailedLedBuffer(factor, ProcessAmount);
+                                    InsertDetailedLedBuffer(Factor, ProcessAmount);
                             end;
                         else
-                            InsertDetailedLedBuffer(factor, ProcessAmount);
+                            InsertDetailedLedBuffer(Factor, ProcessAmount);
                     end;
                 until TEMPDetailedLedger.Next() = 0;
                 rest := round(abs(ProcessAmount), 0.01) - round(abs(TEMPbuffer_Bnk."Cashflow Amount"), 0.01);
