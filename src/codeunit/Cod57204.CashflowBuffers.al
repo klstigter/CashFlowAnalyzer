@@ -949,6 +949,7 @@ codeunit 57204 "Cashflow Buffers"
     local procedure FillTempGrip_Vendor(DocFilter: Text) HasRecords: Boolean; //LAGI
     var
         GripQry: Query "Get Vendor Ledger Entry Opt.";
+        VATSettlementCheckQry: query "VAT Settlement Check Opt.";
         Inserted: Boolean;
         x: Integer;
     begin
@@ -956,6 +957,10 @@ codeunit 57204 "Cashflow Buffers"
         GripQry.Open();
         while GripQry.Read() do begin
             if (GripQry.Init_Entry_No_ <> GripQry.G_L_Entry_No_) then begin
+                //<< Check VAT Settlement
+                VATSettlementCheckQry.SetFilter(Document_Type_filter, format(GripQry.Document_Type));
+                VATSettlementCheckQry.SetFilter(Document_No_filter, GripQry.Document_No_);
+                //>>
                 TEMPgrip_Vendor.Init();
                 TEMPgrip_Vendor."Exploitation No." := GripQry.G_L_Entry_No_;
                 case GripQry.Document_Type of
@@ -969,8 +974,6 @@ codeunit 57204 "Cashflow Buffers"
                     GripQry.Document_Type::Payment:
                         TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Payment;
                 end;
-                if GripQry.Document_No_ = 'IF25-107888' then
-                    x := 1;
                 TEMPgrip_Vendor."Document No." := GripQry.Document_No_;
                 TEMPgrip_Vendor."G/L Account" := GripQry.G_L_Account_No_;
                 TEMPgrip_Vendor."Amount" := GripQry.Amount;
