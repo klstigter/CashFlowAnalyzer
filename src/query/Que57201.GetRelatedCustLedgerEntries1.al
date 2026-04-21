@@ -44,10 +44,13 @@ query 57201 GetRelatedCustLedgerEntries1
                     column(Cle_AccountNo; "Customer No.") { }
                     column(Cle_Amount; Amount) { }
                     Column(Cle_Dimension_Set_ID; "Dimension Set ID") { }
+                    column(Cle_Global_Dimension_1_Code; "Global Dimension 1 Code") { }
+                    column(Cle_Global_Dimension_2_Code; "Global Dimension 2 Code")
+                    {
+                    }
                 }
             }
         }
-    }
 
-}
+    }
 

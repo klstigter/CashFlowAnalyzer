@@ -98,6 +98,14 @@ table 57211 "Transaction Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(34; "Global Dimension 1 Code"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(35; "Global Dimension 2 Code"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
         field(40; "GL vs GL"; Boolean)
         {
             DataClassification = ToBeClassified;
