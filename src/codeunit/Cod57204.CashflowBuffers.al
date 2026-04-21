@@ -793,7 +793,10 @@ codeunit 57204 "Cashflow Buffers"
         if not TEMPbuffer_Bnk."GL vs GL" then
             GLentry.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk")
         else
-            GLentry.Get(TEMPDetailedLedger."Entry No.");
+            if TEMPDetailedLedger."Entry Type" = TEMPDetailedLedger."Entry Type"::"Payment Tolerance" then //<< Payment Tolerance
+                GLentry.Get(TEMPDetailedLedger."Ledger Entry No.")
+            else
+                GLentry.Get(TEMPDetailedLedger."Entry No.");
         CashFlowLine."Document No." := GLentry."Document No.";
         CashFlowLine."Posting Date" := GLentry."Posting Date";
         CashFlowLine."Dimension Set ID" := TEMPDetailedLedger."led_Dimension Set ID";
