@@ -775,6 +775,10 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine."Global Dimension 1 Code" := TEMPbuffer_Bnk."Global Dimension 1 Code";
         CashFlowLine."Global Dimension 2 Code" := TEMPbuffer_Bnk."Global Dimension 2 Code";
         CashFlowLine."Transaction No." := TEMPbuffer_Bnk."Transaction No.";
+
+        CashFlowLine."Journal Templ. Name" := TEMPbuffer_Bnk."Journal Templ. Name";
+        CashFlowLine."Journal Batch Name" := TEMPbuffer_Bnk."Journal Batch Name";
+
         CashFlowLine.Insert();
     end;
 
@@ -834,6 +838,8 @@ codeunit 57204 "Cashflow Buffers"
             CashFlowLine.Validate("Dimension Set ID", TEMPDetailedLedger."Led_Dimension Set ID");
         CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
 
+        CashFlowLine."Journal Templ. Name" := TEMPbuffer_Bnk."Journal Templ. Name";
+        CashFlowLine."Journal Batch Name" := TEMPbuffer_Bnk."Journal Batch Name";
 
         CashFlowLine.Insert();
     end;
@@ -871,6 +877,10 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."Applied Document Entry No." := TEMPgrip_Vendor."Exploitation No.";
 
                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
+
+                CashFlowLine."Journal Templ. Name" := TEMPbuffer_Bnk."Journal Templ. Name";
+                CashFlowLine."Journal Batch Name" := TEMPbuffer_Bnk."Journal Batch Name";
+
                 CashFlowLine.insert();
             until TEMPgrip_Vendor.Next() = 0;
     end;
@@ -909,6 +919,10 @@ codeunit 57204 "Cashflow Buffers"
                 CashFlowLine."Applied Document Entry No." := TEMPgrip."Exploitation No.";
 
                 CashFlowLine."Transaction No." := TEMPDetailedLedger."Transaction No.";
+
+                CashFlowLine."Journal Templ. Name" := TEMPbuffer_Bnk."Journal Templ. Name";
+                CashFlowLine."Journal Batch Name" := TEMPbuffer_Bnk."Journal Batch Name";
+
                 CashFlowLine.insert();
             until TEMPgrip.Next() = 0;
     end;

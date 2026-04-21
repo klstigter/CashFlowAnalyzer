@@ -196,6 +196,14 @@ table 57210 "Cashflow Analyse Line"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Amount to Analyze', NLD = 'Bedrag te analyseren';
         }
+        field(80; "Journal Templ. Name"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(81; "Journal Batch Name"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
     }
 
     keys
