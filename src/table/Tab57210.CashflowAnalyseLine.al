@@ -164,6 +164,7 @@ table 57210 "Cashflow Analyse Line"
             CaptionML = ENU = 'Dimension Set ID', NLD = 'Dimensie Set ID';
             Editable = false;
             TableRelation = "Dimension Set Entry";
+            BlankZero = true;
 
             trigger OnLookup()
             begin
