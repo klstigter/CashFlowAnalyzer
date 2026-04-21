@@ -14,11 +14,14 @@ query 57210 "VAT Settlement Check Opt."
             dataitem(G_L_Entry___VAT_Entry_Link; "G/L Entry - VAT Entry Link")
             {
                 DataItemLink = "G/L Entry No." = G_L_Entry."Entry No.";
+
                 column(VAT_Entry_No_; "VAT Entry No.") { }
 
                 dataitem(VAT_Entry; "VAT Entry")
                 {
                     DataItemLink = "Entry No." = G_L_Entry___VAT_Entry_Link."VAT Entry No.";
+                    DataItemTableFilter = "Closed" = filter(true);
+
                     column(Amount; "Amount") { }
                     column(TransactionNo; "Transaction No.") { }
                     column(Type; Type) { }
@@ -27,9 +30,6 @@ query 57210 "VAT Settlement Check Opt."
                     column(PostingDate; "Posting Date") { }
                     column(Closed; "Closed") { }
                     column(Closed_by_Entry_No_; "Closed by Entry No.") { }
-
-
-                    filter(Closed_filter; "Closed") { }
                 }
             }
         }
