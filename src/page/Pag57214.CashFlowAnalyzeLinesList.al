@@ -69,7 +69,46 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Posting Date field.', Comment = '%';
                 }
-
+                field("Journal Templ. Name"; Rec."Journal Templ. Name")
+                {
+                    ToolTip = 'Specifies the value of the Journal Templ. Name field.', Comment = '%';
+                }
+                field("Journal Batch Name"; Rec."Journal Batch Name")
+                {
+                    ToolTip = 'Specifies the value of the Journal Batch Name field.', Comment = '%';
+                }
+                field("Global Dimension 1 Code"; Rec."Global Dimension 1 Code")
+                {
+                    ToolTip = 'Specifies the value of the Global Dimension 1 Code field.', Comment = '%';
+                }
+                field("Global Dimension 2 Code"; Rec."Global Dimension 2 Code")
+                {
+                    ToolTip = 'Specifies the value of the Global Dimension 2 Code field.', Comment = '%';
+                }
+                field("Shortcut Dimension 3 Code"; Rec."Shortcut Dimension 3 Code")
+                {
+                    ToolTip = 'Specifies the value of the Shortcut Dimension 3 Code field.', Comment = '%';
+                }
+                field("Shortcut Dimension 4 Code"; Rec."Shortcut Dimension 4 Code")
+                {
+                    ToolTip = 'Specifies the value of the Shortcut Dimension 4 Code field.', Comment = '%';
+                }
+                field("Shortcut Dimension 5 Code"; Rec."Shortcut Dimension 5 Code")
+                {
+                    ToolTip = 'Specifies the value of the Shortcut Dimension 5 Code field.', Comment = '%';
+                }
+                field("Shortcut Dimension 6 Code"; Rec."Shortcut Dimension 6 Code")
+                {
+                    ToolTip = 'Specifies the value of the Shortcut Dimension 6 Code field.', Comment = '%';
+                }
+                field("Shortcut Dimension 7 Code"; Rec."Shortcut Dimension 7 Code")
+                {
+                    ToolTip = 'Specifies the value of the Shortcut Dimension 7 Code field.', Comment = '%';
+                }
+                field("Shortcut Dimension 8 Code"; Rec."Shortcut Dimension 8 Code")
+                {
+                    ToolTip = 'Specifies the value of the Shortcut Dimension 8 Code field.', Comment = '%';
+                }
 
             }
         }
