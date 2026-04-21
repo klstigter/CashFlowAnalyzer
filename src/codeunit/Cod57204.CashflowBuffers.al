@@ -67,8 +67,14 @@ codeunit 57204 "Cashflow Buffers"
         TEMPGLentry.SetCurrentKey("Entry No.");
         if TEMPGLentry.FindLast() then
             FilterTransactionNo := format(TEMPGLentry."Transaction No.");
-        TEMPGLentry.SetRange("Source Type", CashRec."Source Type");
-        TEMPGLentry.SetRange("Source No.", CashRec."Source No.");
+
+        if CashRec."Source Type" = SourceTypeEnum::" " then begin
+            TEMPGLentry.setrange("System-Created Entry", true);
+        end else begin
+            TEMPGLentry.setrange("System-Created Entry");
+            TEMPGLentry.SetRange("Source Type", CashRec."Source Type");
+            TEMPGLentry.SetRange("Source No.", CashRec."Source No.");
+        end;
         if TEMPGLentry.FindSet() then begin
             FilterTransactionNo := format(TEMPGLentry."Transaction No.") + '..' + FilterTransactionNo;
             repeat
@@ -92,9 +98,10 @@ codeunit 57204 "Cashflow Buffers"
         end;
 
         RemoveNulTransactions(TEMPGLentry);
+        TEMPGLentry.reset;
         if CashRec."Source Type" = SourceTypeEnum::" " then begin
-            TEMPGLentry.SetRange("Source Type");
-            TEMPGLentry.SetRange("Source No.");
+            //Qry2 cash receives
+            TEMPGLentry.setrange("System-Created Entry", false);
             TEMPGLentry.SetRange("Journal Batch Name", "CashRec"."Journal Batch Name");
             TEMPGLentry.SetRange("Journal Templ. Name", "CashRec"."Journal Templ. Name");
             TEMPGLentry.SetRange("Document No.", "CashRec"."Document No.");
