@@ -192,18 +192,7 @@ table 57210 "Cashflow Analyse Line"
             DataClassification = ToBeClassified;
             CaptionMl = ENU = 'Error message when unbalance detected', NLD = 'Foutmelding bij een gevonden onbelans';
         }
-        field(61; "Customer No."; Code[20])
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Customer No.', NLD = 'Klantnr.';
-            TableRelation = Customer;
-        }
-        field(62; "Vendor No."; Code[20])
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'Vendor No.', NLD = 'Leveranciersnr.';
-            TableRelation = Vendor;
-        }
+
         field(63; "Location Creation Record"; Text[100])
         {
             DataClassification = SystemMetadata;
