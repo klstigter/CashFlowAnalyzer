@@ -17,6 +17,10 @@ page 57214 "CashFlowAnalyzeLines List"
                 {
                     ToolTip = 'Specifies the value of the Entry Line No. field.', Comment = '%';
                 }
+                field("Document No."; Rec."Document No.")
+                {
+                    ToolTip = 'Specifies the value of the Document No. field.', Comment = '%';
+                }
                 field("Applied Document Entry No."; Rec."Applied Document Entry No.")
                 {
                     ToolTip = 'Specifies the value of the Applied Document Entry No. field.', Comment = '%';
