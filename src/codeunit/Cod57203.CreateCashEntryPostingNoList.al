@@ -35,7 +35,6 @@ codeunit 57203 CreateCashEntryPostingNoList
     var
         CashEntryPostingNo: Record "Cash Entry Posting No.";
         qry: query "GetPostingNo From GLEntry";
-        qry2: query "GetPostingNo From GLEntry";
         SourceType: Enum "Gen. Journal Source Type";
         i: Integer;
     begin
@@ -49,8 +48,10 @@ codeunit 57203 CreateCashEntryPostingNoList
                     end;
                 2:
                     begin
-                        qry2.setfilter(JournalTemplNameFlt, GetFilterCashTemplates());
-                        qry2.SetFilter(PostingDateFilter, DateFilter);
+                        SourceType := SourceType::" ";
+                        qry.setfilter(SourceTypeFilter, '%1', SourceType);
+                        qry.setfilter(JournalTemplNameFlt, GetFilterCashTemplates());
+                        qry.SetFilter(PostingDateFilter, DateFilter);
                     end;
             end;
 

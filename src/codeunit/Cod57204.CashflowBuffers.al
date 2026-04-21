@@ -49,6 +49,7 @@ codeunit 57204 "Cashflow Buffers"
     var
         GLentry: Record "G/L Entry";
         TEMPGLentry: Record "G/L Entry" temporary;
+        SourceTypeEnum: Enum "Gen. Journal Source Type";
     begin
         TEMPbuffer_Bnk.reset;
         TEMPbuffer_Bnk.DeleteAll();
@@ -91,8 +92,17 @@ codeunit 57204 "Cashflow Buffers"
         end;
 
         RemoveNulTransactions(TEMPGLentry);
-        TEMPGLentry.SetFilter("Source Type", '<>%1', CashRec."Source Type");
-        TEMPGLentry.SetFilter("Source No.", '<>%1', CashRec."Source No.");
+        if CashRec."Source Type" = SourceTypeEnum::" " then begin
+            TEMPGLentry.SetRange("Source Type");
+            TEMPGLentry.SetRange("Source No.");
+            TEMPGLentry.SetRange("Journal Batch Name", "CashRec"."Journal Batch Name");
+            TEMPGLentry.SetRange("Journal Templ. Name", "CashRec"."Journal Templ. Name");
+            TEMPGLentry.SetRange("Document No.", "CashRec"."Document No.");
+        end else begin
+            TEMPGLentry.SetFilter("Source Type", '<>%1', CashRec."Source Type");
+            TEMPGLentry.SetFilter("Source No.", '<>%1', CashRec."Source No.");
+        end;
+
         TEMPGLentry.SetCurrentKey("Entry No.");
         TEMPbuffer_Bnk.setrange("Gl_EntryNo_Bnk");
         if TEMPbuffer_Bnk.FindSet() then

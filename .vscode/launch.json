@@ -16,7 +16,6 @@
             "enableSqlInformationDebugger": true,
             "schemaUpdateMode": "ForceSync"
         },
-       
         {
             "name": "Development - Attach",
             "request": "attach",
@@ -48,11 +47,11 @@
             "request": "attach",
             "type": "al",
             "environmentType": "Sandbox",
-            "environmentName": "woonzorgtest",
-            "sessionId": 33629,
+            "environmentName": "Development",
+            "sessionId": 178623,
             "breakOnNext": "WebClient",
             "breakOnError": "ExcludeTry",
-            "tenant": "563ae06e-997e-424b-abcf-963949afe7ae"
+            "tenant": "b065c0bc-23a5-45b6-a36e-f392b42d19a1"
         }
     ]
 }
