@@ -16,14 +16,17 @@ codeunit 57205 "CashflowAnalyzer Helper"
         nRec += TransActionBuffer.FillDetVendorLedgBuffer1(Rec, FilterTxt);
         nRec += TransActionBuffer.FillDetVendorLedgBuffer2(Rec, FilterTxt);
 
-        if nRec = 0 then begin
-            nRec += TransActionBuffer.FillVATSettlement(Rec);
-            if nRec <> 0 then begin
-                Rec."Is VAT Settlement" := true;
-                Rec.Modify();
-            end
-        end;
-        FilterTxt := TransActionBuffer.FillBuffer(Rec);
+        /*
+                if nRec = 0 then begin
+                    nRec += TransActionBuffer.FillVATSettlement(Rec);
+                    if nRec <> 0 then begin
+                        Rec."Is VAT Settlement" := true;
+                        Rec.Modify();
+                    end
+                end;
+        */
+
+        TransActionBuffer.FillBuffer(Rec);
         TransActionBuffer.FillTEMPCashFlowCategory();
         exit(true);
     end;

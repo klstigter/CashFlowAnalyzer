@@ -110,8 +110,11 @@ table 57211 "Transaction Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(41; "Reviewed Identifier"; Integer)
+        {
+            DataClassification = ToBeClassified;
+        }
     }
-
     keys
     {
         key(Key1; "Gl_EntryNo_Bnk")

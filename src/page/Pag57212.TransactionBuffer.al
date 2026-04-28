@@ -92,6 +92,14 @@ page 57212 "Transaction Buffer"
                 {
                     ToolTip = 'Specifies the value of the GL Account No. field.', Comment = '%';
                 }
+                field("Reviewed Identifier"; Rec."Reviewed Identifier")
+                {
+                    ToolTip = 'Specifies the value of the Reviewed Identifier field.', Comment = '%';
+                }
+                field("Is VAT Settlement"; Rec."Is VAT Settlement")
+                {
+                    ToolTip = 'Specifies the value of the Is VAT Settlement field.', Comment = '%';
+                }
 
             }
         }
