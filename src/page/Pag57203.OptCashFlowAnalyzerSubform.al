@@ -5,7 +5,7 @@ page 57203 "Opt. CashFlow Analyzer Subform"
     UsageCategory = Lists;
     SourceTable = "Cashflow Analyse Line";
     Editable = false;
-    Caption = 'CashFlow Analyzer Subform';
+    CaptionML = ENU = 'CashFlow Analyzer Subform', NLD = 'Gedetailleerde kasstroomposten';
     AutoSplitKey = true;
     DelayedInsert = true;
     DeleteAllowed = false;

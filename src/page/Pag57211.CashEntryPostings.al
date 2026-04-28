@@ -112,7 +112,7 @@ page 57211 "Cash Entry Postings"
                     t1, t2 : time;
                     duration: Duration;
                     log: Record "Log Cashflow Analyzer";
-                    LblMsg: Label 'Selected %1 records for processing. Do you want to continue?', comment = 'ENU=Selected %1 records for processing. Do you want to continue?,NLD=Er zijn %1 records geselecteerd voor verwerking. Wilt u doorgaan?';
+                    LblMsg: Label 'Aantal %1 records voor verwerking. Wilt u doorgaan?', comment = 'ENU=Selected %1 records for processing. Do you want to continue?,NLD=Er zijn %1 records geselecteerd voor verwerking. Wilt u doorgaan?';
                 begin
                     CurrPage.SetSelectionFilter(pRec);
                     if pRec.Count <> 0 then begin
@@ -139,14 +139,14 @@ page 57211 "Cash Entry Postings"
                         until pRec.Next() = 0;
                         ALL_t2 := Time();
                         duration := ALL_t2 - ALL_t1;
-                        Message('Process is completely done. \Time taken: %1', duration);
+                        Message('Proces verwerkt. \Duur: %1', duration);
                     end;
                 end;
             }
-            action(runFilbuffers)
+            action(runFillbuffers)
             {
                 ApplicationArea = Basic, Suite;
-                CaptionML = ENU = 'Fetch data in ALL buffers, also GRIP', NLD = 'Gegevens ophalen in ALLE buffers, ook GRIP';
+                CaptionML = ENU = 'Gegevens ophalen in ALLE buffers, ook GRIP', NLD = 'Gegevens ophalen in ALLE buffers, ook GRIP';
                 Visible = ShowTestFields;
 
                 trigger OnAction()
@@ -158,16 +158,16 @@ page 57211 "Cash Entry Postings"
                     if cu.Fill_All_Buffer(Rec) then begin
                         t2 := Time();
                         duration := t2 - t1;
-                        Message('Data fetched successfully in all buffers. \Time taken: %1', duration);
+                        Message('Data is opgehaald en opgeslagen in buffers. \Duur: %1', duration);
                     end else
-                        Message('No data fetched for the selected record.');
+                        Message('Geen gegevens opgehaald voor het geselecteerde record.');
 
                 end;
             }
             action(runCreateAnalyzeLines)
             {
                 ApplicationArea = Basic, Suite;
-                CaptionML = ENU = 'Step 3: Create Analyze Lines (buffer must be filled first)', NLD = 'Stap 3: Analyse regels maken (buffer moet eerst worden gevuld)';
+                CaptionML = ENU = 'Stap 3: Aanmaken analyse regels (buffer moet eerst worden gevuld)', NLD = 'Stap 3: Analyse regels maken (buffer moet eerst worden gevuld)';
                 Visible = ShowTestFields;
 
 
@@ -180,7 +180,7 @@ page 57211 "Cash Entry Postings"
                     Cu.CreateAnalyze();
                     t2 := Time();
                     duration := t2 - t1;
-                    Message('Analyze lines created successfully. \Time taken: %1', duration);
+                    Message('Analyse regels succesvol aangemaakt. \Duur: %1', duration);
                 end;
             }
 
@@ -250,7 +250,7 @@ page 57211 "Cash Entry Postings"
         }
     }
     var
-        CU: Codeunit MyCodeunit;
+        CU: Codeunit "CashflowAnalyzer Helper";
         ShowTestFields: Boolean;
 
     trigger OnOpenPage()

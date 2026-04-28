@@ -183,7 +183,7 @@ table 57210 "Cashflow Analyse Line"
         field(70; "Error message unbalance"; text[250])
         {
             DataClassification = ToBeClassified;
-            CaptionMl = ENU = 'Error message when unbalance detected', NLD = 'Foutmelding bij een gevonden onbelans';
+            CaptionMl = ENU = 'Error message when unbalance detected', NLD = 'Foutmelding bij een gevonden onbalans';
         }
 
         field(64; "Transaction No."; integer)
@@ -199,10 +199,12 @@ table 57210 "Cashflow Analyse Line"
         field(80; "Journal Templ. Name"; Code[20])
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Journal Template Name', NLD = 'Dagboeksjabloonnaam';
         }
         field(81; "Journal Batch Name"; Code[20])
         {
             DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Journal Batch Name', NLD = 'Dagboekbatchnaam';
         }
     }
 

@@ -1,4 +1,4 @@
-codeunit 57205 MyCodeunit
+codeunit 57205 "CashflowAnalyzer Helper"
 {
     TableNo = 57209;
 
@@ -19,7 +19,7 @@ codeunit 57205 MyCodeunit
         if nRec = 0 then begin
             nRec += TransActionBuffer.FillVATSettlement(Rec);
             if nRec <> 0 then begin
-                Rec."GL vs GL" := true;
+                Rec."Is VAT Settlement" := true;
                 Rec.Modify();
             end
         end;

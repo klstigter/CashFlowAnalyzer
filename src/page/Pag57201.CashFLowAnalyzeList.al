@@ -336,7 +336,7 @@ page 57201 "CashFLow Analyze List"
         }
     }
     var
-        CU: Codeunit MyCodeunit;
+        CU: Codeunit "CashflowAnalyzer Helper";
         ShowTestFields: Boolean;
         BuffersFilledFor: code[20];
 

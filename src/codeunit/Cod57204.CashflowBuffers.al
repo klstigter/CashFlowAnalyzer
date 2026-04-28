@@ -50,6 +50,7 @@ codeunit 57204 "Cashflow Buffers"
         GLentry: Record "G/L Entry";
         TEMPGLentry: Record "G/L Entry" temporary;
         SourceTypeEnum: Enum "Gen. Journal Source Type";
+        n: integer;
     begin
         TEMPbuffer_Bnk.reset;
         TEMPbuffer_Bnk.DeleteAll();
@@ -95,7 +96,7 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPbuffer_Bnk."Global Dimension 1 Code" := TEMPGLentry."Global Dimension 1 Code";
                 TEMPbuffer_Bnk."Global Dimension 2 Code" := TEMPGLentry."Global Dimension 2 Code";
 
-                TEMPbuffer_Bnk."GL vs GL" := CashRec."GL vs GL";
+                TEMPbuffer_Bnk."Is VAT Settlement" := CashRec."Is VAT Settlement";
                 TEMPbuffer_Bnk.Insert();
             until TEMPGLentry.Next() = 0;
         end;
@@ -112,7 +113,7 @@ codeunit 57204 "Cashflow Buffers"
             TEMPGLentry.SetFilter("Source Type", '<>%1', CashRec."Source Type");
             TEMPGLentry.SetFilter("Source No.", '<>%1', CashRec."Source No.");
         end;
-
+        n := TEMPGLentry.Count;
         TEMPGLentry.SetCurrentKey("Entry No.");
         TEMPbuffer_Bnk.setrange("Gl_EntryNo_Bnk");
         if TEMPbuffer_Bnk.FindSet() then
@@ -120,6 +121,7 @@ codeunit 57204 "Cashflow Buffers"
                 if TEMPGLentry.Next() = 0 then
                     break;
                 TEMPbuffer_Bnk."GL_EntryNo Start" := TEMPGLentry."Entry No.";
+                TEMPGLentry.setrange("Transaction No.", TEMPGLentry."Transaction No.");
                 repeat
                     TEMPbuffer_Bnk."Balance Amount" += TEMPGLentry.Amount;
                     TEMPbuffer_Bnk."GL_EntryNo End" := TEMPGLentry."Entry No.";
@@ -127,10 +129,11 @@ codeunit 57204 "Cashflow Buffers"
                     TEMPbuffer_Bnk."Source No." := TEMPGLentry."Source No.";
 
                     TEMPbuffer_Bnk."GL Account No." := TEMPGLentry."G/L Account No.";
-                    if -1 * TEMPbuffer_Bnk."Balance Amount" >= TEMPbuffer_Bnk."Cashflow Amount" then
-                        break;
+                //if -1 * TEMPbuffer_Bnk."Balance Amount" >= TEMPbuffer_Bnk."Cashflow Amount" then
+                //    break;
                 until TEMPGLentry.Next() = 0;
                 TEMPbuffer_Bnk.Modify();
+                TEMPGLentry.setrange("Transaction No.");
             until TEMPbuffer_Bnk.Next() = 0;
     end;
 
@@ -206,7 +209,7 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger."Is Init" := true; //CustLedgerEntry.Init_CustLedgEntryNo = CustLedgerEntry.CustLedgEntryNo;
         TEMPDetailedLedger."Init Entry No." := GLEntry."Entry No."; //CustLedgerEntry.Init_EntryNo;
         TEMPDetailedLedger."Init Ledger Entry No." := 0;//CustLedgerEntry.Init_CustLedgEntryNo;
-        if not TEMPbuffer_Bnk."GL vs GL" then
+        if not TEMPbuffer_Bnk."Is VAT Settlement" then
             TEMPDetailedLedger."Entry No." := 0 //CustLedgerEntry.EntryNo;
         else
             TEMPDetailedLedger."Entry No." := GLEntry."Entry No."; //CustLedgerEntry.EntryNo;
@@ -589,7 +592,7 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine.SetRange("G/L Entry No.", TEMPbuffer_Bnk."Gl_EntryNo_Bnk");
         CashFlowLine.DeleteAll();
         CashFlowLineNo := 0;
-        if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."GL vs GL" = false) and (TEMPbuffer_Bnk."GL_EntryNo Start" <> 0) then
+        if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."Is VAT Settlement" = false) and (TEMPbuffer_Bnk."GL_EntryNo Start" <> 0) then
             InsertTransactionBuffer(1, ProcessAmount)
         else begin
             TEMPDetailedLedger.Reset();
@@ -648,7 +651,7 @@ codeunit 57204 "Cashflow Buffers"
             repeat
                 CashFlowLineNo := 0;
                 ProcessAmount := 0;
-                if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."GL vs GL" = false) and (TEMPbuffer_Bnk."GL_EntryNo Start" <> 0) then
+                if (TEMPbuffer_Bnk."Source No." = '') and (TEMPbuffer_Bnk."Is VAT Settlement" = false) and (TEMPbuffer_Bnk."GL_EntryNo Start" <> 0) then
                     InsertTransactionBuffer(1, ProcessAmount)
                 else begin
                     TEMPDetailedLedger.Reset();
@@ -794,7 +797,7 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine."G/L Entry No." := TEMPbuffer_Bnk."Gl_EntryNo_Bnk";
         CashFlowLine."Entry Line No." := CashFlowLineNo;
         // Bank/Cash Block
-        if not TEMPbuffer_Bnk."GL vs GL" then
+        if not TEMPbuffer_Bnk."Is VAT Settlement" then
             if TEMPDetailedLedger."Entry Type" = TEMPDetailedLedger."Entry Type"::"Payment Tolerance" then //<< Payment Tolerance
                 GLentry.Get(TEMPDetailedLedger."Ledger Entry No.")
             else

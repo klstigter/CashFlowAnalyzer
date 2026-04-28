@@ -205,7 +205,7 @@ table 57201 "Realized_Cash Flow OLD"
         field(70; "Error message unbalance"; text[250])
         {
             DataClassification = ToBeClassified;
-            CaptionMl = ENU = 'Error message when unbalance detected', NLD = 'Foutmelding bij een gevonden onbelans';
+            CaptionMl = ENU = 'Error message when unbalance detected', NLD = 'Foutmelding bij een gevonden onbalans';
         }
         field(61; "Customer No."; Code[20])
         {
