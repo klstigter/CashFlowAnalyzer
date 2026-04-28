@@ -447,6 +447,7 @@ codeunit 57204 "Cashflow Buffers"
         LogReview: record "G/L Entry Review Log";
         GlEntry: record "G/L Entry";
         VatEntry: record "vat Entry";
+        Link: record "G/L Entry - VAT Entry Link";
     begin
         LogReview.SetRange("Reviewed Identifier", Identifier);
         logReview.SetFilter("G/L Entry No.", '<>%1', EntryNo);
@@ -458,16 +459,20 @@ codeunit 57204 "Cashflow Buffers"
                 if VatEntry.FindSet() then
                     repeat
                         VatEntriesSettlement := VatEntry;
+                        Link.SetRange("VAT Entry No.", VatEntry."Entry No.");
+                        if Link.FindFirst() then begin
+                            VatEntriesSettlement."Transaction No." := link."G/L Entry No.";
+                        end;
                         VatEntriesSettlement.Insert();
                     until VatEntry.Next() = 0;
             until LogReview.Next() = 0;
     end;
 
-
     procedure FillVATSettlement(): Integer
     var
         nRec: Integer;
         VatEntriesSettlement: record "Vat Entry" temporary;
+        GlEntry: record "G/L Entry";
     begin
         GetReviewedVATentries(TEMPbuffer_Bnk."Reviewed Identifier", TEMPbuffer_Bnk."GL_EntryNo_Bnk", VatEntriesSettlement);
         if VatEntriesSettlement.findset then
@@ -481,7 +486,7 @@ codeunit 57204 "Cashflow Buffers"
                 //TEMPDetailedLedger."Is Init" := (GLEntry2."Entry No." = GLEntrySettlement."Entry No.");
                 TEMPDetailedLedger."Init Entry No." := TEMPbuffer_Bnk.Gl_EntryNo_Bnk;
                 TEMPDetailedLedger."Init Ledger Entry No." := TEMPbuffer_Bnk."GL_EntryNo Start";
-                //TEMPDetailedLedger."Entry No." := //TODO klaas; 
+                TEMPDetailedLedger."Entry No." := TEMPbuffer_Bnk.Gl_EntryNo_Bnk; //misused
 
                 //TEMPDetailedLedger."Vendor Ledger Entry No." := VendorLedgerEntry.VendLedgEntryNo;
                 //TEMPDetailedLedger."Applied Ledger Entry No." := VendorLedgerEntry.AppliedVendLedgEntryNo;
@@ -489,83 +494,30 @@ codeunit 57204 "Cashflow Buffers"
                 //TEMPDetailedLedger."Transaction No." := GLEntrySettlement."Transaction No.";
 
                 TEMPDetailedLedger."Document No." := TEMPbuffer_Bnk."Document No.";
-                TEMPDetailedLedger."Amount" := TEMPbuffer_Bnk."Balance Amount";
+                if VatEntriesSettlement."VAT Calculation Type" = VatEntriesSettlement."VAT Calculation Type"::"Reverse Charge VAT" then
+                    TEMPDetailedLedger."Amount" := VatEntriesSettlement."Non-Deductible VAT Amount"
+                else
+                    TEMPDetailedLedger."Amount" := -1 * VatEntriesSettlement.Amount;
                 TEMPDetailedLedger."Posting Date" := VatEntriesSettlement."Posting Date";
                 TEMPDetailedLedger."led_Entry No." := VatEntriesSettlement."Entry No.";
                 TEMPDetailedLedger."led_Document Type" := VatEntriesSettlement."Document Type";
                 TEMPDetailedLedger."led_Document No." := VatEntriesSettlement."Document No.";
                 TEMPDetailedLedger."led_Posting Date" := VatEntriesSettlement."Posting Date";
-                //TEMPDetailedLedger."led_Account No." := GLEntrySettlement."G/L Account No.";
+                GlEntry.get(VatEntriesSettlement."Transaction No.");
+                TEMPDetailedLedger."led_Account No." := GlEntry."G/L Account No.";
                 if VatEntriesSettlement."VAT Calculation Type" = VatEntriesSettlement."VAT Calculation Type"::"Reverse Charge VAT" then
                     TEMPDetailedLedger."led_Amount" := -1 * VatEntriesSettlement."Non-Deductible VAT Amount"
                 else
                     TEMPDetailedLedger."led_Amount" := VatEntriesSettlement.Amount;
-                //TEMPDetailedLedger."led_Dimension Set ID" := GLEntrySettlement."Dimension Set ID";
-                //TEMPDetailedLedger."Led_Global Dimension 1 Code" := GLEntrySettlement."Global Dimension 1 Code";
-                //TEMPDetailedLedger."Led_Global Dimension 2 Code" := GLEntrySettlement."Global Dimension 2 Code";
+                TEMPDetailedLedger."led_Dimension Set ID" := GlEntry."Dimension Set ID";
+                TEMPDetailedLedger."Led_Global Dimension 1 Code" := GlEntry."Global Dimension 1 Code";
+                TEMPDetailedLedger."Led_Global Dimension 2 Code" := GlEntry."Global Dimension 2 Code";
                 TEMPDetailedLedger."Query Nr." := 5;
                 TEMPDetailedLedger.Insert();
                 nRec += 1;
             until VatEntriesSettlement.Next() = 0;
 
         exit(nRec);
-    end;
-
-    local procedure CheckReverseChargeVAT(GLEntrySettlement: Record "G/L Entry";
-                                          GLEntry: Record "G/L Entry";
-                                          GLEntry2: Record "G/L Entry";
-                                          var nRec: Integer): Boolean
-    var
-        VatEntry: Record "VAT Entry";
-        VatEntry2: Record "VAT Entry";
-        GLE_VATEntry: Record "G/L Entry - VAT Entry Link";
-        GLEntryInv: Record "G/L Entry";
-        IsReverseChargeVAT: Boolean;
-    begin
-        // Implement the logic to check for Reverse Charge VAT
-        IsReverseChargeVAT := False;
-        VatEntry.Setrange("Document No.", GLEntrySettlement."Document No.");
-        VatEntry.SetRange("Posting Date", GLEntrySettlement."Posting Date");
-        VatEntry.SetRange(Type, VatEntry.Type::Settlement);
-        VatEntry.SetRange("VAT Calculation Type", VatEntry."VAT Calculation Type"::"Reverse Charge VAT");
-        if VatEntry.FindFirst() then begin
-            VatEntry2.SetRange("Closed by Entry No.", VatEntry."Entry No.");
-            IsReverseChargeVAT := VatEntry2.FindSet();
-            if IsReverseChargeVAT then
-                repeat
-                    GLE_VATEntry.SetRange("VAT Entry No.", VatEntry2."Entry No.");
-                    if GLE_VATEntry.findfirst then begin
-                        GLEntryInv.Get(GLE_VATEntry."G/L Entry No.");
-                        TEMPDetailedLedger_EntryNo += 1;
-                        TEMPDetailedLedger.Init();
-                        TEMPDetailedLedger.n := TEMPDetailedLedger_EntryNo;
-                        TEMPDetailedLedger."Is Init" := (GLEntry2."Entry No." = GLEntryInv."Entry No.");
-                        TEMPDetailedLedger."Init Entry No." := GLEntry2."Entry No.";
-                        TEMPDetailedLedger."Init Ledger Entry No." := GLEntry."Entry No.";
-                        TEMPDetailedLedger."Entry No." := GLEntryInv."Entry No.";
-                        //TEMPDetailedLedger."Vendor Ledger Entry No." := VendorLedgerEntry.VendLedgEntryNo;
-                        //TEMPDetailedLedger."Applied Ledger Entry No." := VendorLedgerEntry.AppliedVendLedgEntryNo;
-                        //TEMPDetailedLedger."Entry Type" := VendorLedgerEntry.EntryType;
-                        TEMPDetailedLedger."Transaction No." := GLEntryInv."Transaction No.";
-                        TEMPDetailedLedger."Document No." := GLEntryInv."Document No.";
-                        TEMPDetailedLedger."Amount" := VatEntry2."Non-Deductible VAT Amount";
-                        TEMPDetailedLedger."Posting Date" := VatEntry2."Posting Date";
-                        TEMPDetailedLedger."led_Entry No." := VatEntry2."Entry No.";
-                        TEMPDetailedLedger."led_Document Type" := VatEntry2."Document Type";
-                        TEMPDetailedLedger."led_Document No." := VatEntry2."Document No.";
-                        TEMPDetailedLedger."led_Posting Date" := VatEntry2."Posting Date";
-                        TEMPDetailedLedger."led_Account No." := VatEntry2."G/L Acc. No.";
-                        TEMPDetailedLedger."led_Amount" := VatEntry2."Non-Deductible VAT Amount";
-                        TEMPDetailedLedger."led_Dimension Set ID" := GLEntryInv."Dimension Set ID";
-                        TEMPDetailedLedger."led_Global Dimension 1 Code" := GLEntryInv."Global Dimension 1 Code";
-                        TEMPDetailedLedger."led_Global Dimension 2 Code" := GLEntryInv."Global Dimension 2 Code";
-                        TEMPDetailedLedger."Query Nr." := 5;
-                        TEMPDetailedLedger.Insert();
-                        nRec += 1;
-                    end;
-                until VatEntry2.Next() = 0;
-        end;
-        exit(IsReverseChargeVAT);
     end;
 
     procedure CreateAnalyze(var AnalyzeHeader: Record "CashFLow Analyze Header")
@@ -993,55 +945,36 @@ codeunit 57204 "Cashflow Buffers"
     local procedure FillTempGrip_Vendor(DocFilter: Text) HasRecords: Boolean; //LAGI
     var
         GripQry: Query "Get Vendor Ledger Entry Opt.";
-        VATSettlementCheckQry: query "VAT Settlement Check Opt.";
-        VATSettlement: Boolean;
-        VATSettlement_GLEntryNo: Integer;
         Inserted: Boolean;
-        AllowInsert: Boolean;
         x: Integer;
     begin
         GripQry.SetFilter(Entry_No_, DocFilter);
         GripQry.Open();
         while GripQry.Read() do begin
             if (GripQry.Init_Entry_No_ <> GripQry.G_L_Entry_No_) then begin
-                //<< Check VAT Settlement
-                VATSettlementCheckQry.SetRange(Document_Type_filter, GripQry.Document_Type);
-                VATSettlementCheckQry.SetRange(Document_No_filter, GripQry.Document_No_);
-                VATSettlementCheckQry.SetRange(Closed, true);
-                VATSettlementCheckQry.Open();
-                VATSettlement := VATSettlementCheckQry.Read();
-                if VATSettlement then
-                    VATSettlement_GLEntryNo := VATSettlementCheckQry.GL_Entry_No_;
-                VATSettlementCheckQry.Close();
-                //TODO: klaas
-                AllowInsert := true;
-                if VATSettlement and (VATSettlement_GLEntryNo <> GripQry.G_L_Entry_No_) then
-                    AllowInsert := false;
-                //>>                
-                if AllowInsert then begin
-                    TEMPgrip_Vendor.Init();
-                    TEMPgrip_Vendor."Exploitation No." := GripQry.G_L_Entry_No_;
-                    case GripQry.Document_Type of
-                        GripQry.Document_Type::Invoice,
-                        GripQry.Document_Type::" ":
-                            TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Invoice;
-                        GripQry.Document_Type::"Credit Memo":
-                            TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::"Credit Memo";
-                        GripQry.Document_Type::Refund:
-                            TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Refund;
-                        GripQry.Document_Type::Payment:
-                            TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Payment;
-                    end;
-                    TEMPgrip_Vendor."Document No." := GripQry.Document_No_;
-                    TEMPgrip_Vendor."G/L Account" := GripQry.G_L_Account_No_;
-                    TEMPgrip_Vendor."Amount" := GripQry.Amount;
-                    TEMPgrip_Vendor."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
-                    TEMPgrip_Vendor."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
-                    TEMPgrip_Vendor."Dimension Set ID" := GripQry.Dimension_Set_ID;
-                    Inserted := TEMPgrip_Vendor.Insert();
-                    if not HasRecords and Inserted then
-                        HasRecords := true;
+
+                TEMPgrip_Vendor.Init();
+                TEMPgrip_Vendor."Exploitation No." := GripQry.G_L_Entry_No_;
+                case GripQry.Document_Type of
+                    GripQry.Document_Type::Invoice,
+                    GripQry.Document_Type::" ":
+                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Invoice;
+                    GripQry.Document_Type::"Credit Memo":
+                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::"Credit Memo";
+                    GripQry.Document_Type::Refund:
+                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Refund;
+                    GripQry.Document_Type::Payment:
+                        TEMPgrip_Vendor."Document Type" := TEMPgrip_Vendor."Document Type"::Payment;
                 end;
+                TEMPgrip_Vendor."Document No." := GripQry.Document_No_;
+                TEMPgrip_Vendor."G/L Account" := GripQry.G_L_Account_No_;
+                TEMPgrip_Vendor."Amount" := GripQry.Amount;
+                TEMPgrip_Vendor."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
+                TEMPgrip_Vendor."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
+                TEMPgrip_Vendor."Dimension Set ID" := GripQry.Dimension_Set_ID;
+                Inserted := TEMPgrip_Vendor.Insert();
+                if not HasRecords and Inserted then
+                    HasRecords := true;
             end;
         end;
         GripQry.Close();
