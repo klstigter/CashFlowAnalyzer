@@ -260,7 +260,7 @@ page 57201 "CashFLow Analyze List"
                         Message(msg3Lbl);
                 end;
             }
-            action(runMyCodeunit)
+            action(RunCashflowAnalyzer)
             {
                 ApplicationArea = Basic, Suite;
                 CaptionML = ENU = 'Step 2: Fetch all data in all buffers', NLD = 'Stap 2: Haal alle gegevens op in alle buffers';
@@ -301,21 +301,29 @@ page 57201 "CashFLow Analyze List"
                     CashEntryPostingNo: Record "Cash Entry Posting No.";
                     msgLbl: Label 'Gedetailleerde kasstroomposten succesvol aangemaakt. Duur: %1.';
                     msg2Lbl: Label 'Gegevens succesvol opgehaald in alle buffers. Duur: %1.';
+                    CashflowAnalyzeLine: Record "CashFLow Analyze Header";
                 begin
-                    if BuffersFilledFor <> Rec."Document No." then begin
+                    CurrPage.SetSelectionFilter(CashflowAnalyzeLine);
+                    if not CashflowAnalyzeLine.FindFirst() then begin
+                        Message('Er zijn geen records gevonden om te analyseren.');
+                        exit;
+                    end;
+                    if BuffersFilledFor <> CashflowAnalyzeLine."Document No." then begin
                         t1 := Time();
-                        CashEntryPostingNo.setrange("Posting Date", Rec."Posting Date");
-                        CashEntryPostingNo.setrange("Document No.", Rec."Document No.");
+                        CashEntryPostingNo.setrange("Posting Date", CashflowAnalyzeLine."Posting Date");
+                        CashEntryPostingNo.setrange("Document No.", CashflowAnalyzeLine."Document No.");
                         CashEntryPostingNo.FindFirst();
                         if cu.Fill_NOT_GripBuffer(CashEntryPostingNo) then begin
                             t2 := Time();
                             duration := t2 - t1;
-                            BuffersFilledFor := Rec."Document No.";
+                            BuffersFilledFor := CashflowAnalyzeLine."Document No.";
                             Message(msg2Lbl, format(duration));
                         end;
                     end;
                     t1 := Time();
-                    Cu.CreateAnalyze(rec);
+                    repeat
+                        Cu.CreateAnalyze(CashflowAnalyzeLine);
+                    until CashflowAnalyzeLine.Next() = 0;
                     t2 := Time();
                     duration := t2 - t1;
                     Message(msgLbl, format(duration));

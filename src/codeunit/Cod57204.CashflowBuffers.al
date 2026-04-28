@@ -1026,7 +1026,7 @@ codeunit 57204 "Cashflow Buffers"
                 if VATSettlement then
                     VATSettlement_GLEntryNo := VATSettlementCheckQry.GL_Entry_No_;
                 VATSettlementCheckQry.Close();
-
+                k
                 AllowInsert := true;
                 if VATSettlement and (VATSettlement_GLEntryNo <> GripQry.G_L_Entry_No_) then
                     AllowInsert := false;

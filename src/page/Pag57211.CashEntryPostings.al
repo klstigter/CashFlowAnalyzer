@@ -107,25 +107,25 @@ page 57211 "Cash Entry Postings"
 
                 trigger OnAction()
                 var
-                    pRec: Record "Cash Entry Posting No.";
+                    RecSelection: Record "Cash Entry Posting No.";
                     ALL_t1, ALL_t2 : time;
                     t1, t2 : time;
                     duration: Duration;
                     log: Record "Log Cashflow Analyzer";
                     LblMsg: Label 'Aantal %1 records voor verwerking. Wilt u doorgaan?', comment = 'ENU=Selected %1 records for processing. Do you want to continue?,NLD=Er zijn %1 records geselecteerd voor verwerking. Wilt u doorgaan?';
                 begin
-                    CurrPage.SetSelectionFilter(pRec);
-                    if pRec.Count <> 0 then begin
-                        if not Confirm(StrSubstNo(LblMsg, pRec.Count), false) then
+                    CurrPage.SetSelectionFilter(RecSelection);
+                    if RecSelection.Count <> 0 then begin
+                        if not Confirm(StrSubstNo(LblMsg, RecSelection.Count), false) then
                             exit;
                         ALL_t1 := Time();
-                        pRec.FindSet(); //set to top
+                        RecSelection.FindSet(); //set to top
                         repeat
-                            Rec := pRec;
-                            Rec.Find();
+                            //Rec := RecSelection;
+                            //Rec.Find();
 
                             t1 := Time();
-                            if cu.Fill_All_Buffer(Rec) then begin
+                            if cu.Fill_All_Buffer(RecSelection) then begin
                                 t2 := Time();
                                 duration := t2 - t1;
                                 log.createLog(0, t1, t2, 'Duration Fetch all buffers');
@@ -136,7 +136,7 @@ page 57211 "Cash Entry Postings"
                             t2 := Time();
                             duration := t2 - t1;
                             log.createLog(0, t1, t2, 'Duration Create analyze lines');
-                        until pRec.Next() = 0;
+                        until RecSelection.Next() = 0;
                         ALL_t2 := Time();
                         duration := ALL_t2 - ALL_t1;
                         Message('Proces verwerkt. \Duur: %1', duration);
@@ -236,12 +236,17 @@ page 57211 "Cash Entry Postings"
             {
                 ApplicationArea = Basic, Suite;
                 CaptionML = ENU = 'Analyze List', NLD = 'Kasstroomposten';
+                Image = AnalysisView;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
                 trigger OnAction()
                 var
                     cashFlowheader: Record "CashFlow Analyze Header";
                     cashflowAnalyzeList: Page "CashFlow Analyze List";
                 begin
                     //Pass parameters to the page through global variables in codeunit, as the page is called from action on repeater which has source as temp table.
+                    cashFlowheader.setrange("Posting Date", Rec."Posting Date");
                     cashFlowheader.setrange("Document No.", Rec."Document No.");
                     cashflowAnalyzeList.SetTableView(cashFlowheader);
                     cashflowAnalyzeList.Run();
