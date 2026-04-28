@@ -442,43 +442,66 @@ codeunit 57204 "Cashflow Buffers"
         exit(nRec);
     end;
 
-    procedure GetReviewedVATentries(Identifier: Integer; EntryNo: Integer; var VatEntriesSettlement: record "Vat Entry" temporary)
+    procedure GetReviewedVATentries(Identifier: Integer; EntryNo: Integer; var TEMPglEntry: record "G/L Entry" temporary)
     var
         LogReview: record "G/L Entry Review Log";
         GlEntry: record "G/L Entry";
+        GlEntryOri: record "G/L Entry";
+        VatEntriesSettlement: record "Vat Entry" temporary;
         VatEntry: record "vat Entry";
         Link: record "G/L Entry - VAT Entry Link";
+        n1, n2 : Integer;
     begin
+        TEMPglEntry.reset;
+        TEMPglEntry.DeleteAll();
         LogReview.SetRange("Reviewed Identifier", Identifier);
         logReview.SetFilter("G/L Entry No.", '<>%1', EntryNo);
         if LogReview.FindSet() then
             repeat
+                GlEntryOri.get(EntryNo);
                 GlEntry.get(LogReview."G/L Entry No.");
-                VatEntry.setrange("Posting Date", GlEntry."Posting Date");
-                VatEntry.SetRange("Document No.", GlEntry."Document No.");
-                if VatEntry.FindSet() then
+                if (GlEntry."Document No." = GlEntryOri."Document No.") and (GlEntry."Posting Date" = GlEntryOri."Posting Date") then
+                    continue;
+                // VatEntry.setrange("Posting Date", GlEntry."Posting Date");
+                // VatEntry.SetRange("Document No.", GlEntry."Document No.");
+                // if VatEntry.FindSet() then
+                //     repeat
+                //         VatEntriesSettlement := VatEntry;
+                //         Link.SetRange("VAT Entry No.", VatEntry."Entry No.");
+                //         if Link.FindFirst() then
+                //             VatEntriesSettlement."Transaction No." := link."G/L Entry No.";
+                //         VatEntriesSettlement.Insert();
+                //         n1 += 1;
+                //     until VatEntry.Next() = 0;
+                GlEntry.setrange("Posting Date", GlEntry."Posting Date");
+                GlEntry.SetRange("Document No.", GlEntry."Document No.");
+                if GlEntry.FindSet() then
                     repeat
-                        VatEntriesSettlement := VatEntry;
-                        Link.SetRange("VAT Entry No.", VatEntry."Entry No.");
-                        if Link.FindFirst() then begin
-                            VatEntriesSettlement."Transaction No." := link."G/L Entry No.";
-                        end;
-                        VatEntriesSettlement.Insert();
-                    until VatEntry.Next() = 0;
+                        TEMPglEntry := GlEntry;
+                        Link.SetRange("VAT Entry No.");
+                        Link.SetRange("G/l Entry No.", GlEntry."Entry No.");
+                        if Link.FindFirst() then
+                            TEMPglEntry."Transaction No." := link."VAT Entry No."
+                        else
+                            TEMPglEntry."Transaction No." := 0;
+                        TEMPglEntry.Insert();
+                        n2 += 1;
+                    until GlEntry.Next() = 0;
             until LogReview.Next() = 0;
+        TEMPglEntry.Delete(); //Last record is counter line
     end;
 
     procedure FillVATSettlement(): Integer
     var
         nRec: Integer;
-        VatEntriesSettlement: record "Vat Entry" temporary;
+        //VatEntriesSettlement: record "Vat Entry" temporary;
+        TEMPglEntry: record "G/L Entry" temporary;
         GlEntry: record "G/L Entry";
     begin
-        GetReviewedVATentries(TEMPbuffer_Bnk."Reviewed Identifier", TEMPbuffer_Bnk."GL_EntryNo_Bnk", VatEntriesSettlement);
-        if VatEntriesSettlement.findset then
+        GetReviewedVATentries(TEMPbuffer_Bnk."Reviewed Identifier", TEMPbuffer_Bnk."GL_EntryNo_Bnk", TEMPglEntry);
+        if TEMPglEntry.findset then
             repeat
-                if not ((VatEntriesSettlement."VAT Calculation Type" = VatEntriesSettlement."VAT Calculation Type"::"Reverse Charge VAT")
-                    or (VatEntriesSettlement.Amount <> 0)) then
+                if not (TEMPglEntry.amount <> 0) then
                     continue;
                 TEMPDetailedLedger_EntryNo += 1;
                 TEMPDetailedLedger.Init();
@@ -494,28 +517,23 @@ codeunit 57204 "Cashflow Buffers"
                 //TEMPDetailedLedger."Transaction No." := GLEntrySettlement."Transaction No.";
 
                 TEMPDetailedLedger."Document No." := TEMPbuffer_Bnk."Document No.";
-                if VatEntriesSettlement."VAT Calculation Type" = VatEntriesSettlement."VAT Calculation Type"::"Reverse Charge VAT" then
-                    TEMPDetailedLedger."Amount" := VatEntriesSettlement."Non-Deductible VAT Amount"
-                else
-                    TEMPDetailedLedger."Amount" := -1 * VatEntriesSettlement.Amount;
-                TEMPDetailedLedger."Posting Date" := VatEntriesSettlement."Posting Date";
-                TEMPDetailedLedger."led_Entry No." := VatEntriesSettlement."Entry No.";
-                TEMPDetailedLedger."led_Document Type" := VatEntriesSettlement."Document Type";
-                TEMPDetailedLedger."led_Document No." := VatEntriesSettlement."Document No.";
-                TEMPDetailedLedger."led_Posting Date" := VatEntriesSettlement."Posting Date";
-                GlEntry.get(VatEntriesSettlement."Transaction No.");
-                TEMPDetailedLedger."led_Account No." := GlEntry."G/L Account No.";
-                if VatEntriesSettlement."VAT Calculation Type" = VatEntriesSettlement."VAT Calculation Type"::"Reverse Charge VAT" then
-                    TEMPDetailedLedger."led_Amount" := -1 * VatEntriesSettlement."Non-Deductible VAT Amount"
-                else
-                    TEMPDetailedLedger."led_Amount" := VatEntriesSettlement.Amount;
-                TEMPDetailedLedger."led_Dimension Set ID" := GlEntry."Dimension Set ID";
-                TEMPDetailedLedger."Led_Global Dimension 1 Code" := GlEntry."Global Dimension 1 Code";
-                TEMPDetailedLedger."Led_Global Dimension 2 Code" := GlEntry."Global Dimension 2 Code";
+
+                TEMPDetailedLedger."Amount" := -1 * TEMPglEntry.Amount;
+                TEMPDetailedLedger."Posting Date" := TEMPglEntry."Posting Date";
+                TEMPDetailedLedger."led_Entry No." := TEMPglEntry."Entry No.";
+                TEMPDetailedLedger."led_Document Type" := TEMPglEntry."Document Type";
+                TEMPDetailedLedger."led_Document No." := TEMPglEntry."Document No.";
+                TEMPDetailedLedger."led_Posting Date" := TEMPglEntry."Posting Date";
+                TEMPDetailedLedger."led_Account No." := TEMPglEntry."G/L Account No.";
+
+                TEMPDetailedLedger."led_Amount" := TEMPglEntry.Amount;
+                TEMPDetailedLedger."led_Dimension Set ID" := TEMPglEntry."Dimension Set ID";
+                TEMPDetailedLedger."Led_Global Dimension 1 Code" := TEMPglEntry."Global Dimension 1 Code";
+                TEMPDetailedLedger."Led_Global Dimension 2 Code" := TEMPglEntry."Global Dimension 2 Code";
                 TEMPDetailedLedger."Query Nr." := 5;
                 TEMPDetailedLedger.Insert();
                 nRec += 1;
-            until VatEntriesSettlement.Next() = 0;
+            until TEMPglEntry.Next() = 0;
 
         exit(nRec);
     end;
@@ -713,9 +731,12 @@ codeunit 57204 "Cashflow Buffers"
         CashFlowLine."Applied Document No." := TEMPbuffer_Bnk."Document No.";
         //CashFlowLine."Applied Document Entry No." := TEMPbuffer_Bnk."Init Entry No.";
         //CashFlowLine."Realized Type" := CashFlowLine."Realized Type"::"Customer Ledger Entry";
-        CashFlowLine."Dimension Set ID" := TEMPbuffer_Bnk."Dimension Set ID";
-        CashFlowLine."Global Dimension 1 Code" := TEMPbuffer_Bnk."Global Dimension 1 Code";
-        CashFlowLine."Global Dimension 2 Code" := TEMPbuffer_Bnk."Global Dimension 2 Code";
+
+        //disable KAS25-0005
+        // CashFlowLine."Dimension Set ID" := TEMPbuffer_Bnk."Dimension Set ID";
+        // CashFlowLine."Global Dimension 1 Code" := TEMPbuffer_Bnk."Global Dimension 1 Code";
+        // CashFlowLine."Global Dimension 2 Code" := TEMPbuffer_Bnk."Global Dimension 2 Code";
+
         CashFlowLine."Transaction No." := TEMPbuffer_Bnk."Transaction No.";
 
         CashFlowLine."Journal Templ. Name" := TEMPbuffer_Bnk."Journal Templ. Name";

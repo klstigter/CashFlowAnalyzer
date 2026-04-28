@@ -16,7 +16,7 @@ codeunit 57206 GetNotGrip
         if not TEMP_.FindSet() then
             exit(false);
         repeat
-            TEMPgrip.SetRange("Document Type", TEMP_."led_Document Type");
+            TEMPgrip.SetRange("Document Type", convertDocType(TEMP_."led_Document Type"));
             TEMPgrip.setrange("Document No.", TEMP_."led_Document No.");
             if TEMPgrip.IsEmpty then begin
                 n := 1;
@@ -41,4 +41,22 @@ codeunit 57206 GetNotGrip
 
     end;
 
+    local procedure convertDocType(type: Enum Microsoft.Finance.GeneralLedger.Journal."Gen. Journal Document Type"): Option
+    var
+        NewType: Option "Invoice","Credit Memo",Payment,Refund;
+    begin
+        case type of
+            Type::Invoice:
+                NewType := NewType::Invoice;
+            Type::"Credit Memo":
+                NewType := NewType::"Credit Memo";
+            Type::Payment:
+                NewType := NewType::Payment;
+            Type::Refund:
+                NewType := NewType::Refund;
+        end;
+        exit(NewType);
+
+
+    end;
 }
