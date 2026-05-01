@@ -91,6 +91,23 @@ table 57205 "GRIP Invoice Analyze Data"
             CalcFormula = lookup("Cust. Ledger Entry".Open where("Document No." = field("Document No.")));
             Editable = false;
         }
+        field(110; "VAT Calculation Type"; Enum Microsoft.Foundation.Enums."Tax Calculation Type")
+        {
+            CaptionML = ENU = 'VAT Type', NLD = 'BTW-type';
+            Editable = false;
+        }
+        field(120; "Non-Deductible VAT Amount"; Decimal)
+        {
+            CaptionML = ENU = 'Non-Deductible VAT Amount', NLD = 'Niet-aftrekbaar BTW-bedrag';
+            DecimalPlaces = 2 : 5;
+            Editable = false;
+        }
+        field(130; "VAT Amount"; Decimal)
+        {
+            CaptionML = ENU = 'VAT Amount', NLD = 'BTW-bedrag';
+            DecimalPlaces = 2 : 5;
+            Editable = false;
+        }
 
     }
 

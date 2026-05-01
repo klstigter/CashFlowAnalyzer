@@ -15,6 +15,7 @@ codeunit 57204 "Cashflow Buffers"
         TEMPCashFlowCategory: record "Cash Flow Category G/L Account" temporary;
         CashFlowLineNo: Integer;
 
+
     procedure ShowTransactionBufferPage()
     var
         TransactionBufferPage: Page "Transaction Buffer";
@@ -126,7 +127,7 @@ codeunit 57204 "Cashflow Buffers"
                     TEMPbuffer_Bnk."Source No." := TEMPGLentry."Source No.";
                     TEMPbuffer_Bnk."GL Account No." := TEMPGLentry."G/L Account No.";
                     TEMPbuffer_Bnk."Reviewed Identifier" := TEMPGLentry."Reviewed Identifier";
-                    if TEMPGLentry."Reversed by Entry No." <> 0 then begin
+                    if TEMPGLentry."Reversed by Entry No." <> 0 then begin //miuse Reversed be Entry No.
                         TEMPbuffer_Bnk."Is VAT Settlement" := true;
                         TEMPbuffer_Bnk."Reviewed Identifier" := TEMPGLentry."Reversed by Entry No.";
                         FillVATSettlement();
@@ -154,7 +155,7 @@ codeunit 57204 "Cashflow Buffers"
         TempGLentry."Dimension Set ID" := GLentry."Dimension Set ID";
         TempGLentry."Document Type" := GLentry."Document Type";
         TEMPGLentry."System-Created Entry" := GLentry."System-Created Entry";
-        TEMPGLentry."Reversed by Entry No." := GLentry."Reviewed Identifier";
+        TEMPGLentry."Reversed by Entry No." := GLentry."Reviewed Identifier"; //miuse Reversed be Entry No.
         TEMPGLentry.insert;
     end;
 
@@ -526,7 +527,7 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPDetailedLedger."led_Posting Date" := TEMPglEntry."Posting Date";
                 TEMPDetailedLedger."led_Account No." := TEMPglEntry."G/L Account No.";
 
-                TEMPDetailedLedger."led_Amount" := TEMPglEntry.Amount;
+                TEMPDetailedLedger."led_Amount" := -1 * TEMPglEntry.Amount;
                 TEMPDetailedLedger."led_Dimension Set ID" := TEMPglEntry."Dimension Set ID";
                 TEMPDetailedLedger."Led_Global Dimension 1 Code" := TEMPglEntry."Global Dimension 1 Code";
                 TEMPDetailedLedger."Led_Global Dimension 2 Code" := TEMPglEntry."Global Dimension 2 Code";
@@ -763,9 +764,15 @@ codeunit 57204 "Cashflow Buffers"
             else
                 GLentry.Get(TEMPbuffer_Bnk."Gl_EntryNo_Bnk")
         else
-            GLentry.Get(TEMPDetailedLedger."Entry No.");
-        CashFlowLine."Document No." := GLentry."Document No.";
-        CashFlowLine."Posting Date" := GLentry."Posting Date";
+            GLentry.Get(TEMPDetailedLedger."Led_entry No.");
+
+        if TEMPbuffer_Bnk."Is VAT Settlement" then begin
+            CashFlowLine."Document No." := TEMPbuffer_Bnk."Document No.";
+            CashFlowLine."Posting Date" := TEMPbuffer_Bnk."Posting Date";
+        end else begin
+            CashFlowLine."Document No." := GLentry."Document No.";
+            CashFlowLine."Posting Date" := GLentry."Posting Date";
+        end;
         CashFlowLine."Dimension Set ID" := TEMPDetailedLedger."led_Dimension Set ID";
         CashFlowLine."Global Dimension 1 Code" := TEMPDetailedLedger."led_Global Dimension 1 Code";
         CashFlowLine."Global Dimension 2 Code" := TEMPDetailedLedger."led_Global Dimension 2 Code";
@@ -813,10 +820,19 @@ codeunit 57204 "Cashflow Buffers"
         GLaccount: Record "G/L Account";
         GLentry: Record "G/L Entry";
         Sign: Integer;
+        CalcType: Enum Microsoft.Foundation.Enums."Tax Calculation Type";
+        vatAmount: Decimal;
     begin
         TEMPgrip_Vendor.SetRange("Document No.", TEMPDetailedLedger."led_Document No.");
         if TEMPgrip_Vendor.FindSet() then
             repeat
+                if TEMPgrip_Vendor."VAT Calculation Type" = CalcType::"Reverse Charge VAT" then begin
+                    vatAmount := abs(TEMPgrip_Vendor."VAT Amount");
+                    vatAmount += abs(TEMPgrip_Vendor."Non-Deductible VAT Amount");
+                end;
+                if abs(TEMPgrip_Vendor.Amount) = vatAmount then
+                    continue;
+
                 CashFlowLineNo += 1;
                 CashFlowLine."G/L Entry No." := TEMPbuffer_Bnk."Gl_EntryNo_Bnk";
                 CashFlowLine."Entry Line No." := CashFlowLineNo;
@@ -993,6 +1009,11 @@ codeunit 57204 "Cashflow Buffers"
                 TEMPgrip_Vendor."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
                 TEMPgrip_Vendor."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
                 TEMPgrip_Vendor."Dimension Set ID" := GripQry.Dimension_Set_ID;
+
+                TEMPgrip_Vendor."VAT Amount" := GripQry.VAT_Amount;
+                TEMPgrip_Vendor."VAT Calculation Type" := GripQry."VAT_Calculation_Type";
+                TEMPgrip_Vendor."Non-Deductible VAT Amount" := GripQry."Non_Deductible_VAT_Amount";
+
                 Inserted := TEMPgrip_Vendor.Insert();
                 if not HasRecords and Inserted then
                     HasRecords := true;
@@ -1017,7 +1038,7 @@ codeunit 57204 "Cashflow Buffers"
     // GRIPdataOLD: Record "CashFlow Category GRIP Invoice";
     begin
         // TEMPgrip.Reset();
-        // TEMPgrip.DeleteAll();
+        // TEMPgrip.DeleteAll();k
         GripQry.SetFilter("Document_No_", DocFilter);
         GripQry.Open();
         while GripQry.Read() do begin
@@ -1027,7 +1048,7 @@ codeunit 57204 "Cashflow Buffers"
             TEMPgrip."Document Type" := GripQry.Document_Type;
             TEMPgrip."Document No." := GripQry.Document_No_;
             TEMPgrip."G/L Account" := GripQry.GL_Account;
-            TEMPgrip."Amount" := GripQry.Amount;
+            TEMPgrip."Amount" := -1 * GripQry.Amount;
             TEMPgrip."Global Dimension 1 Code" := GripQry.Global_Dimension_1_Code;
             TEMPgrip."Global Dimension 2 Code" := GripQry.Global_Dimension_2_Code;
             //TEMPgrip."Dimension Set ID" := ;
@@ -1056,12 +1077,13 @@ codeunit 57204 "Cashflow Buffers"
             end;
             TEMPgrip."Document No." := VatQry.DocNo;
             TEMPgrip."G/L Account" := VatQry.GLaccountNo;
-            TEMPgrip."Amount" := -1 * VatQry.Amount;
+            TEMPgrip."Amount" := VatQry.Amount;
             TEMPgrip."Global Dimension 1 Code" := VatQry.Dim1;
             TEMPgrip."Global Dimension 2 Code" := VatQry.Dim2;
             TEMPgrip."Dimension Set ID" := VatQry.Dim_Set_ID;
-            if not TEMPgrip.Insert() then
-                log.CreateLog(n, t1, t2, StrSubstNo('Double vat_id %1', VatQry.EntryNo));
+            if TEMPgrip."Amount" <> 0 then
+                if not TEMPgrip.Insert() then
+                    log.CreateLog(n, t1, t2, StrSubstNo('Double vat_id %1', VatQry.EntryNo));
         end;
         VatQry.Close();
     end;
