@@ -106,6 +106,18 @@ table 57212 "DetailLedger2DocNo Buffer"
         {
             DataClassification = ToBeClassified;
         }
+        field(95; "Is Non Deductible VAT"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(96; "VAT Bus. Posting Group"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(97; "VAT Prod. Posting Group"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
 
     }
 

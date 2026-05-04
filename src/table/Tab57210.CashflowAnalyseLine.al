@@ -206,6 +206,11 @@ table 57210 "Cashflow Analyse Line"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'Journal Batch Name', NLD = 'Dagboekbatchnaam';
         }
+        field(95; "Is Non Deductable VAT"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'Is Non Deductible VAT', NLD = 'Is niet-aftrekbare btw';
+        }
     }
 
     keys
