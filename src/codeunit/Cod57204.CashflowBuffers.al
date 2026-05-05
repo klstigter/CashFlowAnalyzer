@@ -54,8 +54,8 @@ codeunit 57204 "Cashflow Buffers"
         SourceTypeEnum: Enum "Gen. Journal Source Type";
         n: integer;
     begin
-        //TEMPbuffer_Bnk.reset;
-        //TEMPbuffer_Bnk.DeleteAll();
+        TEMPbuffer_Bnk.reset;
+        TEMPbuffer_Bnk.DeleteAll();
         GLentry.SetCurrentKey("Entry No.");
         GLentry.SetLoadFields("Entry No.", "Document No.", "Posting Date", "Source Type", "Source No.", Amount, "G/L Account No.", "Journal Templ. Name", "Journal Batch Name", "Transaction No.", "Dimension Set ID", "Document Type");
         GLentry.SetRange("Document No.", "CashRec"."Document No.");
@@ -199,10 +199,10 @@ codeunit 57204 "Cashflow Buffers"
 
     procedure DeleteDetailedLedger()
     begin
-        ClearAll();
         TEMPDetailedLedger.Reset();
         TEMPDetailedLedger.DeleteAll();
         TEMPDetailedLedger_EntryNo := 0;
+
     end;
 
     procedure CreateDummyLedgBuffer(GLEntryNo: Integer; Amount: Decimal)
@@ -500,8 +500,6 @@ codeunit 57204 "Cashflow Buffers"
         nRec: Integer;
         Non_DeductableMode: Boolean;
     begin
-
-
         GetVatentries.SetRange(IdentifierFilter, TEMPbuffer_Bnk."Reviewed Identifier");
         GetVatentries.Open();
         while GetVatentries.Read() do begin
