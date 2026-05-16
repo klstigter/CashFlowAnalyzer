@@ -227,7 +227,10 @@ codeunit 57204 "Cashflow Buffers"
         TEMPDetailedLedger."Document No." := GLEntry."Document No."; //CustLedgerEntry.DocumentNo;
         TEMPDetailedLedger."Amount" := Amount; //CustLedgerEntry.Amount;
         TEMPDetailedLedger."Posting Date" := GLEntry."Posting Date"; //CustLedgerEntry.PostingDate;
-        TEMPDetailedLedger."led_Entry No." := 0; //CustLedgerEntry.Cle_EntryNo;
+        if TEMPbuffer_Bnk."Is VAT Settlement" then
+            TEMPDetailedLedger."led_Entry No." := GLEntry."Entry No."
+        else
+            TEMPDetailedLedger."led_Entry No." := 0; //CustLedgerEntry.Cle_EntryNo;
         TEMPDetailedLedger."led_Document Type" := GLEntry."Document Type"; //CustLedgerEntry.Cle_DocType;
         TEMPDetailedLedger."led_Document No." := GLEntry."Document No."; //CustLedgerEntry.Cle_DocNo;
         TEMPDetailedLedger."led_Posting Date" := GLEntry."Posting Date"; //CustLedgerEntry.Cle_PostingDate;
@@ -446,7 +449,7 @@ codeunit 57204 "Cashflow Buffers"
         exit(nRec);
     end;
 
-    Procedure GetNonDeductableVat(CLosedByEntryNo: Integer): integer
+    Procedure GetNonDeductableVat(CLosedByEntryNo: Integer; var VatAmountExplained: Decimal): integer
     var
         getClosedby: Query GetClosedBy_Entries;
         NewNo: Integer;
@@ -454,7 +457,7 @@ codeunit 57204 "Cashflow Buffers"
     begin
         getClosedby.SetRange(ClosedByNoFilter, CLosedByEntryNo);
         getClosedby.Open();
-        if getClosedby.Read() then begin
+        while getClosedby.Read() do begin
             NewNo := TEMPDetailedLedger.n + 1;
             TEMPDetailedLedger.Init();
             TEMPDetailedLedger.n := NewNo;
@@ -471,6 +474,7 @@ codeunit 57204 "Cashflow Buffers"
             TEMPDetailedLedger."Document No." := TEMPbuffer_Bnk."Document No.";
 
             TEMPDetailedLedger."Amount" := -1 * getClosedby.Non_Deductible_VAT_Amount;
+            VatAmountExplained -= getClosedby.Non_Deductible_VAT_Amount;
             TEMPDetailedLedger."Posting Date" := getClosedby."posting_Date";
 
             TEMPDetailedLedger."led_Entry No." := getClosedby."EntryNo";
@@ -499,23 +503,25 @@ codeunit 57204 "Cashflow Buffers"
         NewNo: Integer;
         nRec: Integer;
         Non_DeductableMode: Boolean;
+        Non_DeductibleAmountExplained: Decimal;
     begin
         GetVatentries.SetRange(IdentifierFilter, TEMPbuffer_Bnk."Reviewed Identifier");
         GetVatentries.Open();
         while GetVatentries.Read() do begin
+            Non_DeductibleAmountExplained := 0;
             if GetVatentries.G_L_Entry_No_ = TEMPbuffer_Bnk."GL_EntryNo Start" then
                 continue;
             if GetVatentries.Non_Deductible_VAT_Amount <> 0 then begin
-                nRec += GetNonDeductableVat(GetVatentries.VATentryNo);
+                nRec += GetNonDeductableVat(GetVatentries.VATentryNo, Non_DeductibleAmountExplained);
                 Non_DeductableMode := true;
-                continue;
+                //if GetVatentries.Amount_GLentry = 0 then
+                //    continue;
             end;
             if Non_DeductableMode then begin
                 if (GetVatentries."VAT_Bus__Posting_Group" = '')
                     and (GetVatentries."VAT_Prod__Posting_Group" = '') then
                     continue;
             end;
-            Non_DeductableMode := false;
             NewNo := TEMPDetailedLedger.n + 1;
             TEMPDetailedLedger.Init();
             TEMPDetailedLedger.n := NewNo;
@@ -531,7 +537,8 @@ codeunit 57204 "Cashflow Buffers"
 
             TEMPDetailedLedger."Document No." := TEMPbuffer_Bnk."Document No.";
 
-            TEMPDetailedLedger."Amount" := -1 * GetVatentries.Amount_GLentry;
+            TEMPDetailedLedger."Amount" := -1 * GetVatentries.Amount_GLentry - Non_DeductibleAmountExplained;
+
             TEMPDetailedLedger."Posting Date" := GetVatentries."postingDate2";
             TEMPDetailedLedger."led_Entry No." := GetVatentries."GL_Entry_No";
             TEMPDetailedLedger."led_Document Type" := GetVatentries."Document_Type";
@@ -545,6 +552,8 @@ codeunit 57204 "Cashflow Buffers"
             TEMPDetailedLedger."Led_Global Dimension 2 Code" := GetVatentries."Global_Dimension_2_Code";
             TEMPDetailedLedger."Query Nr." := 5;
             TEMPDetailedLedger.Insert();
+            Non_DeductableMode := false;
+
             nRec += 1;
         end;
         TEMPDetailedLedger.delete;
