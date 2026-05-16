@@ -514,8 +514,6 @@ codeunit 57204 "Cashflow Buffers"
             if GetVatentries.Non_Deductible_VAT_Amount <> 0 then begin
                 nRec += GetNonDeductableVat(GetVatentries.VATentryNo, Non_DeductibleAmountExplained);
                 Non_DeductableMode := true;
-                //if GetVatentries.Amount_GLentry = 0 then
-                //    continue;
             end;
             if Non_DeductableMode then begin
                 if (GetVatentries."VAT_Bus__Posting_Group" = '')
